@@ -1,5 +1,7 @@
 # The Slow War — Deterministic Climate Casualty Counter
 
+Live site: https://tamorist.github.io/slow-war/
+
 Visualizes future deaths "locked in" by CO₂ emissions, based on the 1,000-ton rule (≈ 1 future death per 1,000 t of CO₂).
 
 - `index.html` — story page for a general audience
