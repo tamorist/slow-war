@@ -1,0 +1,7 @@
+# 非公開の下書き
+戦死者カウンター.md
+*.md
+!README.md
+
+# macOS
+.DS_Store

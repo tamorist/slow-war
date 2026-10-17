@@ -1,0 +1,873 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Your Day, at Scale</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Inter:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0f11; --bg2: #16181b; --bg3: #1d2024; --text: #ecebe7; --muted: #8d8f94; --faint: #34373c;
+    --red: #e5483b; --green: #4fb38a; --amber: #e0a43b;
+    --s-luc: #b0703f; --s-farm: #e0a43b; --s-feed: #86b35c; --s-post: #6b7078; --s-coc: #2f7d62;
+    --c-transport: #e5483b; --c-food: #e0a43b; --c-home: #5b9bd5; --c-flights: #a983e0; --c-shopping: #4fb38a;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); line-height: 1.7;
+    font-family: Inter, "Noto Sans JP", -apple-system, "Hiragino Sans", sans-serif; -webkit-font-smoothing: antialiased; }
+  html[lang="ja"] body { font-family: "Noto Sans JP", -apple-system, "Hiragino Sans", sans-serif; }
+  .num { font-family: Inter, -apple-system, sans-serif; font-variant-numeric: tabular-nums; letter-spacing: -.01em; }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 16px; }
+  a { color: var(--text); }
+  [hidden] { display: none !important; }
+
+  /* Control bar */
+  .bar-top { position: sticky; top: 0; z-index: 20; background: rgba(14,15,17,.88); backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid var(--faint); }
+  .bar-top .wrap { display: flex; align-items: center; gap: 10px 16px; padding-top: 10px; padding-bottom: 10px; flex-wrap: wrap; }
+  .ctl { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); }
+  select { font: inherit; font-size: 13px; color: var(--text); background: var(--bg2); border: 1px solid var(--faint);
+    border-radius: 8px; padding: 6px 28px 6px 10px; appearance: none; -webkit-appearance: none; cursor: pointer; max-width: 62vw;
+    background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+    background-position: right 13px center, right 8px center; background-size: 5px 5px; background-repeat: no-repeat; }
+  .lang { margin-left: auto; display: flex; border: 1px solid var(--faint); border-radius: 8px; overflow: hidden; }
+  .lang button { font: inherit; font-size: 12px; background: transparent; color: var(--muted); border: 0; padding: 6px 12px; cursor: pointer; }
+  .lang button[aria-pressed="true"] { background: var(--text); color: var(--bg); font-weight: 700; }
+
+  /* Hero */
+  .hero { padding: 72px 0 48px; }
+  .eyebrow { font-size: 12px; letter-spacing: .2em; color: var(--muted); text-transform: uppercase; margin: 0 0 14px; }
+  h1 { font-size: clamp(30px, 6vw, 52px); line-height: 1.2; margin: 0 0 18px; font-weight: 900; }
+  .lead { font-size: clamp(15px, 2.2vw, 17px); color: #c9c8c3; max-width: 660px; margin: 0; }
+  h2 { font-size: clamp(22px, 3.6vw, 30px); line-height: 1.35; margin: 0 0 12px; font-weight: 900; }
+
+  /* Layout */
+  .layout { display: grid; gap: 24px; grid-template-columns: 1fr; padding-bottom: 32px; }
+  @media (min-width: 900px) { .layout { grid-template-columns: 1fr 380px; align-items: start; } .result { position: sticky; top: 72px; } }
+
+  /* Input blocks */
+  .block { background: var(--bg2); border: 1px solid var(--faint); border-radius: 14px; padding: 20px; margin-bottom: 16px; }
+  .block h3 { margin: 0 0 4px; font-size: 16px; display: flex; align-items: center; gap: 10px; }
+  .block h3 .dot { width: 10px; height: 10px; border-radius: 3px; flex: none; }
+  .block h3 .kg { margin-left: auto; font-size: 13px; color: var(--muted); font-weight: 500; }
+  .hint { font-size: 12px; color: var(--muted); margin: 0 0 12px; }
+  .sub-label { font-size: 13px; color: #c9c8c3; margin: 14px 0 8px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip { font: inherit; font-size: 13px; color: var(--text); background: var(--bg3); border: 1px solid var(--faint); border-radius: 999px;
+    padding: 6px 12px; cursor: pointer; transition: border-color .15s, background .15s; line-height: 1.4; }
+  .chip:hover { border-color: #55595f; }
+  .chip[aria-pressed="true"] { background: var(--text); color: var(--bg); border-color: var(--text); font-weight: 700; }
+  .chip small { opacity: .65; font-weight: 400; margin-left: 4px; }
+  .meal-row { display: grid; grid-template-columns: 64px 1fr; gap: 8px; align-items: center; margin-top: 10px; }
+  .meal-row > span { font-size: 13px; color: #c9c8c3; }
+  .row { display: flex; align-items: center; gap: 12px; }
+  input[type=range] { flex: 1; accent-color: var(--text); }
+  .val { min-width: 64px; text-align: right; font-weight: 700; }
+  .toggle { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; margin-top: 12px; cursor: pointer; color: #c9c8c3; }
+  .toggle input { accent-color: var(--green); width: 16px; height: 16px; }
+  .stepper { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 0; border-top: 1px solid var(--faint); }
+  .stepper:first-of-type { border-top: 0; }
+  .stepper .lbl { font-size: 13.5px; }
+  .stepper .lbl small { display: block; color: var(--muted); font-size: 11.5px; }
+  .step { display: flex; align-items: center; gap: 4px; flex: none; }
+  .step button { font: inherit; width: 30px; height: 30px; border-radius: 8px; border: 1px solid var(--faint); background: var(--bg3);
+    color: var(--text); cursor: pointer; font-size: 16px; line-height: 1; }
+  .step b { min-width: 28px; text-align: center; }
+  .shop { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+  .item { position: relative; text-align: left; font: inherit; color: var(--text); background: var(--bg3); border: 1px solid var(--faint);
+    border-radius: 12px; padding: 10px 12px; cursor: pointer; line-height: 1.4; }
+  .item.on { border-color: var(--c-shopping); background: rgba(79,179,138,.08); }
+  .item b { display: block; font-size: 13.5px; padding-right: 26px; }
+  .item .k { font-size: 12px; color: var(--muted); }
+  .item .eq { font-size: 11px; color: var(--muted); opacity: .8; }
+  .item .cnt { position: absolute; top: 8px; right: 8px; min-width: 22px; height: 22px; border-radius: 11px; background: var(--c-shopping);
+    color: #0b1a13; font-size: 12px; font-weight: 800; display: grid; place-items: center; padding: 0 6px; }
+  .item .minus { position: absolute; bottom: 8px; right: 8px; width: 22px; height: 22px; border-radius: 6px; border: 1px solid var(--faint);
+    background: var(--bg2); color: var(--text); font-size: 14px; line-height: 1; cursor: pointer; }
+
+  /* Result panel */
+  .result { background: var(--bg2); border: 1px solid var(--faint); border-radius: 16px; padding: 22px; }
+  .result .k { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+  .total { font-size: 56px; font-weight: 900; line-height: 1.05; margin: 6px 0 2px; }
+  .total small { font-size: 18px; font-weight: 600; color: var(--muted); margin-left: 6px; }
+  .vs { font-size: 12.5px; color: var(--muted); }
+  .stack { display: flex; height: 12px; border-radius: 6px; overflow: hidden; background: var(--faint); margin: 16px 0 8px; }
+  .stack span { transition: width .4s ease; }
+  .legend { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 12px; font-size: 12px; color: #c9c8c3; }
+  .legend div { display: flex; align-items: center; gap: 6px; }
+  .legend i { width: 9px; height: 9px; border-radius: 2px; flex: none; }
+  .legend .n { margin-left: auto; color: var(--muted); }
+  .scale-tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; background: var(--bg); padding: 4px; border-radius: 10px; margin: 22px 0 16px; }
+  .scale-tabs button { font: inherit; font-size: 12px; background: transparent; color: var(--muted); border: 0; border-radius: 7px; padding: 8px 4px; cursor: pointer; line-height: 1.3; }
+  .scale-tabs button[aria-pressed="true"] { background: var(--bg3); color: var(--text); font-weight: 700; box-shadow: 0 0 0 1px var(--faint); }
+  .impact .big { font-size: 40px; font-weight: 900; color: var(--red); line-height: 1.1; }
+  .impact .cap { font-size: 13px; color: #c9c8c3; margin-top: 6px; }
+  .impact .sub { font-size: 12.5px; color: var(--muted); margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--faint); }
+
+  /* Plate */
+  .plate { padding: 56px 0 24px; border-top: 1px solid var(--faint); }
+  .gwp-row { display: flex; align-items: center; gap: 10px 14px; flex-wrap: wrap; margin-top: 24px; font-size: 13px; color: #c9c8c3; }
+  .plate .hint { margin-top: 8px; max-width: 680px; }
+  .pstats { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; margin: 24px 0 8px; }
+  .pstats > div { background: var(--bg2); border: 1px solid var(--faint); border-radius: 14px; padding: 18px; }
+  .pstats .k { font-size: 12.5px; color: #c9c8c3; }
+  .pstats .v { font-size: 32px; font-weight: 900; line-height: 1.2; margin-top: 4px; }
+  .pstats .s { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .ph3 { font-size: 15px; margin: 32px 0 12px; }
+  .mrow { display: grid; grid-template-columns: 130px 1fr 64px; gap: 10px; align-items: center; padding: 6px 8px; border-radius: 8px; }
+  .mrow.today { background: var(--bg2); box-shadow: inset 0 0 0 1px var(--faint); }
+  .mrow .mn { font-size: 13px; line-height: 1.3; }
+  .mrow .badge { display: inline-block; margin-left: 6px; font-size: 10.5px; color: var(--bg); background: var(--text); border-radius: 999px; padding: 0 6px; font-weight: 700; }
+  .mrow .mb { display: flex; height: 16px; border-radius: 4px; overflow: hidden; background: var(--bg3); }
+  .mrow .mb span { transition: width .5s ease; }
+  .mrow .mv { text-align: right; font-size: 13px; font-weight: 700; }
+  @media (max-width: 520px) { .mrow { grid-template-columns: 92px 1fr 54px; gap: 6px; } }
+  .slegend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12px; color: #c9c8c3; margin-top: 10px; }
+  .slegend span { display: inline-flex; align-items: center; gap: 6px; }
+  .slegend i { width: 10px; height: 10px; border-radius: 2px; }
+  .tbl-wrap { overflow-x: auto; }
+  table.swapt { max-width: none; font-size: 13px; }
+  .swapt th { text-align: right; font-weight: 500; color: var(--muted); font-size: 11.5px; padding: 4px 8px; border-bottom: 1px solid var(--faint); }
+  .swapt td { text-align: right; color: var(--text); }
+  .swapt td:first-child, .swapt th:first-child { text-align: left; }
+  .swapt td.g { color: var(--green); font-weight: 700; }
+  .mrow .mb span.coc { background-image: repeating-linear-gradient(135deg, rgba(255,255,255,.18) 0 3px, transparent 3px 7px); }
+  .note-box { font-size: 13px; color: #c9c8c3; background: var(--bg2); border-left: 3px solid var(--s-farm); border-radius: 0 10px 10px 0; padding: 14px 16px; margin-top: 20px; max-width: 760px; }
+
+  /* Compare foods */
+  .cmpfood { padding: 56px 0 24px; border-top: 1px solid var(--faint); }
+  .vs-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; margin-top: 24px; }
+  .vs-cards > div { background: var(--bg2); border: 1px solid var(--faint); border-radius: 14px; padding: 16px; }
+  .vs-cards .k { font-size: 12.5px; color: #c9c8c3; }
+  .vs-cards .v { font-size: 30px; font-weight: 900; color: var(--amber); line-height: 1.2; margin-top: 2px; }
+  .vs-cards .s { font-size: 11.5px; color: var(--muted); margin-top: 4px; line-height: 1.5; }
+  .vs-cards .animal { border-color: rgba(229,72,59,.45); background: rgba(229,72,59,.06); }
+  .vs-cards .animal .v { color: var(--red); }
+  .fpanels { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px; margin-top: 20px; }
+  .fpanel { background: var(--bg2); border: 1px solid var(--faint); border-radius: 14px; padding: 16px; }
+  .fpanel h4 { margin: 0; font-size: 14px; }
+  .fpanel .u { font-size: 11.5px; color: var(--muted); margin-bottom: 10px; }
+  .frow { display: grid; grid-template-columns: 78px 1fr 64px; gap: 8px; align-items: center; margin: 5px 0; font-size: 12.5px; }
+  .frow .fb { height: 12px; background: var(--bg3); border-radius: 3px; position: relative; overflow: hidden; }
+  .frow .fb span { position: absolute; inset: 0 auto 0 0; border-radius: 3px; transition: width .4s ease; }
+  .frow .fb.broken span { -webkit-mask: linear-gradient(90deg, #000 calc(100% - 14px), transparent calc(100% - 14px), transparent calc(100% - 9px), #000 calc(100% - 9px));
+    mask: linear-gradient(90deg, #000 calc(100% - 14px), transparent calc(100% - 14px), transparent calc(100% - 9px), #000 calc(100% - 9px)); }
+  .frow .fv { text-align: right; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .frow.hl-plant .fn { color: var(--green); font-weight: 700; }
+  .frow.hl-sel .fn { color: var(--amber); font-weight: 700; }
+  .fpanel .brk { font-size: 10.5px; color: var(--muted); margin-top: 6px; }
+
+  /* What-if */
+  .whatif { padding: 56px 0 24px; border-top: 1px solid var(--faint); }
+  .swaps { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; margin-top: 24px; }
+  .swap { display: flex; gap: 12px; align-items: flex-start; text-align: left; font: inherit; color: var(--text); background: var(--bg2);
+    border: 1px solid var(--faint); border-radius: 14px; padding: 14px 16px; cursor: pointer; line-height: 1.45; }
+  .swap .box { width: 20px; height: 20px; border-radius: 6px; border: 1.5px solid #55595f; flex: none; margin-top: 2px; display: grid; place-items: center; }
+  .swap[aria-pressed="true"] { border-color: var(--green); background: rgba(79,179,138,.07); }
+  .swap[aria-pressed="true"] .box { background: var(--green); border-color: var(--green); }
+  .swap[aria-pressed="true"] .box::after { content: ""; width: 5px; height: 10px; border: solid #0b1a13; border-width: 0 2px 2px 0; transform: rotate(45deg) translate(-1px, -1px); }
+  .swap b { display: block; font-size: 14px; }
+  .swap .d { font-size: 12px; color: var(--muted); }
+  .swap .d .g { color: var(--green); font-weight: 700; }
+  .empty { color: var(--muted); font-size: 14px; margin-top: 16px; }
+  .saved { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-top: 20px; }
+  .saved > div { background: linear-gradient(180deg, rgba(79,179,138,.10), rgba(79,179,138,.03)); border: 1px solid rgba(79,179,138,.35);
+    border-radius: 14px; padding: 18px; }
+  .saved .k { font-size: 12.5px; color: #c9c8c3; }
+  .saved .v { font-size: 34px; font-weight: 900; color: var(--green); line-height: 1.2; margin-top: 4px; }
+  .saved .s { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+  /* About */
+  .about { padding: 48px 0 24px; border-top: 1px solid var(--faint); margin-top: 32px; }
+  .about ul { color: #c9c8c3; font-size: 14px; padding-left: 20px; }
+  .about li { margin-bottom: 6px; }
+  details { margin-top: 12px; font-size: 13px; color: #c9c8c3; }
+  summary { cursor: pointer; color: var(--text); }
+  table { border-collapse: collapse; margin-top: 10px; width: 100%; max-width: 560px; }
+  td { padding: 4px 8px; border-bottom: 1px solid var(--faint); }
+  td:last-child { text-align: right; color: var(--muted); white-space: nowrap; }
+  footer { text-align: center; color: var(--muted); font-size: 12px; padding: 24px 16px 48px; }
+  footer a { color: var(--muted); }
+
+  /* Mobile summary bar */
+  .mbar { display: none; }
+  @media (max-width: 899px) {
+    .mbar { display: flex; position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; gap: 12px; align-items: center; justify-content: space-between;
+      background: rgba(22,24,27,.95); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-top: 1px solid var(--faint);
+      padding: 10px 16px; font-size: 12.5px; color: #c9c8c3; }
+    .mbar b { font-size: 18px; color: var(--text); }
+    .mbar .r b { color: var(--red); }
+    body { padding-bottom: 64px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="bar-top">
+  <div class="wrap">
+    <label class="ctl"><span data-i18n="ctlCountry"></span><select id="country"></select></label>
+    <label class="ctl"><span data-i18n="ctlTip"></span><select id="tip"></select></label>
+    <div class="lang" role="group" aria-label="Language"><button data-lang="en">EN</button><button data-lang="ja">日本語</button></div>
+  </div>
+</div>
+
+<div class="wrap">
+  <header class="hero">
+    <p class="eyebrow">Personal Simulator</p>
+    <h1 data-i18n="h1"></h1>
+    <p class="lead" data-i18n="lead"></p>
+  </header>
+
+  <div class="layout">
+    <div id="inputs"></div>
+
+    <aside class="result" aria-live="polite">
+      <div class="k" data-i18n="resTitle"></div>
+      <div class="total num"><span id="total">0</span><small>kg CO₂</small></div>
+      <div class="vs" id="vs"></div>
+      <div class="stack" id="stack"></div>
+      <div class="legend" id="legend"></div>
+      <div class="scale-tabs" role="group" id="scaleTabs"></div>
+      <div class="impact">
+        <div class="big num" id="impBig"></div>
+        <div class="cap" id="impCap"></div>
+        <div class="sub" id="impSub"></div>
+      </div>
+    </aside>
+  </div>
+
+  <section class="plate">
+    <p class="eyebrow">Your plate, unpacked</p>
+    <h2 data-i18n="plateH"></h2>
+    <p class="lead" data-i18n="plateLead"></p>
+    <div class="gwp-row"><span data-i18n="gwpLabel"></span><div class="chips" id="gwpChips2"></div></div>
+    <p class="hint" data-i18n="gwpHint"></p>
+    <div class="gwp-row"><span data-i18n="cocLabel"></span><div class="chips" id="cocChips2"></div></div>
+    <div id="cocMore" style="max-width:560px">
+      <div class="sub-label" data-i18n="cocRate"></div>
+      <div class="row"><input type="range" id="cocRate" min="0.1" max="1.5" step="0.1" value="0.5"><span class="val num" id="cocRateV" style="min-width:120px"></span></div>
+    </div>
+    <p class="hint" data-i18n="cocHint"></p>
+    <div class="pstats">
+      <div><div class="k" data-i18n="pFoodK"></div><div class="v num" id="pFoodV"></div><div class="s" id="pFoodS"></div></div>
+      <div><div class="k" data-i18n="pLandK"></div><div class="v num" id="pLandV"></div><div class="s" id="pLandS"></div></div>
+      <div><div class="k" id="pScaleK"></div><div class="v num" id="pScaleV"></div><div class="s" id="pScaleS"></div></div>
+    </div>
+    <h3 class="ph3" data-i18n="perMealH"></h3>
+    <div id="mbars"></div>
+    <div class="slegend" id="slegend"></div>
+    <h3 class="ph3" data-i18n="swapH"></h3>
+    <div class="tbl-wrap"><table class="swapt" id="swapT"></table></div>
+    <p class="hint" id="swapNote"></p>
+    <p class="note-box" data-i18n="notIncl"></p>
+  </section>
+
+  <section class="cmpfood">
+    <p class="eyebrow">Beyond carbon</p>
+    <h2 data-i18n="cfH"></h2>
+    <p class="lead" data-i18n="cfLead"></p>
+    <div class="gwp-row"><span data-i18n="cfSel"></span><div class="chips" id="selChips"></div></div>
+    <div class="gwp-row" style="margin-top:12px"><span data-i18n="cfBasis"></span><div class="chips" id="basisChips"></div></div>
+    <div class="vs-cards" id="vsCards"></div>
+    <div class="fpanels" id="fpanels"></div>
+    <p class="note-box" data-i18n="cfNote"></p>
+  </section>
+
+  <section class="whatif">
+    <p class="eyebrow">What if</p>
+    <h2 data-i18n="wiH"></h2>
+    <p class="lead" id="wiLead"></p>
+    <div class="swaps" id="swaps"></div>
+    <p class="empty" id="noSwaps" data-i18n="noSwaps" hidden></p>
+    <div class="saved" id="savedBox">
+      <div><div class="k" data-i18n="improved"></div><div class="v num" id="impKg">—</div><div class="s" id="impPct"></div></div>
+      <div><div class="k" id="savedCK"></div><div class="v num" id="savedC">—</div><div class="s" id="savedCS"></div></div>
+      <div><div class="k" data-i18n="savedWK"></div><div class="v num" id="savedW">—</div><div class="s" id="savedWS"></div></div>
+    </div>
+  </section>
+
+  <section class="about">
+    <p class="eyebrow">About the numbers</p>
+    <h2 style="font-size:22px" data-i18n="aboutH"></h2>
+    <ul id="aboutList"></ul>
+    <details><summary data-i18n="factorsH"></summary><table id="factors"></table></details>
+  </section>
+</div>
+
+<footer data-i18n="footer"></footer>
+
+<div class="mbar"><div><span data-i18n="mToday"></span><br><b class="num" id="mKg">0</b> kg CO₂</div><div class="r" style="text-align:right"><span id="mScale"></span><br><b class="num" id="mImp">—</b></div></div>
+
+<script>
+/* ===================== DATA ===================== */
+const COUNTRIES = {
+  world:  { en: 'World',          ja: '世界全体', enIn: 'the world',         jaIn: '世界',   gt: 40,   pop: 8.1e9,  grid: 0.48, area: 104e6 },
+  china:  { en: 'China',          ja: '中国',     enIn: 'China',             jaIn: '中国',   gt: 11.9, pop: 1.41e9, grid: 0.55, area: 9.6e6 },
+  us:     { en: 'United States',  ja: '米国',     enIn: 'the United States', jaIn: '米国',   gt: 4.9,  pop: 3.35e8, grid: 0.37, area: 9.83e6 },
+  india:  { en: 'India',          ja: 'インド',   enIn: 'India',             jaIn: 'インド', gt: 3.1,  pop: 1.43e9, grid: 0.70, area: 3.29e6 },
+  eu:     { en: 'European Union', ja: 'EU',       enIn: 'the EU',            jaIn: 'EU',     gt: 2.6,  pop: 4.48e8, grid: 0.25, area: 4.23e6 },
+  russia: { en: 'Russia',         ja: 'ロシア',   enIn: 'Russia',            jaIn: 'ロシア', gt: 1.8,  pop: 1.44e8, grid: 0.35, area: 17.1e6 },
+  japan:  { en: 'Japan',          ja: '日本',     enIn: 'Japan',             jaIn: '日本',   gt: 1.0,  pop: 1.24e8, grid: 0.45, area: 0.378e6 },
+  uk:     { en: 'United Kingdom', ja: '英国',     enIn: 'the UK',            jaIn: '英国',   gt: 0.31, pop: 6.8e7,  grid: 0.20, area: 0.244e6 },
+};
+const TIPS = [
+  { m: 1,   en: 'None (1,000-ton rule only)',     ja: 'なし（1,000トン・ルールのみ）' },
+  { m: 1.5, en: 'Moderate feedbacks ×1.5',        ja: '中程度のフィードバック ×1.5' },
+  { m: 2,   en: 'Tipping-point cascade ×2',       ja: 'ティッピング連鎖 ×2' },
+  { m: 3,   en: 'Cascade + societal collapse ×3', ja: '連鎖＋社会的崩壊 ×3' },
+];
+const WW2 = 80e6;
+// 排出係数（kg CO₂e、ライフサイクルの概算。出典により最大2倍程度の幅あり）
+const F = {
+  transport: { walk: 0, train: 0.02, bus: 0.06, ev: null /* 0.15 kWh/km × 電力係数 */, hybrid: 0.08, car: 0.14 },
+  evKwhPerKm: 0.15,
+  hvacKwhPerH: { cool: 0.5, heat: 0.8 }, keroKgPerH: 0.6, eco: 0.9,
+  applKwh: { low: 3, avg: 5, high: 8 },
+  flight: { short: 150, long: 1500 },       // 往復1回あたり
+  shop: { bottle: 0.15, coffee: 0.3, parcel: 0.5, tshirt: 7, jeans: 25, shoes: 14, phone: 70, laptop: 300 },
+};
+const CATS = ['transport', 'food', 'home', 'flights', 'shopping'];
+// 食事：Poore & Nemecek (2018, Science) のサプライチェーン段階別の値（Our World in Data 経由の概算）
+// stages = kg CO₂e / kg 食品 [森林破壊・土地利用変化, 農場(メタン・N₂O), 飼料, 加工・輸送・小売・包装]（中央値, GWP100）
+const STAGES = ['luc', 'farm', 'feed', 'post', 'coc'];
+const MEAL = {
+  portion: { beef: 0.12, pork: 0.12, chicken: 0.12, fish: 0.12, veg: 0.12, vegan: 0.15 },   // 主菜の量 (kg)
+  stages: {
+    beef:    [16.3, 39.4, 1.9, 2.3],   // 牛肉（肉牛）
+    pork:    [1.5, 1.7, 2.9, 1.1],
+    chicken: [2.5, 0.7, 1.8, 1.1],
+    fish:    [0.5, 3.6, 0.8, 0.2],     // 養殖魚
+    veg:     [0.7, 1.3, 2.2, 0.3],     // 卵で代表
+    vegan:   [1.0, 0.5, 0, 1.5],       // 豆腐で代表
+  },
+  ch4Share: { beef: 0.8, pork: 0.5, chicken: 0.1, fish: 0.6, veg: 0.1, vegan: 0.1 },  // 農場段階のうちメタンの割合（概算）
+  land: { beef: 326, pork: 17, chicken: 12, fish: 8, veg: 6, vegan: 3.5 },            // m²·年 / kg（平均値）
+  side: [0, 0.2, 0, 0.1], sideCh4: 0.8, sideLand: 0.4,                                 // ごはん・野菜（水田のメタンを含む）
+};
+// 食材別の環境負荷（Poore & Nemecek 2018 の平均値, Our World in Data 経由の概算）／ 1 kg あたり
+// ghg: kg CO₂e（土地利用変化を含む）, land: m²·年, water: 淡水取水量 L, eutro: 富栄養化 g PO₄eq, protein: たんぱく質の割合
+// animals: 食肉1 kgあたりの頭・羽数（可食部：牛 約220 kg, 豚 約80 kg, ブロイラー 約1.3 kg）
+const FOODS = {
+  beef:    { ghg: 99.48, land: 326.21, water: 1451.2, eutro: 301.41, protein: 0.20,  animals: 1 / 220 },
+  cheese:  { ghg: 23.88, land: 87.79,  water: 5605.2, eutro: 98.37,  protein: 0.22,  animals: null },
+  pork:    { ghg: 12.31, land: 17.36,  water: 1795.8, eutro: 76.38,  protein: 0.16,  animals: 1 / 80 },
+  fish:    { ghg: 13.63, land: 8.41,   water: 3691.3, eutro: 235.12, protein: 0.23,  animals: null },
+  chicken: { ghg: 9.87,  land: 12.22,  water: 660.0,  eutro: 48.7,   protein: 0.173, animals: 1 / 1.3 },
+  eggs:    { ghg: 4.67,  land: 5.7,    water: 577.7,  eutro: 21.76,  protein: 0.11,  animals: null },
+  tofu:    { ghg: 3.16,  land: 3.52,   water: 148.6,  eutro: 6.2,    protein: 0.16,  animals: null },
+  peas:    { ghg: 0.98,  land: 7.46,   water: 396.8,  eutro: 7.52,   protein: 0.22,  animals: null },
+};
+const INDICATORS = ['ghg', 'land', 'water', 'eutro'];
+const PLANTS = ['tofu', 'peas'];
+const GWP20K = 2.9;   // メタンの GWP20 / GWP100（約80 / 約27）
+// 土地の機会費用：農地として使い続けることで失われる、森林回復による吸収 ＝ 農地(m²·年) × 吸収量(kg CO₂/m²/年)
+function mealStages(m, gwp = S.gwp, coc = S.coc) {
+  const p = MEAL.portion[m], k = gwp === 20 ? GWP20K : 1, sh = MEAL.ch4Share[m];
+  const st = MEAL.stages[m].map(x => x * p);
+  st[1] = st[1] * (1 - sh + sh * k) + MEAL.side[1] * (1 - MEAL.sideCh4 + MEAL.sideCh4 * k);
+  [0, 2, 3].forEach(i => { st[i] += MEAL.side[i]; });
+  st.push(coc ? mealLand(m) * S.cocRate : 0);
+  return st;
+}
+const mealKg = (m, gwp, coc) => mealStages(m, gwp, coc).reduce((a, b) => a + b, 0);
+const mealLand = m => MEAL.land[m] * MEAL.portion[m] + MEAL.sideLand;
+
+/* ===================== I18N ===================== */
+const I18N = {
+  en: {
+    title: 'Your Day, at Scale', ctlCountry: 'Region', ctlTip: 'Tipping effects',
+    h1: 'Your day, multiplied.',
+    lead: 'On its own, one person’s day emits only a few kilograms of CO₂. Multiply it by everyone in a country — or on Earth — and it becomes a count of lives. Tell us how your day went.',
+    cat: { transport: 'Getting around', food: 'Meals', home: 'Heating, cooling & power', flights: 'Flights', shopping: 'Shopping today' },
+    mode: { walk: 'Walk / bike', train: 'Train', bus: 'Bus', ev: 'Electric car', hybrid: 'Hybrid car', car: 'Petrol car' },
+    distance: 'Distance today (round trip)',
+    mealSlot: ['Breakfast', 'Lunch', 'Dinner'],
+    meal: { beef: 'Beef', pork: 'Pork', chicken: 'Chicken', fish: 'Fish', veg: 'Vegetarian', vegan: 'Plant-based' },
+    hvac: { off: 'Off', cool: 'A/C cooling', heat: 'A/C heating', kero: 'Kerosene / gas heater' },
+    hours: 'Hours used today', eco: 'Thermostat set 1 °C milder', appl: 'Other electricity (lights, fridge, TV…)',
+    applOpt: { low: 'Low', avg: 'Average', high: 'High' },
+    flightHint: 'Round trips per year, spread across 365 days',
+    fShort: 'Short-haul', fShortD: '~1–2 h each way (domestic, regional)', fLong: 'Long-haul', fLongD: '~12 h each way (e.g. Tokyo–London)',
+    shopHint: 'Tap to add. Emissions from making and shipping each item.',
+    shop: { bottle: 'Bottled drink', coffee: 'Takeaway coffee', parcel: 'Online delivery', tshirt: 'T-shirt', jeans: 'Jeans', shoes: 'Sneakers', phone: 'Smartphone', laptop: 'Laptop' },
+    carEq: '≈ {km} km by car',
+    gwpLabel: 'How to count methane', gwp100: '100-year (standard, GWP100)', gwp20: '20-year (near-term, GWP20)',
+    gwpHint: 'Methane traps far more heat than CO₂ but breaks down within decades: about 80× CO₂ over 20 years, about 27× over 100 years. The 20-year view shows its impact on the warming we will live through.',
+    plateH: 'What’s behind your plate',
+    plateLead: 'Very little of food’s footprint comes from cooking or transport. For beef, most of it comes from methane (cattle burps and manure) and from clearing forest for pasture and feed crops. Here is the full picture, meal by meal.',
+    stage: { luc: 'Deforestation & land-use change', farm: 'Farm: methane & N₂O (burps, manure, fertiliser)', feed: 'Growing animal feed', post: 'Processing, transport & packaging', coc: 'Land’s lost carbon (opportunity cost)' },
+    perMealH: 'Emissions per meal (main dish + rice & vegetables)', todayBadge: '×{n} today',
+    pFoodK: 'Your meals today', pFoodS: '{m}% from farm methane & N₂O · {d}% from deforestation & land-use change',
+    pLandK: 'Farmland used for a year to produce today’s meals', pLandS: '≈ {n} parking spaces (12.5 m² each)',
+    pScaleK: 'If everyone in {name} ate like this every day', pScaleV: '{x}×', pScaleS: 'the land area of {name} (≈ {km} km² of farmland)', pScaleSW: 'all habitable land on Earth (≈ {km} km² of farmland)',
+    cocLabel: 'Land’s lost carbon (opportunity cost)', cocOff: 'Exclude', cocOn: 'Include (estimate)',
+    cocRate: 'CO₂ the land could absorb if it grew back into forest', cocUnit: ' kg CO₂/m²/yr',
+    cocHint: 'Farmland that is no longer needed can grow back into forest and pull CO₂ out of the air. Keeping it farmed gives that up. Estimated as farmland used (m²) × absorption rate. Rough guide for regrowing forest: about 0.3 kg CO₂ per m² per year in temperate zones, 1 kg or more in the tropics. An illustrative estimate.',
+    pFoodSc: ' · {c}% land’s lost carbon', cocCol: '+ opportunity cost',
+    cfH: 'Beyond carbon: comparing foods',
+    cfLead: 'Greenhouse gases are only part of the story. Land, water and water pollution point the same way: chicken is far better than beef, but on <b>every</b> measure it is still several times worse than plant proteins such as tofu and beans. And swapping beef for chicken means many more animals.',
+    cfBasis: 'Compare per', basis: { protein: '100 g of protein (fair comparison)', kg: '1 kg of food' },
+    ind: { ghg: 'Greenhouse gases', land: 'Land use', water: 'Freshwater use', eutro: 'Water pollution (nutrient run-off)', animals: 'Animals slaughtered' },
+    unit: { ghg: 'kg CO₂e', land: 'm²', water: 'L', eutro: 'g PO₄³⁻eq', animals: '' },
+    unitAnimals: { protein: 'animals per 100 kg of protein', kg: 'animals per 1,000 kg of meat' },
+    food: { beef: 'Beef', cheese: 'Cheese', pork: 'Pork', fish: 'Farmed fish', chicken: 'Chicken', eggs: 'Eggs', tofu: 'Tofu', peas: 'Peas / beans' },
+    cfSel: 'Compare with plants', 
+    vsK: '{ind}: {food} vs plants', vsS: '{food} {c} · tofu {t} · beans {p}',
+    animalK: 'Animals slaughtered: {food}', animalV: '≈ {n} {u}', animalU: { beef: 'cattle', pork: 'pigs', chicken: 'chickens' }, animalS: 'per 100 kg of protein · {x}× as many as beef', animalSB: 'per 100 kg of protein · plants: none',
+    times: '×{x}', brk: '⫽ = bar cut short; actual value shown at right',
+    cfNote: '<b>About these figures:</b> global averages from Poore &amp; Nemecek (2018, <i>Science</i>) via Our World in Data. Greenhouse gases here are <b>means including land-use change</b>, so they differ from the median-based meal calculation above. Water = freshwater withdrawals; water pollution = nutrient run-off (eutrophication). Animal counts use approximate edible meat per animal (cattle ~220 kg, pigs ~80 kg, broilers ~1.3 kg). Impacts vary hugely between farms: the best producers can be far below average, the worst far above.',
+    swapH: 'Swapping one beef meal', swapCols: ['', 'CO₂e saved (100-yr)', 'CO₂e saved (20-yr)', 'Land freed', 'Lives saved / yr ({name})'],
+    toChicken: 'Beef → chicken', toPlant: 'Beef → plant-based (tofu, beans)',
+    swapNote: 'Lives saved assume everyone in {name} replaces one beef meal a day for a year, using the methane setting above.',
+    notIncl: '<b>Still not included:</b> indirect land-use change (e.g. soy for feed pushing cattle ranching deeper into the Amazon), conversion of savannas such as the Cerrado and of peatlands, soil-carbon loss, and land cleared more than 20 years ago are only partly captured or missed. The “land’s lost carbon” option above is a rough way to see how large land-related effects could be. Water use, biodiversity loss and fertiliser run-off are also left out. And the 1,000-ton rule was derived for CO₂; applying it to CO₂-equivalent (especially on a 20-year basis) is an approximation.',
+    resTitle: 'Your day',
+    vs: 'Average per person in {where}: {avg} kg/day (all sources, incl. industry)',
+    scale: { you: 'You', country: 'Everyone in {name}', world: 'Everyone on Earth' },
+    youBig: '1 in {n}', youCap: 'Live this day for {n} and it locks in one future death.',
+    youSub: 'Over a lifetime (80 years): <b>{x}</b> future deaths',
+    days: '{n} days', years: '{n} years',
+    massCap: 'future deaths locked in <b>per day</b> if everyone in {name} ({pop}) lived today like you',
+    massSub: 'Per year: <b>{y}</b> — matching World War II’s toll in about <b>{t}</b>',
+    months: '{n} months',
+    mToday: 'Your day',
+    wiH: 'What if you changed one thing?',
+    wiLead: 'Pick changes below. Lives saved assume everyone in {name} — or on Earth — makes the same change for a year.',
+    sw: {
+      toTrain: 'Take the train instead', toBike: 'Walk or cycle this short trip', beefToChicken: 'Swap beef for chicken',
+      onePlant: 'Make one more meal plant-based', eco: 'Set heating/cooling 1 °C milder', keroToAC: 'Switch the heater to an A/C heat pump',
+      lessLong: 'One fewer long-haul trip a year', lessShort: 'One fewer short-haul trip a year',
+      noNew: 'Skip new clothes & gadgets (buy used, or wait)', refill: 'Carry a refillable bottle',
+    },
+    swD: '<span class="g">−{kg} kg</span>/day · saves {lives} a year in {name}',
+    noSwaps: 'Your day is already very low-carbon — nothing obvious left to swap.',
+    improved: 'Your improved day', impPct: '−{kg} kg (−{pct}%) per day',
+    savedCK: 'Lives saved per year — everyone in {name}', savedWK: 'Lives saved per year — everyone on Earth',
+    savedS: '≈ {x}% of World War II’s toll',
+    aboutH: 'How this is calculated',
+    about: [
+      '<b>Rough estimates.</b> Emission factors are approximate lifecycle values; published figures vary by up to ~2× depending on source, region and method.',
+      '<b>Food</b> uses supply-chain values from Poore &amp; Nemecek (2018, <i>Science</i>) via Our World in Data: median greenhouse-gas emissions and mean land use per kg, for a 120 g main portion (150 g tofu) plus rice and vegetables. Methane and N₂O are converted to CO₂-equivalent (100- or 20-year basis, as selected).',
+      'Electricity uses an approximate grid factor for {where}: <b>{grid} kg CO₂/kWh</b>. Electric-car and air-con emissions change with the region you choose.',
+      'Your total covers only the activities above. The national average also includes industry, public services, construction and more, so it is usually higher.',
+      'Deaths use the 1,000-ton rule (1 t CO₂ ≈ 0.001 future deaths) × the tipping multiplier you select.',
+      '<b>This is not about blame.</b> One person’s choices are tiny on their own. The point is what becomes possible when habits — and the systems behind them — change at scale.',
+    ],
+    factorsH: 'Show emission factors used',
+    fRows: { perKm: '/ km', perMeal: '/ meal', perH: '/ hour', perDay: '/ day', perTrip: '/ round trip', perItem: '/ item' },
+    footer: 'Part of the <a href="index.html">Slow War</a> project · <a href="simulator.html">Detailed simulator</a>',
+    people: n => n,
+  },
+  ja: {
+    title: 'あなたの1日を、世界の規模で', ctlCountry: '国・地域', ctlTip: 'ティッピング効果',
+    h1: 'あなたの1日を、<br>かけ算する。',
+    lead: '1人の1日の排出は、数キログラムにすぎません。けれど、それを国の全員、世界の全員でかけ算すると、命の数になります。あなたの今日を選んでみてください。',
+    cat: { transport: '移動', food: '食事', home: '冷暖房・電気', flights: '飛行機', shopping: '今日の買い物' },
+    mode: { walk: '徒歩・自転車', train: '電車', bus: 'バス', ev: '電気自動車', hybrid: 'ハイブリッド車', car: 'ガソリン車' },
+    distance: '今日の移動距離（往復）',
+    mealSlot: ['朝食', '昼食', '夕食'],
+    meal: { beef: '牛肉', pork: '豚肉', chicken: '鶏肉', fish: '魚', veg: 'ベジタリアン', vegan: '植物性のみ' },
+    hvac: { off: 'なし', cool: 'エアコン冷房', heat: 'エアコン暖房', kero: '石油・ガスストーブ' },
+    hours: '今日の使用時間', eco: '設定温度を1℃ゆるめる', appl: 'その他の電気（照明・冷蔵庫・テレビなど）',
+    applOpt: { low: '少なめ', avg: 'ふつう', high: '多め' },
+    flightHint: '1年間の往復回数を、365日で割って1日あたりに換算',
+    fShort: '短距離', fShortD: '片道1〜2時間（国内線など）', fLong: '長距離', fLongD: '片道約12時間（例：東京–ロンドン）',
+    shopHint: 'タップで追加。製造から配送までの排出量です。',
+    shop: { bottle: 'ペットボトル飲料', coffee: 'テイクアウトのコーヒー', parcel: 'ネット通販の配送', tshirt: 'Tシャツ', jeans: 'ジーンズ', shoes: 'スニーカー', phone: 'スマートフォン', laptop: 'ノートPC' },
+    carEq: '車で約{km} km分',
+    gwpLabel: 'メタンの評価期間', gwp100: '100年（標準・GWP100）', gwp20: '20年（短期・GWP20）',
+    gwpHint: 'メタンはCO₂よりはるかに強く熱をため込みますが、数十年で分解されます。20年で見るとCO₂の約80倍、100年で見ると約27倍です。20年で見ると、私たちが生きているうちの温暖化への影響が分かります。',
+    plateH: 'お皿の向こう側',
+    plateLead: '食べ物の排出のうち、調理や輸送によるものはごく一部です。牛肉の場合、大部分は牛のげっぷやふん尿から出るメタンと、牧草地や飼料畑をつくるための森林破壊から来ています。1食ずつ、全体像を見てみましょう。',
+    stage: { luc: '森林破壊・土地利用の変化', farm: '農場：メタン・N₂O（げっぷ・ふん尿・肥料）', feed: '飼料の生産', post: '加工・輸送・包装', coc: '土地の機会費用（失われる吸収）' },
+    perMealH: '1食あたりの排出量（主菜＋ごはん・野菜）', todayBadge: '今日 ×{n}',
+    pFoodK: '今日の食事', pFoodS: '農場のメタン・N₂O {m}% ・ 森林破壊・土地利用の変化 {d}%',
+    pLandK: '今日の食事のために1年間使われる農地', pLandS: '畳 約{n}枚分',
+    pScaleK: '{name}の全員が毎日この食事をしたら', pScaleV: '{x}倍', pScaleS: '{name}の国土の面積に対して（約{km} km²の農地が必要）', pScaleSW: '地球上の居住可能な土地に対して（約{km} km²の農地が必要）',
+    cocLabel: '土地の機会費用', cocOff: '含めない', cocOn: '含める（概算）',
+    cocRate: '森林に戻った場合のCO₂吸収量', cocUnit: ' kg CO₂/m²・年',
+    cocHint: '使われなくなった農地は、森林に戻れば空気中のCO₂を吸収します。農地として使い続けると、その吸収は失われます。これを「使っている農地（m²）× 吸収量」で概算します。森林回復による吸収量の目安は、温帯で1 m²あたり年約0.3 kg、熱帯で1 kg以上です。あくまで目安の概算です。',
+    pFoodSc: ' ・ 土地の機会費用 {c}%', cocCol: '＋機会費用',
+    cfH: '炭素だけではない：食材を比べる',
+    cfLead: '温室効果ガスは全体の一部にすぎません。土地・水・水質汚染で見ても、結果は同じ方向です。鶏肉は牛肉よりはるかにましですが、<b>どの指標でも</b>豆腐や豆などの植物性たんぱくの数倍の負荷があります。さらに、牛肉を鶏肉に替えると、犠牲になる動物の数は大きく増えます。',
+    cfBasis: '比べる単位', basis: { protein: 'たんぱく質100 gあたり（公平な比較）', kg: '食品1 kgあたり' },
+    ind: { ghg: '温室効果ガス', land: '土地利用', water: '淡水の使用', eutro: '水質汚染（栄養塩の流出）', animals: '犠牲になる動物' },
+    unit: { ghg: 'kg CO₂e', land: 'm²', water: 'L', eutro: 'g PO₄³⁻eq', animals: '' },
+    unitAnimals: { protein: 'たんぱく質100 kgあたりの頭・羽数', kg: '食肉1,000 kgあたりの頭・羽数' },
+    food: { beef: '牛肉', cheese: 'チーズ', pork: '豚肉', fish: '養殖魚', chicken: '鶏肉', eggs: '卵', tofu: '豆腐', peas: '豆類' },
+    cfSel: '植物性と比べる食材',
+    vsK: '{ind}：{food}は植物性の', vsS: '{food} {c} ・ 豆腐 {t} ・ 豆類 {p}',
+    animalK: '犠牲になる動物：{food}', animalV: '約{n}{u}', animalU: { beef: '頭', pork: '頭', chicken: '羽' }, animalS: 'たんぱく質100 kgあたりの頭・羽数 ・ 牛肉の約{x}倍', animalSB: 'たんぱく質100 kgあたりの頭・羽数 ・ 植物性は0',
+    times: '{x}倍', brk: '⫽ ＝ 棒を途中で省略（実際の値は右端）',
+    cfNote: '<b>数値について：</b>Poore &amp; Nemecek（2018年、<i>Science</i>）の世界平均値（Our World in Data 経由）です。ここでの温室効果ガスは<b>土地利用変化を含む平均値</b>のため、上の食事の計算（中央値）とは異なります。水は淡水の取水量、水質汚染は栄養塩の流出（富栄養化）です。動物の数は、1頭・1羽あたりの可食部の概算（牛 約220 kg、豚 約80 kg、ブロイラー 約1.3 kg）で求めています。環境負荷は生産者によって大きく異なり、最良の生産者は平均よりはるかに低く、最悪の生産者ははるかに高くなります。',
+    swapH: '牛肉1食を置き換えると', swapCols: ['', 'CO₂e削減（100年）', 'CO₂e削減（20年）', '空く農地', '1年で救える命（{name}）'],
+    toChicken: '牛肉 → 鶏肉', toPlant: '牛肉 → 植物性（豆腐・豆）',
+    swapNote: '救える命は、{name}の全員が1日1食の牛肉を1年間置き換えた場合の数です（上で選んだメタンの評価期間で計算）。',
+    notIncl: '<b>まだ含めていないもの：</b>間接的な土地利用変化（飼料用の大豆畑が広がり、押し出された放牧がアマゾンの奥へ移るなど）、セラードのようなサバンナや泥炭地の転換、土壌炭素の損失、20年以上前に開墾された土地の分は、一部しかとらえていないか、含まれていません。上の「土地の機会費用」は、土地を通じた影響がどれほど大きくなりうるかを見るための概算です。水の使用、生物多様性の損失、肥料の流出も含めていません。また、1,000トン・ルールはCO₂について導かれたもので、CO₂換算（特に20年基準）に当てはめるのは近似です。',
+    resTitle: 'あなたの1日',
+    vs: '{where}の1人あたり平均：{avg} kg/日（産業なども含む全排出）',
+    scale: { you: 'あなた', country: '{name}の全員', world: '世界の全員' },
+    youBig: '{n}で1人', youCap: 'この1日を{n}続けると、将来の死者1人が確定します。',
+    youSub: '一生（80年）続けると：将来の死者 <b>{x}人</b>',
+    days: '{n}日', years: '{n}年',
+    massCap: '{name}の全員（{pop}）があなたと同じ1日を過ごした場合、<b>1日に</b>確定する将来の死者',
+    massSub: '1年で <b>{y}</b>　第二次世界大戦の犠牲者数に約<b>{t}</b>で並びます',
+    months: '{n}か月',
+    mToday: 'あなたの1日',
+    wiH: 'ひとつ変えてみたら？',
+    wiLead: '変えてみたいことを選んでください。救える命は、{name}の全員（または世界の全員）が同じことを1年続けた場合の数です。',
+    sw: {
+      toTrain: '車をやめて電車にする', toBike: 'この距離なら徒歩・自転車にする', beefToChicken: '牛肉を鶏肉にする',
+      onePlant: 'もう1食を植物性にする', eco: '冷暖房の設定を1℃ゆるめる', keroToAC: 'ストーブをエアコン暖房に替える',
+      lessLong: '長距離フライトを年1回減らす', lessShort: '短距離フライトを年1回減らす',
+      noNew: '新品の服・機器を見送る（中古か、今は買わない）', refill: 'マイボトルを持ち歩く',
+    },
+    swD: '1日 <span class="g">−{kg} kg</span> ・ {name}全体で年{lives}を救う',
+    noSwaps: 'あなたの1日はすでにとても低炭素です。目立って変えられる点は見当たりません。',
+    improved: '改善したあなたの1日', impPct: '1日 −{kg} kg（−{pct}%）',
+    savedCK: '1年で救える命 — {name}の全員', savedWK: '1年で救える命 — 世界の全員',
+    savedS: '第二次世界大戦の犠牲者数の約{x}%',
+    aboutH: '計算のしかた',
+    about: [
+      '<b>概算です。</b>排出係数はライフサイクル全体の目安で、出典・地域・算定方法によって最大2倍ほど違います。',
+      '<b>食事</b>は Poore &amp; Nemecek（2018年、<i>Science</i>）のサプライチェーン段階別の値（Our World in Data 経由）を使っています。温室効果ガスは1kgあたりの中央値、土地は平均値で、主菜120 g（豆腐は150 g）にごはん・野菜を加えて計算しています。メタンとN₂OはCO₂換算です（選んだ100年／20年の基準）。',
+      '電気は{where}の電力の概算係数 <b>{grid} kg CO₂/kWh</b> で計算しています。電気自動車やエアコンの排出は、選んだ国・地域によって変わります。',
+      'あなたの合計は上の項目だけです。国の平均には産業・公共サービス・建設なども含まれるため、ふつうはそれより高くなります。',
+      '犠牲者数は1,000トン・ルール（CO₂ 1トン ≒ 将来の死者0.001人）に、選んだティッピング係数を掛けて求めています。',
+      '<b>個人を責めるためのものではありません。</b>1人の選択だけでは小さな数字です。大切なのは、習慣と、それを支える社会の仕組みが大きな規模で変わったときに何が起きるかです。',
+    ],
+    factorsH: '使っている排出係数を見る',
+    fRows: { perKm: '/ km', perMeal: '/ 食', perH: '/ 時間', perDay: '/ 日', perTrip: '/ 往復', perItem: '/ 個' },
+    footer: '<a href="index.html">静かな戦争</a> プロジェクトの一部 ・ <a href="simulator.html">詳細シミュレータ</a>',
+  },
+};
+
+/* ===================== STATE ===================== */
+const store = { get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+                set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} } };
+const S = {
+  lang: store.get('scw-lang') === 'ja' ? 'ja' : 'en', country: 'japan', tip: 0, scale: 'country', gwp: 100, coc: false, cocRate: 0.5, basis: 'protein', sel: 'chicken',
+  day: { mode: 'car', km: 20, meals: ['veg', 'chicken', 'beef'], hvac: 'cool', hours: 6, eco: false, appl: 'avg',
+         short: 1, long: 1, shop: { coffee: 1, bottle: 1, parcel: 1, tshirt: 0, jeans: 0, shoes: 0, phone: 0, laptop: 0 } },
+  swaps: new Set(),
+};
+const $ = id => document.getElementById(id);
+const L = () => I18N[S.lang];
+const tpl = (s, v = {}) => s.replace(/\{(\w+)\}/g, (_, x) => v[x] ?? '');
+const C = () => COUNTRIES[S.country];
+const mult = () => TIPS[S.tip].m;
+const cname = () => S.lang === 'ja' ? C().jaIn : C().enIn;
+const fmt = n => Math.round(n).toLocaleString('en-US');
+const trim = s => s.replace(/\.0$/, '');
+function people(n) {
+  if (S.lang === 'ja') {
+    if (n >= 1e8) return trim((Math.round(n / 1e7) / 10).toFixed(1)) + '億人';
+    if (n >= 1e5) return Math.round(n / 1e4).toLocaleString() + '万人';
+    return fmt(n) + '人';
+  }
+  if (n >= 1e9) return trim((n / 1e9).toFixed(1)) + ' billion';
+  if (n >= 1e6) return (n >= 1e7 ? Math.round(n / 1e6) : trim((n / 1e6).toFixed(1))) + ' million';
+  return fmt(n) + (n === 1 ? ' life' : ' lives');
+}
+const kg = n => n >= 100 ? fmt(n) : n.toFixed(1);
+const span = days => days >= 365 ? tpl(L().years, { n: fmt(days / 365) }) : tpl(L().days, { n: fmt(days) });
+
+/* ===================== MODEL ===================== */
+function footprint(d) {
+  const grid = C().grid;
+  const perKm = d.mode === 'ev' ? F.evKwhPerKm * grid : F.transport[d.mode];
+  const hvac = d.hvac === 'off' ? 0 : d.hvac === 'kero' ? F.keroKgPerH * d.hours : F.hvacKwhPerH[d.hvac] * d.hours * grid;
+  const r = {
+    transport: perKm * d.km,
+    food: d.meals.reduce((s, m) => s + mealKg(m), 0),
+    home: hvac * (d.eco ? F.eco : 1) + F.applKwh[d.appl] * grid,
+    flights: (d.short * F.flight.short + d.long * F.flight.long) / 365,
+    shopping: Object.entries(d.shop).reduce((s, [k, n]) => s + F.shop[k] * n, 0),
+  };
+  r.total = CATS.reduce((s, c) => s + r[c], 0);
+  return r;
+}
+const clone = d => JSON.parse(JSON.stringify(d));
+// 「もし…」の変更。順番に適用して改善後の1日を作る
+const SWAPS = [
+  { id: 'toTrain',       ok: d => ['car', 'hybrid', 'ev', 'bus'].includes(d.mode) && d.km > 10, apply: d => { d.mode = 'train'; } },
+  { id: 'toBike',        ok: d => d.mode !== 'walk' && d.km > 0 && d.km <= 10,                   apply: d => { d.mode = 'walk'; } },
+  { id: 'beefToChicken', ok: d => d.meals.includes('beef'),                                     apply: d => { d.meals = d.meals.map(m => m === 'beef' ? 'chicken' : m); } },
+  { id: 'onePlant',      ok: d => d.meals.some(m => m !== 'vegan'),
+    apply: d => { const i = d.meals.reduce((b, m, j) => mealKg(m) > mealKg(d.meals[b]) ? j : b, 0); if (d.meals[i] !== 'vegan') d.meals[i] = 'vegan'; } },
+  { id: 'eco',           ok: d => d.hvac !== 'off' && d.hours > 0 && !d.eco,                    apply: d => { d.eco = true; } },
+  { id: 'keroToAC',      ok: d => d.hvac === 'kero' && d.hours > 0,                             apply: d => { d.hvac = 'heat'; } },
+  { id: 'lessLong',      ok: d => d.long > 0,                                                   apply: d => { d.long = Math.max(0, d.long - 1); } },
+  { id: 'lessShort',     ok: d => d.short > 0,                                                  apply: d => { d.short = Math.max(0, d.short - 1); } },
+  { id: 'noNew',         ok: d => ['tshirt', 'jeans', 'shoes', 'phone', 'laptop'].some(k => d.shop[k] > 0),
+    apply: d => { ['tshirt', 'jeans', 'shoes', 'phone', 'laptop'].forEach(k => { d.shop[k] = 0; }); } },
+  { id: 'refill',        ok: d => d.shop.bottle > 0,                                            apply: d => { d.shop.bottle = 0; } },
+];
+const deathsPerKg = () => mult() / 1e6;       // 1,000 t = 1e6 kg ≒ 1人
+const livesPerYear = (kgDay, pop) => kgDay * 365 * pop * deathsPerKg();
+
+/* ===================== BUILD INPUTS ===================== */
+const gwpChips = () => [100, 20].map(g => chip('gwp', g, L()['gwp' + g], S.gwp === g)).join('');
+const cocChips = () => [0, 1].map(v => chip('coc', v, L()[v ? 'cocOn' : 'cocOff'], S.coc === !!v)).join('');
+const chip = (group, val, label, on, extra = '') => `<button class="chip" data-g="${group}" data-v="${val}" aria-pressed="${on}">${label}${extra}</button>`;
+function buildInputs() {
+  const l = L(), d = S.day;
+  const head = c => `<h3><span class="dot" style="background:var(--c-${c})"></span>${l.cat[c]}<span class="kg num" id="kg-${c}"></span></h3>`;
+  $('inputs').innerHTML = `
+    <div class="block">${head('transport')}
+      <div class="chips" style="margin-top:12px">${Object.keys(F.transport).map(m => chip('mode', m, l.mode[m], d.mode === m)).join('')}</div>
+      <div class="sub-label">${l.distance}</div>
+      <div class="row"><input type="range" id="km" min="0" max="100" step="1" value="${d.km}"><span class="val num" id="kmV"></span></div>
+    </div>
+    <div class="block">${head('food')}
+      ${l.mealSlot.map((slot, i) => `<div class="meal-row"><span>${slot}</span><div class="chips">${Object.keys(MEAL.portion).map(m =>
+        chip('meal' + i, m, l.meal[m], d.meals[i] === m)).join('')}</div></div>`).join('')}
+      <div class="sub-label">${l.gwpLabel}</div><div class="chips">${gwpChips()}</div>
+      <div class="sub-label">${l.cocLabel}</div><div class="chips">${cocChips()}</div>
+    </div>
+    <div class="block">${head('home')}
+      <div class="chips" style="margin-top:12px">${Object.keys(l.hvac).map(h => chip('hvac', h, l.hvac[h], d.hvac === h)).join('')}</div>
+      <div id="hvacMore"${d.hvac === 'off' ? ' hidden' : ''}>
+        <div class="sub-label">${l.hours}</div>
+        <div class="row"><input type="range" id="hours" min="0" max="24" step="1" value="${d.hours}"><span class="val num" id="hoursV"></span></div>
+        <label class="toggle"><input type="checkbox" id="eco"${d.eco ? ' checked' : ''}>${l.eco}</label>
+      </div>
+      <div class="sub-label">${l.appl}</div>
+      <div class="chips">${Object.keys(F.applKwh).map(a => chip('appl', a, l.applOpt[a], d.appl === a)).join('')}</div>
+    </div>
+    <div class="block">${head('flights')}
+      <p class="hint">${l.flightHint}</p>
+      ${[['short', l.fShort, l.fShortD], ['long', l.fLong, l.fLongD]].map(([k, a, b]) => `
+        <div class="stepper"><div class="lbl">${a}<small>${b}</small></div>
+          <div class="step"><button data-step="${k}" data-d="-1" aria-label="−">−</button><b class="num" id="n-${k}">${d[k]}</b><button data-step="${k}" data-d="1" aria-label="+">+</button></div></div>`).join('')}
+    </div>
+    <div class="block">${head('shopping')}
+      <p class="hint">${l.shopHint}</p>
+      <div class="shop">${Object.keys(F.shop).map(k => `
+        <div class="item${d.shop[k] ? ' on' : ''}" data-shop="${k}" role="button" tabindex="0">
+          <b>${l.shop[k]}</b><div class="k num">${F.shop[k]} kg</div><div class="eq">${tpl(l.carEq, { km: fmt(F.shop[k] / F.transport.car) })}</div>
+          ${d.shop[k] ? `<span class="cnt num">${d.shop[k]}</span><button class="minus" data-minus="${k}" aria-label="−">−</button>` : ''}
+        </div>`).join('')}</div>
+    </div>`;
+}
+
+/* ===================== RENDER ===================== */
+function renderStatic() {
+  const l = L();
+  document.documentElement.lang = S.lang;
+  document.title = l.title;
+  document.querySelectorAll('[data-i18n]').forEach(el => { el.innerHTML = l[el.dataset.i18n]; });
+  document.querySelectorAll('.lang button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === S.lang)));
+  $('country').innerHTML = Object.entries(COUNTRIES).map(([k, c]) => `<option value="${k}">${c[S.lang]}</option>`).join('');
+  $('country').value = S.country;
+  $('tip').innerHTML = TIPS.map((x, i) => `<option value="${i}">${x[S.lang]}</option>`).join('');
+  $('tip').value = S.tip;
+  buildInputs();
+  update();
+}
+
+function update() {
+  const l = L(), d = S.day, fp = footprint(d), c = C();
+  // 入力の表示値
+  $('kmV').textContent = d.km + ' km';
+  if ($('hoursV')) $('hoursV').textContent = d.hours + (S.lang === 'ja' ? ' 時間' : ' h');
+  CATS.forEach(k => { $('kg-' + k).textContent = kg(fp[k]) + ' kg'; });
+
+  // 合計と内訳
+  $('total').textContent = kg(fp.total);
+  $('mKg').textContent = kg(fp.total);
+  const avg = c.gt * 1e12 / c.pop / 365;
+  $('vs').textContent = tpl(l.vs, { where: cname(), avg: avg.toFixed(1) });
+  $('stack').innerHTML = CATS.map(k => `<span style="width:${fp.total ? fp[k] / fp.total * 100 : 0}%;background:var(--c-${k})"></span>`).join('');
+  $('legend').innerHTML = CATS.map(k => `<div><i style="background:var(--c-${k})"></i>${l.cat[k]}<span class="n num">${fp.total ? Math.round(fp[k] / fp.total * 100) : 0}%</span></div>`).join('');
+
+  // 規模の切り替え
+  $('scaleTabs').innerHTML = ['you', 'country', 'world'].map(s =>
+    `<button data-scale="${s}" aria-pressed="${S.scale === s}">${tpl(l.scale[s], { name: c[S.lang] })}</button>`).join('');
+  const perDayDeaths = pop => fp.total * pop * deathsPerKg();
+  if (S.scale === 'you') {
+    const days = fp.total > 0 ? 1 / (fp.total * deathsPerKg()) : Infinity;
+    $('impBig').textContent = isFinite(days) ? tpl(l.youBig, { n: span(days) }) : '—';
+    $('impCap').innerHTML = isFinite(days) ? tpl(l.youCap, { n: span(days) }) : '';
+    $('impSub').innerHTML = tpl(l.youSub, { x: (fp.total * 365 * 80 * deathsPerKg()).toFixed(2) });
+    $('mScale').textContent = l.scale.you; $('mImp').textContent = isFinite(days) ? tpl(l.youBig, { n: span(days) }) : '—';
+  } else {
+    const pop = S.scale === 'world' ? COUNTRIES.world.pop : c.pop;
+    const name = S.scale === 'world' ? (S.lang === 'ja' ? '世界' : 'the world') : cname();
+    const pd = perDayDeaths(pop), py = pd * 365, yrs = WW2 / py;
+    $('impBig').textContent = people(pd);
+    $('impCap').innerHTML = tpl(l.massCap, { name, pop: people(pop).replace(/ (lives|life)$/, '') });
+    $('impSub').innerHTML = py > 0 ? tpl(l.massSub, { y: people(py),
+      t: yrs >= 1 ? tpl(l.years, { n: yrs >= 10 ? fmt(yrs) : trim(yrs.toFixed(1)) }) : tpl(l.months, { n: Math.max(1, Math.round(yrs * 12)) }) }) : '';
+    $('mScale').textContent = tpl(l.scale[S.scale], { name: c[S.lang] }); $('mImp').textContent = people(pd) + (S.lang === 'ja' ? '/日' : '/day');
+  }
+
+  // もし…
+  $('wiLead').innerHTML = tpl(l.wiLead, { name: cname() });
+  const avail = SWAPS.filter(s => s.ok(d));
+  S.swaps.forEach(id => { if (!avail.some(s => s.id === id)) S.swaps.delete(id); });
+  $('swaps').innerHTML = avail.map(s => {
+    const alt = clone(d); s.apply(alt);
+    const saved = fp.total - footprint(alt).total;
+    return `<button class="swap" data-swap="${s.id}" aria-pressed="${S.swaps.has(s.id)}"><span class="box"></span><span>
+      <b>${l.sw[s.id]}</b><span class="d">${tpl(l.swD, { kg: kg(saved), lives: people(livesPerYear(saved, c.pop)), name: cname() })}</span></span></button>`;
+  }).join('');
+  $('noSwaps').hidden = avail.length > 0;
+  const imp = clone(d);
+  SWAPS.forEach(s => { if (S.swaps.has(s.id) && s.ok(imp)) s.apply(imp); });
+  const after = footprint(imp).total, saved = fp.total - after;
+  $('impKg').textContent = kg(after) + ' kg';
+  $('impPct').textContent = tpl(l.impPct, { kg: kg(saved), pct: fp.total ? Math.round(saved / fp.total * 100) : 0 });
+  $('savedCK').textContent = tpl(l.savedCK, { name: cname() });
+  const sc = livesPerYear(saved, c.pop), sw = livesPerYear(saved, COUNTRIES.world.pop);
+  $('savedC').textContent = saved > 0 ? people(sc) : '—';
+  $('savedCS').textContent = saved > 0 ? tpl(l.savedS, { x: trim((sc / WW2 * 100).toFixed(sc / WW2 < 0.1 ? 1 : 0)) }) : '';
+  $('savedW').textContent = saved > 0 ? people(sw) : '—';
+  $('savedWS').textContent = saved > 0 ? tpl(l.savedS, { x: fmt(sw / WW2 * 100) }) : '';
+
+  renderPlate();
+  renderCompare();
+
+  // 説明
+  $('aboutList').innerHTML = l.about.map(s => `<li>${tpl(s, { where: cname(), grid: c.grid })}</li>`).join('');
+  const fr = l.fRows, rows = [
+    ...Object.keys(F.transport).map(m => [l.mode[m], (m === 'ev' ? +(F.evKwhPerKm * c.grid).toFixed(3) : F.transport[m]) + ' kg ' + fr.perKm]),
+    ...Object.keys(MEAL.portion).map(m => [l.meal[m], mealKg(m).toFixed(2) + ' kg ' + fr.perMeal + (S.gwp === 20 ? ' (GWP20)' : '') + (S.coc ? ' +COC' : '')]),
+    [l.hvac.cool, F.hvacKwhPerH.cool + ' kWh ' + fr.perH], [l.hvac.heat, F.hvacKwhPerH.heat + ' kWh ' + fr.perH], [l.hvac.kero, F.keroKgPerH + ' kg ' + fr.perH],
+    ...Object.keys(F.applKwh).map(a => [l.appl + ' — ' + l.applOpt[a], F.applKwh[a] + ' kWh ' + fr.perDay]),
+    [l.fShort, F.flight.short + ' kg ' + fr.perTrip], [l.fLong, F.flight.long + ' kg ' + fr.perTrip],
+    ...Object.keys(F.shop).map(k => [l.shop[k], F.shop[k] + ' kg ' + fr.perItem]),
+  ];
+  $('factors').innerHTML = rows.map(([a, b]) => `<tr><td>${a}</td><td class="num">${b}</td></tr>`).join('');
+}
+
+function renderPlate() {
+  const l = L(), d = S.day, c = C();
+  $('gwpChips2').innerHTML = gwpChips();
+  $('cocChips2').innerHTML = cocChips();
+  $('cocMore').hidden = !S.coc;
+  $('cocRateV').textContent = S.cocRate.toFixed(1) + l.cocUnit;
+  // 今日の食事
+  const st = [0, 0, 0, 0, 0];
+  d.meals.forEach(m => mealStages(m).forEach((v, i) => { st[i] += v; }));
+  const food = st.reduce((a, b) => a + b, 0), land = d.meals.reduce((a, m) => a + mealLand(m), 0);
+  $('pFoodV').textContent = kg(food) + ' kg';
+  $('pFoodS').textContent = tpl(l.pFoodS, { m: Math.round(st[1] / food * 100), d: Math.round(st[0] / food * 100) })
+    + (S.coc ? tpl(l.pFoodSc, { c: Math.round(st[4] / food * 100) }) : '');
+  $('pLandV').textContent = fmt(land) + ' m²';
+  $('pLandS').textContent = tpl(l.pLandS, { n: S.lang === 'ja' ? fmt(land / 1.62) : trim((land / 12.5).toFixed(1)) });
+  const km2 = land * 365 * c.pop / 1e6, x = km2 / c.area;
+  $('pScaleK').textContent = tpl(l.pScaleK, { name: cname() });
+  $('pScaleV').textContent = tpl(l.pScaleV, { x: x >= 10 ? fmt(x) : trim(x.toFixed(1)) });
+  $('pScaleS').textContent = tpl(S.country === 'world' ? l.pScaleSW : l.pScaleS, { km: fmt(Math.round(km2 / 1000) * 1000), name: cname() });
+
+  // 1食あたりの比較（目盛りは「GWP20＋機会費用」の最大値に固定し、切り替えで伸びが見えるようにする）
+  const meals = Object.keys(MEAL.portion), max = Math.max(...meals.map(m => mealKg(m, 20, true)));
+  $('mbars').innerHTML = meals.map(m => {
+    const n = d.meals.filter(x => x === m).length, ms = mealStages(m);
+    return `<div class="mrow${n ? ' today' : ''}"><div class="mn">${l.meal[m]}${n ? `<span class="badge">${tpl(l.todayBadge, { n })}</span>` : ''}</div>
+      <div class="mb">${ms.map((v, i) => `<span class="${STAGES[i]}" style="width:${v / max * 100}%;background-color:var(--s-${STAGES[i]})" title="${l.stage[STAGES[i]]}: ${v.toFixed(2)} kg"></span>`).join('')}</div>
+      <div class="mv num">${mealKg(m).toFixed(1)} kg</div></div>`;
+  }).join('');
+  $('slegend').innerHTML = STAGES.filter(s => s !== 'coc' || S.coc).map(s => `<span><i style="background:var(--s-${s})"></i>${l.stage[s]}</span>`).join('');
+
+  // 牛肉1食を置き換えた場合
+  $('swapT').innerHTML = `<tr>${l.swapCols.map((h, i) => `<th>${tpl(h, { name: cname() })}${S.coc && (i === 1 || i === 2) ? '<br>' + l.cocCol : ''}</th>`).join('')}</tr>` +
+    [['chicken', l.toChicken], ['vegan', l.toPlant]].map(([to, label]) => {
+      const d100 = mealKg('beef', 100) - mealKg(to, 100), d20 = mealKg('beef', 20) - mealKg(to, 20);
+      const lives = livesPerYear(mealKg('beef') - mealKg(to), c.pop);
+      return `<tr><td>${label}</td><td class="num">−${d100.toFixed(1)} kg</td><td class="num">−${d20.toFixed(1)} kg</td>
+        <td class="num">−${fmt(mealLand('beef') - mealLand(to))} m²</td><td class="num g">${people(lives)}</td></tr>`;
+    }).join('');
+  $('swapNote').textContent = tpl(l.swapNote, { name: cname() });
+}
+
+function renderCompare() {
+  const l = L(), b = S.basis;
+  const sel = S.sel, sname = l.food[sel];
+  $('selChips').innerHTML = Object.keys(FOODS).filter(f => !PLANTS.includes(f)).map(f => chip('sel', f, l.food[f], sel === f)).join('');
+  $('basisChips').innerHTML = ['protein', 'kg'].map(v => chip('basis', v, l.basis[v], b === v)).join('');
+  // 基準：たんぱく質100 gあたり ＝ 1 kgあたり ÷ (たんぱく質割合 × 10)
+  const val = (f, ind) => { const x = FOODS[f][ind]; return b === 'protein' ? x / (FOODS[f].protein * 10) : x; };
+  const num = v => v >= 100 ? fmt(v) : v >= 10 ? v.toFixed(1) : v.toFixed(2);
+  const rx = x => x >= 10 ? fmt(x) : trim(x.toFixed(1));
+
+  // 選んだ食材と植物性の倍率
+  const cards = INDICATORS.map(ind => {
+    const c = val(sel, ind), r = PLANTS.map(p => c / val(p, ind)), lo = Math.min(...r), hi = Math.max(...r);
+    const x = Math.abs(hi - lo) < 0.25 ? tpl(l.times, { x: rx(lo) }) : tpl(l.times, { x: rx(lo) + '–' + rx(hi) });
+    return `<div><div class="k">${tpl(l.vsK, { ind: l.ind[ind], food: sname })}</div><div class="v num">${x}</div>
+      <div class="s">${tpl(l.vsS, { food: sname, c: num(c), t: num(val('tofu', ind)), p: num(val('peas', ind)) })} ${l.unit[ind]}</div></div>`;
+  });
+  const per100kgProtein = f => FOODS[f].animals / FOODS[f].protein * 100;
+  if (FOODS[sel].animals) {
+    const n = per100kgProtein(sel), ratio = n / per100kgProtein('beef');
+    cards.push(`<div class="animal"><div class="k">${tpl(l.animalK, { food: sname })}</div><div class="v num">${tpl(l.animalV, { n: n >= 10 ? fmt(n) : trim(n.toFixed(1)), u: l.animalU[sel] })}</div>
+      <div class="s">${sel === 'beef' ? l.animalSB : tpl(l.animalS, { x: fmt(ratio) })}</div></div>`);
+  }
+  $('vsCards').innerHTML = cards.join('');
+
+  // 指標ごとの棒グラフ（桁違いの値は棒を省略して、鶏肉と植物性の差が見えるようにする）
+  const panel = (title, unit, rows) => {
+    const vs = rows.map(r => r.v).sort((a, b) => b - a);
+    let cap = (vs[2] ?? vs[0]) * 1.15;
+    if (vs[0] <= cap * 1.3) cap = vs[0] * 1.02;
+    const anyBroken = rows.some(r => r.v > cap);
+    return `<div class="fpanel"><h4>${title}</h4><div class="u">${unit}</div>${rows.map(r => {
+      const cls = r.f === sel ? 'hl-sel' : PLANTS.includes(r.f) ? 'hl-plant' : '';
+      const col = r.f === sel ? 'var(--amber)' : PLANTS.includes(r.f) ? 'var(--green)' : '#6b7078';
+      return `<div class="frow ${cls}"><span class="fn">${l.food[r.f]}</span>
+        <div class="fb${r.v > cap ? ' broken' : ''}"><span style="width:${Math.min(1, r.v / cap) * 100}%;background:${col}"></span></div>
+        <span class="fv">${num(r.v)}</span></div>`;
+    }).join('')}${anyBroken ? `<div class="brk">${l.brk}</div>` : ''}</div>`;
+  };
+  const foods = Object.keys(FOODS);
+  const panels = INDICATORS.map(ind => panel(l.ind[ind], l.unit[ind] + ' / ' + l.basis[b].replace(/（.*|\s*\(.*/, ''), foods.map(f => ({ f, v: val(f, ind) }))));
+  const meats = foods.filter(f => FOODS[f].animals);
+  panels.push(panel(l.ind.animals, l.unitAnimals[b], meats.map(f => ({ f, v: b === 'protein' ? per100kgProtein(f) : FOODS[f].animals * 1000 }))));
+  $('fpanels').innerHTML = panels.join('');
+}
+
+/* ===================== EVENTS ===================== */
+document.addEventListener('click', e => {
+  const t = e.target.closest('button, .item');
+  if (!t) return;
+  const d = S.day;
+  if (t.dataset.lang) { S.lang = t.dataset.lang; store.set('scw-lang', S.lang); renderStatic(); return; }
+  if (t.dataset.scale) { S.scale = t.dataset.scale; update(); return; }
+  if (t.dataset.swap) { S.swaps.has(t.dataset.swap) ? S.swaps.delete(t.dataset.swap) : S.swaps.add(t.dataset.swap); update(); return; }
+  if (t.dataset.step) { const k = t.dataset.step; d[k] = Math.min(20, Math.max(0, d[k] + +t.dataset.d)); $('n-' + k).textContent = d[k]; update(); return; }
+  if (t.dataset.minus) { e.stopPropagation(); d.shop[t.dataset.minus] = Math.max(0, d.shop[t.dataset.minus] - 1); buildInputs(); update(); return; }
+  if (t.dataset.shop) { d.shop[t.dataset.shop] = Math.min(20, d.shop[t.dataset.shop] + 1); buildInputs(); update(); return; }
+  if (t.dataset.g) {
+    const g = t.dataset.g, v = t.dataset.v;
+    if (g === 'gwp') { S.gwp = +v; buildInputs(); update(); return; }
+    if (g === 'basis') { S.basis = v; renderCompare(); return; }
+    if (g === 'sel') { S.sel = v; renderCompare(); return; }
+    if (g === 'coc') { S.coc = v === '1'; buildInputs(); update(); return; }
+    if (g === 'mode') d.mode = v;
+    else if (g === 'hvac') { d.hvac = v; $('hvacMore').hidden = v === 'off'; }
+    else if (g === 'appl') d.appl = v;
+    else if (g.startsWith('meal')) d.meals[+g.slice(4)] = v;
+    t.parentElement.querySelectorAll('.chip').forEach(b => b.setAttribute('aria-pressed', String(b === t)));
+    update();
+  }
+});
+document.addEventListener('keydown', e => {
+  if ((e.key === 'Enter' || e.key === ' ') && e.target.classList?.contains('item')) { e.preventDefault(); e.target.click(); }
+});
+document.addEventListener('input', e => {
+  if (e.target.id === 'km') S.day.km = +e.target.value;
+  else if (e.target.id === 'hours') S.day.hours = +e.target.value;
+  else if (e.target.id === 'eco') S.day.eco = e.target.checked;
+  else if (e.target.id === 'cocRate') S.cocRate = +e.target.value;
+  else return;
+  update();
+});
+$('country').addEventListener('change', e => { S.country = e.target.value; update(); });
+$('tip').addEventListener('change', e => { S.tip = +e.target.value; update(); });
+
+renderStatic();
+</script>
+</body>
+</html>

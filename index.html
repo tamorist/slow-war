@@ -1,0 +1,584 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Slow War</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Inter:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0f11; --bg2: #16181b; --text: #ecebe7; --muted: #8d8f94; --faint: #3a3d42;
+    --red: #e5483b; --red-soft: rgba(229, 72, 59, .14); --war: #8a9bb0; --green: #4fb38a; --amber: #e0a43b;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+    font-family: Inter, "Noto Sans JP", -apple-system, "Hiragino Sans", sans-serif; line-height: 1.8;
+    -webkit-font-smoothing: antialiased; }
+  html[lang="ja"] body { font-family: "Noto Sans JP", -apple-system, "Hiragino Sans", sans-serif; }
+  .num { font-family: Inter, -apple-system, sans-serif; font-variant-numeric: tabular-nums; letter-spacing: -.01em; }
+  section { padding: 96px 16px; }
+  .wrap { max-width: 880px; margin: 0 auto; }
+  .eyebrow { font-size: 12px; letter-spacing: .2em; color: var(--muted); text-transform: uppercase; margin: 0 0 16px; }
+  h2 { font-size: clamp(24px, 4.4vw, 36px); line-height: 1.35; margin: 0 0 20px; font-weight: 900; }
+  p.lead { font-size: clamp(15px, 2.2vw, 17px); color: #c9c8c3; max-width: 640px; margin: 0; }
+  em { font-style: normal; color: var(--red); font-weight: 700; }
+  .reveal { opacity: 0; transform: translateY(24px); transition: opacity .9s ease, transform .9s ease; }
+  .reveal.in { opacity: 1; transform: none; }
+
+  /* ---------- Control bar ---------- */
+  .bar-top { position: sticky; top: 0; z-index: 10; background: rgba(14,15,17,.86); backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid var(--faint); }
+  .bar-top .wrap { display: flex; align-items: center; gap: 10px 16px; padding: 10px 16px; flex-wrap: wrap; max-width: 1080px; }
+  .ctl { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); }
+  .ctl select { font: inherit; font-size: 13px; color: var(--text); background: var(--bg2); border: 1px solid var(--faint);
+    border-radius: 8px; padding: 6px 28px 6px 10px; appearance: none; -webkit-appearance: none; cursor: pointer; max-width: 62vw;
+    background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+    background-position: right 13px center, right 8px center; background-size: 5px 5px; background-repeat: no-repeat; }
+  .lang { margin-left: auto; display: flex; border: 1px solid var(--faint); border-radius: 8px; overflow: hidden; }
+  .lang button { font: inherit; font-size: 12px; background: transparent; color: var(--muted); border: 0; padding: 6px 12px; cursor: pointer; }
+  .lang button[aria-pressed="true"] { background: var(--text); color: var(--bg); font-weight: 700; }
+
+  /* ---------- Hero ---------- */
+  .hero { min-height: calc(100svh - 56px); display: flex; flex-direction: column; justify-content: center; text-align: center;
+    background: radial-gradient(ellipse at 50% 40%, rgba(229,72,59,.10), transparent 60%), var(--bg); position: relative; }
+  .hero h1 { font-size: clamp(15px, 2.4vw, 18px); font-weight: 500; color: #c9c8c3; margin: 0 0 12px; }
+  .big { font-size: clamp(56px, 15vw, 150px); font-weight: 800; color: var(--red); line-height: 1; margin: 8px 0 12px; }
+  .unit { font-size: clamp(16px, 2.6vw, 20px); color: var(--text); font-weight: 700; }
+  .hero .since { margin-top: 36px; color: var(--muted); font-size: 14px; }
+  .hero .since b { color: var(--text); font-size: 18px; }
+  .chip { display: inline-block; margin-top: 14px; font-size: 12px; color: var(--amber); border: 1px solid rgba(224,164,59,.4);
+    border-radius: 999px; padding: 2px 12px; }
+  .chip[hidden] { display: none; }
+  .scroll { position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%); color: var(--muted);
+    font-size: 12px; letter-spacing: .15em; text-decoration: none; }
+  .scroll::after { content: ""; display: block; width: 1px; height: 36px; background: var(--muted); margin: 10px auto 0;
+    animation: drip 2s infinite; transform-origin: top; }
+  @keyframes drip { 0% { transform: scaleY(0); } 50% { transform: scaleY(1); } 100% { transform: scaleY(1); opacity: 0; } }
+
+  /* ---------- Pulse ---------- */
+  .pulse-box { display: flex; align-items: center; gap: 40px; flex-wrap: wrap; }
+  .pulse { width: 140px; height: 140px; position: relative; flex: none; margin: 0 auto; }
+  .pulse .core { position: absolute; inset: 50px; border-radius: 50%; background: var(--red); }
+  .pulse .ring { position: absolute; inset: 50px; border-radius: 50%; border: 2px solid var(--red); opacity: 0; }
+  .pulse.beat .ring { animation: ring 1.2s ease-out; }
+  .pulse.beat .core { animation: core .4s ease-out; }
+  @keyframes ring { from { inset: 50px; opacity: .9; } to { inset: 0; opacity: 0; } }
+  @keyframes core { 50% { transform: scale(1.25); } }
+  .pulse-text { flex: 1; min-width: 260px; }
+  .stats3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--faint); margin-top: 40px;
+    border: 1px solid var(--faint); border-radius: 12px; overflow: hidden; }
+  .stats3 div { background: var(--bg2); padding: 18px 12px; text-align: center; line-height: 1.5; }
+  .stats3 .v { font-size: clamp(18px, 4vw, 30px); font-weight: 800; }
+  .stats3 .k { font-size: 12px; color: var(--muted); }
+
+  /* ---------- Dot comparison ---------- */
+  .dots-sec { background: var(--bg2); }
+  .cmp { margin-top: 48px; display: grid; gap: 40px; }
+  .cmp-row .label { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
+  .cmp-row .name { font-weight: 700; font-size: 16px; color: var(--text); }
+  .cmp-row .name small { display: block; font-weight: 400; color: var(--muted); font-size: 12px; }
+  .cmp-row .count { font-size: 22px; font-weight: 800; }
+  .cmp-row .count small { font-size: 13px; color: var(--muted); font-weight: 500; }
+  .grid { display: grid; grid-template-columns: repeat(50, 1fr); gap: 3px; }
+  .grid i { aspect-ratio: 1; border-radius: 50%; background: currentColor; opacity: 0; transform: scale(.3);
+    transition: opacity .35s, transform .35s; }
+  .grid.on i { opacity: 1; transform: none; }
+  .grid i.tip { background: var(--amber); }
+  .war { color: var(--war); } .clim { color: var(--red); }
+  .legend-dot { display: inline-flex; align-items: center; gap: 16px; color: var(--muted); font-size: 13px; margin-top: 8px; flex-wrap: wrap; }
+  .legend-dot span { display: inline-flex; align-items: center; gap: 6px; }
+  .legend-dot i { width: 9px; height: 9px; border-radius: 50%; background: var(--text); }
+  @media (max-width: 520px) { .grid { gap: 2px; } }
+
+  /* ---------- Scale ---------- */
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 40px; }
+  .card { background: var(--bg2); border: 1px solid var(--faint); border-radius: 14px; padding: 24px; }
+  .card .when { font-size: 13px; color: var(--muted); }
+  .card .v { font-size: 28px; font-weight: 800; color: var(--red); margin: 4px 0 12px; line-height: 1.3; }
+  .card .eq { font-size: 14.5px; line-height: 1.7; }
+  .card .icons { margin-top: 16px; display: flex; flex-wrap: wrap; gap: 5px; }
+  .blk { width: 22px; height: 22px; border-radius: 4px; border: 1px solid var(--faint); overflow: hidden; }
+  .blk span { display: block; height: 100%; background: var(--red); }
+  .card .cap { font-size: 11px; color: var(--muted); margin-top: 6px; }
+  .card .cap b { color: var(--red); }
+
+  /* ---------- Scenario ---------- */
+  .scn-sec { background: linear-gradient(180deg, var(--bg) 0%, #101613 100%); }
+  .tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 36px; }
+  .tab { font: inherit; background: var(--bg2); color: var(--text); border: 1px solid var(--faint); border-radius: 12px;
+    padding: 14px 12px; cursor: pointer; text-align: left; transition: border-color .2s, background .2s; line-height: 1.5; }
+  .tab b { display: block; font-size: 15px; }
+  .tab span { font-size: 12px; color: var(--muted); }
+  .tab[aria-pressed="true"] { border-color: var(--green); background: rgba(79,179,138,.08); }
+  .tab:first-child[aria-pressed="true"] { border-color: var(--red); background: var(--red-soft); }
+  .result { margin-top: 28px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 600px) { .result { grid-template-columns: 1fr; } .tabs { grid-template-columns: 1fr; } }
+  .result > div { background: var(--bg2); border: 1px solid var(--faint); border-radius: 14px; padding: 22px; }
+  .result .k { font-size: 13px; color: var(--muted); }
+  .result .v { font-size: clamp(28px, 6vw, 42px); font-weight: 800; line-height: 1.2; margin-top: 4px; }
+  .result .s { font-size: 13px; color: var(--muted); margin-top: 6px; }
+  #saved .v { color: var(--green); }
+  #lost .v { color: var(--red); }
+  .bar { height: 14px; border-radius: 7px; background: var(--faint); margin-top: 28px; overflow: hidden; display: flex; }
+  .bar .a { background: var(--red); transition: width .8s cubic-bezier(.2,.8,.2,1); }
+  .bar .b { background: var(--green); transition: width .8s cubic-bezier(.2,.8,.2,1); }
+  .bar-legend { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-top: 8px; gap: 8px; }
+
+  .cta { display: flex; flex-direction: column; margin-top: 40px; padding: 20px 24px; border-radius: 14px; text-decoration: none; color: var(--text);
+    border: 1px solid rgba(79,179,138,.45); background: rgba(79,179,138,.07); transition: background .2s; }
+  .cta:hover { background: rgba(79,179,138,.14); }
+  .cta span { font-size: 13px; color: var(--muted); }
+  .cta b { font-size: 18px; }
+  .cta b::after { content: "  →"; color: var(--green); }
+
+  /* ---------- Method ---------- */
+  .method { border-top: 1px solid var(--faint); }
+  .formula { background: var(--bg2); border: 1px solid var(--faint); border-radius: 12px; padding: 20px; margin: 24px 0;
+    font-size: 15px; text-align: center; }
+  .formula .num { color: var(--red); font-weight: 700; }
+  .method ul { color: #c9c8c3; padding-left: 20px; font-size: 14px; }
+  .method li { margin-bottom: 8px; }
+  .method a { color: var(--text); }
+  footer { text-align: center; color: var(--muted); font-size: 12px; padding: 32px 16px 48px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1; transform: none; transition: none; }
+    .grid i { transition: none; }
+    .pulse.beat .ring, .pulse.beat .core, .scroll::after { animation: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- CONTROLS -->
+<div class="bar-top">
+  <div class="wrap">
+    <label class="ctl"><span data-i18n="ctlCountry"></span><select id="country"></select></label>
+    <label class="ctl"><span data-i18n="ctlTip"></span><select id="tip"></select></label>
+    <div class="lang" role="group" aria-label="Language">
+      <button data-lang="en">EN</button><button data-lang="ja">日本語</button>
+    </div>
+  </div>
+</div>
+
+<!-- 1. HERO -->
+<section class="hero">
+  <div class="wrap">
+    <h1 id="heroTitle"></h1>
+    <div class="big num" id="today">0</div>
+    <div class="unit" data-i18n="people"></div>
+    <div><span class="chip" id="chip" hidden></span></div>
+    <p class="since"><span data-i18n="since"></span>　<b class="num" id="since">0</b> <span data-i18n="peopleShort"></span></p>
+  </div>
+  <a class="scroll" href="#pulse">SCROLL</a>
+</section>
+
+<!-- 2. PULSE -->
+<section id="pulse">
+  <div class="wrap reveal">
+    <p class="eyebrow">01 — The Pace</p>
+    <div class="pulse-box">
+      <div class="pulse" id="heart"><div class="ring"></div><div class="core"></div></div>
+      <div class="pulse-text">
+        <h2 id="pulseH"></h2>
+        <p class="lead" data-i18n="pulseLead"></p>
+      </div>
+    </div>
+    <div class="stats3">
+      <div><div class="v num" id="perHour">—</div><div class="k" data-i18n="perHour"></div></div>
+      <div><div class="v num" id="perDay">—</div><div class="k" data-i18n="perDay"></div></div>
+      <div><div class="v num" id="perYear">—</div><div class="k" data-i18n="perYear"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 3. DOTS -->
+<section class="dots-sec">
+  <div class="wrap">
+    <div class="reveal">
+      <p class="eyebrow">02 — Compared to War</p>
+      <h2 data-i18n="warH"></h2>
+      <p class="lead" id="warLead"></p>
+      <div class="legend-dot">
+        <span><i></i><span data-i18n="dotLegend"></span></span>
+        <span id="tipLegend" hidden><i style="background:var(--amber)"></i><span data-i18n="tipLegend"></span></span>
+      </div>
+    </div>
+    <div class="cmp" id="cmp"></div>
+  </div>
+</section>
+
+<!-- 4. SCALE -->
+<section>
+  <div class="wrap">
+    <div class="reveal">
+      <p class="eyebrow">03 — Make it Real</p>
+      <h2 data-i18n="scaleH"></h2>
+      <p class="lead" data-i18n="scaleLead"></p>
+    </div>
+    <div class="cards">
+      <div class="card reveal">
+        <div class="when" data-i18n="inDay"></div>
+        <div class="v num" id="cDay"></div>
+        <div class="eq" id="eqDay"></div>
+        <div class="icons" id="iDay"></div>
+        <div class="cap" id="capDay"></div>
+      </div>
+      <div class="card reveal">
+        <div class="when" data-i18n="inYear"></div>
+        <div class="v num" id="cYear"></div>
+        <div class="eq" id="eqYear"></div>
+        <div class="icons" id="iYear"></div>
+        <div class="cap" id="capYear"></div>
+      </div>
+      <div class="card reveal">
+        <div class="when" data-i18n="by2050"></div>
+        <div class="v num" id="c2050"></div>
+        <div class="eq" id="eq2050"></div>
+        <div class="icons" id="i2050"></div>
+        <div class="cap" id="cap2050"></div>
+      </div>
+      <div class="card reveal">
+        <div class="when" data-i18n="lifetime"></div>
+        <div class="v num" id="cLife"></div>
+        <div class="eq" id="eqLife"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 5. SCENARIO -->
+<section class="scn-sec">
+  <div class="wrap reveal">
+    <p class="eyebrow">04 — The Future is Not Fixed</p>
+    <h2 data-i18n="scnH"></h2>
+    <p class="lead" id="scnLead"></p>
+    <div class="tabs" role="group">
+      <button class="tab" data-r="0"><b data-i18n="s0"></b><span data-i18n="s0d"></span></button>
+      <button class="tab" data-r="-0.03"><b data-i18n="s1"></b><span data-i18n="s1d"></span></button>
+      <button class="tab" data-r="-0.07"><b data-i18n="s2"></b><span data-i18n="s2d"></span></button>
+    </div>
+    <div class="result">
+      <div id="lost"><div class="k" data-i18n="lostK"></div><div class="v num">—</div><div class="s"></div></div>
+      <div id="saved"><div class="k" data-i18n="savedK"></div><div class="v num">—</div><div class="s"></div></div>
+    </div>
+    <div class="bar"><div class="a" id="barA"></div><div class="b" id="barB"></div></div>
+    <div class="bar-legend"><span><b style="color:var(--red)">■</b> <span data-i18n="lostL"></span></span><span><b style="color:var(--green)">■</b> <span data-i18n="savedL"></span></span></div>
+    <a class="cta" href="my-day.html"><span data-i18n="ctaK"></span><b data-i18n="ctaV"></b></a>
+  </div>
+</section>
+
+<!-- 6. METHOD -->
+<section class="method">
+  <div class="wrap reveal">
+    <p class="eyebrow">How it Works</p>
+    <h2 style="font-size:22px" data-i18n="mH"></h2>
+    <p class="lead" data-i18n="mLead"></p>
+    <div class="formula" id="formula"></div>
+    <ul id="mList"></ul>
+    <p style="font-size:13px;color:var(--muted);margin-top:24px" data-i18n="simLink"></p>
+  </div>
+</section>
+
+<footer data-i18n="footer"></footer>
+
+<script>
+/* ===================== DATA ===================== */
+// 化石燃料CO₂（2023年頃の概算, Global Carbon Project）。世界合計は土地利用変化を含む 40 Gt。
+const COUNTRIES = {
+  world:  { en: 'World',          ja: '世界全体', enIn: 'the whole world',   jaIn: '世界全体', gt: 40,   pop: 8.1e9 },
+  china:  { en: 'China',          ja: '中国',     enIn: 'China',             jaIn: '中国',     gt: 11.9, pop: 1.41e9 },
+  us:     { en: 'United States',  ja: '米国',     enIn: 'the United States', jaIn: '米国',     gt: 4.9,  pop: 3.35e8 },
+  india:  { en: 'India',          ja: 'インド',   enIn: 'India',             jaIn: 'インド',   gt: 3.1,  pop: 1.43e9 },
+  eu:     { en: 'European Union', ja: 'EU',       enIn: 'the EU',            jaIn: 'EU',       gt: 2.6,  pop: 4.48e8 },
+  russia: { en: 'Russia',         ja: 'ロシア',   enIn: 'Russia',            jaIn: 'ロシア',   gt: 1.8,  pop: 1.44e8 },
+  japan:  { en: 'Japan',          ja: '日本',     enIn: 'Japan',             jaIn: '日本',     gt: 1.0,  pop: 1.24e8 },
+  uk:     { en: 'United Kingdom', ja: '英国',     enIn: 'the UK',            jaIn: '英国',     gt: 0.31, pop: 6.8e7 },
+};
+// ティッピング等の効果：線形推計に掛ける概算の係数（例示であり査読済みの推計ではない）
+const TIPS = [
+  { m: 1,   en: 'None (1,000-ton rule only)',            ja: 'なし（1,000トン・ルールのみ）' },
+  { m: 1.5, en: 'Moderate feedbacks ×1.5',               ja: '中程度のフィードバック ×1.5' },
+  { m: 2,   en: 'Tipping-point cascade ×2',              ja: 'ティッピング連鎖 ×2' },
+  { m: 3,   en: 'Cascade + societal collapse ×3',        ja: '連鎖＋社会的崩壊 ×3' },
+];
+const TPD = 1000, START = 2025, WW1 = 20e6, WW2 = 80e6, STADIUM = 55000;
+
+/* ===================== I18N ===================== */
+const I18N = {
+  en: {
+    title: 'The Slow War',
+    ctlCountry: 'Region', ctlTip: 'Tipping effects',
+    heroTitle: 'Future deaths locked in today<br>by CO₂ emissions from {where}',
+    people: 'people', peopleShort: 'people', since: 'Since you opened this page',
+    chip: 'Includes tipping effects: {tip}',
+    pulseH: 'About one person every <em class="num">{s}</em> {unit}.',
+    sec: 'seconds', min: 'minutes',
+    pulseLead: 'No gunfire. No bombs. Yet the CO₂ released at this very moment will, through heatwaves, hunger, floods and disease, take someone’s life in the years to come. This is a slow war.',
+    perHour: 'per hour', perDay: 'per day', perYear: 'per year',
+    warH: 'Compared with history’s deadliest wars',
+    warLead: 'Around 80 million people died in World War II. At today’s pace, emissions from {where} would match that toll in <em>about {t}</em>.',
+    years: '{n} years', months: '{n} months',
+    dotLegend: 'One dot = 1 million people', tipLegend: 'Added by tipping effects',
+    ww1: 'World War I', ww2: 'World War II', c35: 'Climate: locked in by 2035', c35s: 'Next 10 years of emissions',
+    c50: 'Climate: locked in by 2050', c50s: 'Next 25 years of emissions', xww2: '({x}× WWII)',
+    scaleH: 'If the numbers are too big to imagine', scaleLead: 'Let’s put them in familiar terms.',
+    inDay: 'In one day', inYear: 'In one year', by2050: 'By 2050', lifetime: 'One person’s lifetime',
+    eqDayN: '≈ <b class="num">{n}</b> packed large stadiums<br>(about 55,000 people each)',
+    eqDayP: '≈ <b class="num">{p}%</b> of a packed large stadium<br>(about 55,000 people)',
+    capDay: '<b>■</b> = one stadium (55,000)',
+    eqPopN: '≈ <b class="num">{n}×</b> the entire population<br>of {ref} ({pop})',
+    eqPopP: '≈ <b class="num">{p}%</b> of the population<br>of {ref} ({pop})',
+    capPop: '<b>■</b> = entire population of {ref}',
+    eqLife: 'Future deaths from an average person in {where} over 80 years (≈ {pc} t CO₂ a year)',
+    scnH: 'But this number<br>can still change.',
+    scnLead: 'Deaths scale with the CO₂ we have yet to emit. The faster emissions fall, the more lives are saved. Choose a pathway for {where}.',
+    s0: 'Business as usual', s0d: 'Emissions stay flat', s1: 'Gradual cuts', s1d: '−3% a year', s2: '1.5 °C pathway', s2d: '−7% a year',
+    lostK: 'Deaths locked in by 2050', savedK: 'Lives saved vs. business as usual',
+    lostS: '≈ {x}× World War II', savedS: '≈ {x}', savedNone: 'Changing nothing saves no one.',
+    lostL: 'Lives lost', savedL: 'Lives saved',
+    ctaK: 'Personal simulator', ctaV: 'What does your own day add up to?',
+    mH: 'How these numbers are calculated',
+    mLead: 'We use the “1,000-ton rule”: for every 1,000 tonnes of CO₂ humanity emits, roughly one premature death occurs in the future through about a century of warming.',
+    formula: 'Annual emissions of {where} <span class="num">≈ {gt}</span> ÷ <span class="num">1,000 t</span>{mult} = <span class="num">≈ {perYear}</span> deaths a year',
+    mList: [
+      'Calculated from {start}, holding annual emissions of {where} at about {gt} (unless a pathway is chosen).',
+      'This is a <b>conservative lower bound</b> when tipping effects are set to “None”. Tipping multipliers (×1.5 / ×2 / ×3) are <b>rough illustrative assumptions, not peer-reviewed estimates</b>. They show how the linear estimate could grow if feedbacks such as permafrost thaw and forest dieback, and societal cascades (conflict, famine, mass migration), are included.',
+      '“Locked in” means the harm becomes unavoidable once the CO₂ is emitted; the deaths themselves may occur decades later.',
+      'Country figures: fossil CO₂, approx. 2023 (Global Carbon Project). The world total (40 Gt) also includes land-use change, so countries do not add up exactly.',
+      'War deaths: World War II ≈ 70–85 million (median 80 million shown); World War I ≈ 20 million.',
+    ],
+    simLink: 'Want to tweak the numbers yourself? Try the <a href="simulator.html">detailed simulator</a>, or see <a href="my-day.html">what your own day adds up to</a>.',
+    footer: 'Deterministic Climate Casualty Counter — model-based approximations',
+  },
+  ja: {
+    title: '静かな戦争',
+    ctlCountry: '国・地域', ctlTip: 'ティッピング効果',
+    heroTitle: '今日、{where}のCO₂排出によって<br>将来失われることが確定した命',
+    people: '人', peopleShort: '人', since: 'あなたがこのページを開いてから',
+    chip: 'ティッピング効果を含む：{tip}',
+    pulseH: 'およそ<em class="num">{s}</em>{unit}に1人。',
+    sec: '秒', min: '分',
+    pulseLead: '銃声も爆撃もない。けれど、いまこの瞬間も排出されるCO₂は、熱波・飢餓・洪水・感染症などを通して、将来の誰かの命を確実に奪っていきます。これは「ゆっくり進む戦争」です。',
+    perHour: '1時間あたり', perDay: '1日あたり', perYear: '1年あたり',
+    warH: '史上最悪の戦争と比べると',
+    warLead: '第二次世界大戦では約8,000万人が亡くなりました。いまのペースが続けば、{where}の排出による犠牲は<em>約{t}</em>でそれに並びます。',
+    years: '{n}年', months: '{n}か月',
+    dotLegend: '点1つ ＝ 100万人', tipLegend: 'ティッピング効果による上乗せ分',
+    ww1: '第一次世界大戦', ww2: '第二次世界大戦', c35: '気候：2035年までに確定', c35s: '今後10年間の排出',
+    c50: '気候：2050年までに確定', c50s: '今後25年間の排出', xww2: '（WWIIの{x}倍）',
+    scaleH: '数字が大きすぎて、<br>想像できないなら', scaleLead: '身近なものに置き換えてみます。',
+    inDay: '1日で', inYear: '1年で', by2050: '2050年までに', lifetime: '1人の一生で',
+    eqDayN: '満員の<b>東京ドーム</b>（約5.5万人）<br>およそ <b class="num">{n}</b> 杯分',
+    eqDayP: '満員の<b>東京ドーム</b>（約5.5万人）の<br>およそ <b class="num">{p}%</b>',
+    capDay: '<b>■</b> ＝ 東京ドーム1杯（5.5万人）',
+    eqPopN: '<b>{ref}の全人口</b>（{pop}）の<br>およそ <b class="num">{n}</b> 倍',
+    eqPopP: '<b>{ref}の人口</b>（{pop}）の<br>およそ <b class="num">{p}%</b>',
+    capPop: '<b>■</b> ＝ {ref}の全人口',
+    eqLife: '{where}の平均的な1人が80年間に出すCO₂（年約{pc}トン）による将来の死者',
+    scnH: 'でも、この数字は<br>まだ変えられる。',
+    scnLead: '犠牲者の数は、これから出すCO₂の量に比例します。排出を早く減らすほど、救える命は増えます。{where}の道筋を選んでみてください。',
+    s0: 'このまま', s0d: '排出量が横ばい', s1: 'ゆるやかに削減', s1d: '毎年 −3%', s2: '1.5℃目標の道', s2d: '毎年 −7%',
+    lostK: '2050年までに確定する犠牲者', savedK: '「このまま」と比べて救える命',
+    lostS: '第二次世界大戦の約{x}倍', savedS: '{x}', savedNone: '何も変えなければ、救える命はありません',
+    lostL: '失われる命', savedL: '救える命',
+    ctaK: '個人シミュレータ', ctaV: 'あなたの1日は、何人分？',
+    mH: 'この数字の求め方',
+    mLead: '研究にもとづく「1,000トン・ルール」を使っています。人類がCO₂を1,000トン排出するごとに、今後およそ1世紀の温暖化を通じて、将来1人の早すぎる死が生じるという推計です。',
+    formula: '{where}の年間排出量 <span class="num">約{gt}</span> ÷ <span class="num">1,000トン</span>{mult} ＝ 年間 <span class="num">約{perYear}</span>',
+    mList: [
+      '{start}年を起点に、{where}の年間排出量を約{gt}として計算しています（シナリオを選んだ場合を除く）。',
+      'ティッピング効果「なし」のときは<b>控えめな下限</b>の推計です。×1.5／×2／×3 の係数は<b>査読済みの推計ではなく、目安として示した概算</b>です。永久凍土の融解や森林の枯死などのフィードバック、紛争・飢饉・大規模移民といった社会の連鎖的危機を含めた場合に、線形推計がどこまで膨らみうるかを示しています。',
+      '「確定」とは、排出された時点でその被害が避けられなくなるという意味です。実際に亡くなるのは数十年先になることがあります。',
+      '国別の数値：化石燃料由来のCO₂、2023年ごろの概算（Global Carbon Project）。世界合計（40 Gt）は土地利用変化を含むため、各国の合計とは一致しません。',
+      '戦争の死者数：第二次世界大戦 約7,000万〜8,500万人（中央値8,000万人で表示）、第一次世界大戦 約2,000万人。',
+    ],
+    simLink: '数値を細かく変えて試したい方は <a href="simulator.html">詳細シミュレータ</a> をどうぞ。自分の1日に置き換えるなら <a href="my-day.html">個人シミュレータ</a> へ。',
+    footer: 'Deterministic Climate Casualty Counter — 推計モデルによる概算です',
+  },
+};
+
+/* ===================== STATE ===================== */
+const store = { get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+                set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} } };
+const state = { lang: store.get('scw-lang') === 'ja' ? 'ja' : 'en', country: 'world', tip: 0, r: 0 };
+const $ = id => document.getElementById(id);
+const L = () => I18N[state.lang];
+const t = (k, v = {}) => L()[k].replace(/\{(\w+)\}/g, (_, x) => v[x] ?? '');
+const C = () => COUNTRIES[state.country];
+const where = () => state.lang === 'ja' ? C().jaIn : C().enIn;
+const mult = () => TIPS[state.tip].m;
+const perYear = () => C().gt * 1e9 / TPD * mult();
+const perSec = () => perYear() / (365.25 * 86400);
+const cumulative = (r, years) => { let s = 0; for (let k = 0; k < years; k++) s += C().gt * 1e9 * Math.pow(1 + r, k) / TPD * mult(); return s; };
+const refCountry = () => state.country !== 'world' ? C() : COUNTRIES[state.lang === 'ja' ? 'japan' : 'us'];
+
+const fmt = n => Math.round(n).toLocaleString('en-US');
+const trim = s => s.replace(/\.0$/, '');
+function people(n, withUnit = true) {
+  if (state.lang === 'ja') {
+    const u = withUnit ? '人' : '';
+    if (n >= 1e8) return trim((Math.round(n / 1e7) / 10).toFixed(1)) + '億' + u;
+    if (n >= 1e4) return Math.round(n / 1e4).toLocaleString() + '万' + u;
+    return fmt(n) + u;
+  }
+  const u = withUnit ? ' people' : '';
+  if (n >= 1e9) return trim((n / 1e9).toFixed(1)) + ' billion' + u;
+  if (n >= 1e6) return (n >= 1e7 ? Math.round(n / 1e6) : trim((n / 1e6).toFixed(1))) + ' million' + u;
+  return fmt(n) + u;
+}
+const gtText = gt => state.lang === 'ja'
+  ? trim((gt * 10).toFixed(1)) + '億トン'
+  :(gt >= 1 ? trim(gt.toFixed(1)) + ' billion t' : Math.round(gt * 1000) + ' million t');
+const ratio = x => x >= 10 ? Math.round(x).toString() : trim(x.toFixed(1));
+const blocks = x => Array.from({ length: Math.min(40, Math.ceil(x)) }, (_, i) =>
+  `<div class="blk"><span style="width:${Math.min(1, x - i) * 100}%"></span></div>`).join('');
+function popPhrase(n) {
+  const ref = refCountry(), name = state.lang === 'ja' ? ref.ja : ref.enIn, x = n / ref.pop, pop = people(ref.pop, state.lang === 'ja');
+  return x >= 1 ? t('eqPopN', { n: ratio(x), ref: name, pop }) : t('eqPopP', { p: Math.max(1, Math.round(x * 100)), ref: name, pop });
+}
+
+/* ===================== RENDER ===================== */
+let dotsShown = false;
+function render() {
+  const lang = state.lang;
+  document.documentElement.lang = lang;
+  document.title = t('title');
+  document.querySelectorAll('[data-i18n]').forEach(el => { el.innerHTML = t(el.dataset.i18n); });
+  document.querySelectorAll('.lang button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
+
+  // セレクトの選択肢
+  $('country').innerHTML = Object.entries(COUNTRIES).map(([k, c]) => `<option value="${k}">${c[lang]}</option>`).join('');
+  $('country').value = state.country;
+  $('tip').innerHTML = TIPS.map((x, i) => `<option value="${i}">${x[lang]}</option>`).join('');
+  $('tip').value = state.tip;
+
+  // Hero
+  $('heroTitle').innerHTML = t('heroTitle', { where: where() });
+  $('chip').hidden = mult() === 1;
+  $('chip').textContent = t('chip', { tip: TIPS[state.tip][lang] });
+
+  // Pulse
+  const iv = 1 / perSec();
+  $('pulseH').innerHTML = iv < 120
+    ? t('pulseH', { s: iv < 10 ? iv.toFixed(1) : Math.round(iv), unit: t('sec') })
+    : t('pulseH', { s: trim((iv / 60).toFixed(1)), unit: t('min') });
+  $('perHour').textContent = fmt(perSec() * 3600);
+  $('perDay').textContent = fmt(perSec() * 86400);
+  $('perYear').textContent = people(perYear(), false);
+  startHeart(iv);
+
+  // War comparison
+  const yrs = WW2 / perYear();
+  $('warLead').innerHTML = t('warLead', { where: where(),
+    t: yrs >= 1 ? t('years', { n: yrs >= 10 ? Math.round(yrs) : trim(yrs.toFixed(1)) }) : t('months', { n: Math.max(1, Math.round(yrs * 12)) }) });
+  $('tipLegend').hidden = mult() === 1;
+  const c35 = cumulative(0, 10), c50 = cumulative(0, 25);
+  const rows = [
+    { name: t('ww1'), sub: '1914–1918', n: WW1, cls: 'war' },
+    { name: t('ww2'), sub: '1939–1945', n: WW2, cls: 'war' },
+    { name: t('c35'), sub: t('c35s'), n: c35, cls: 'clim' },
+    { name: t('c50'), sub: t('c50s'), n: c50, cls: 'clim' },
+  ];
+  $('cmp').innerHTML = rows.map(r => {
+    const dots = Math.max(r.n >= 5e5 ? 1 : 0, Math.round(r.n / 1e6));
+    const base = r.cls === 'clim' ? Math.round(dots / mult()) : dots;   // 線形分（残りはティッピング上乗せ）
+    const extra = r.cls === 'clim' ? `<small> ${t('xww2', { x: ratio(r.n / WW2) })}</small>` : '';
+    return `<div class="cmp-row ${r.cls}"><div class="label"><div class="name">${r.name}<small>${r.sub}</small></div>
+      <div class="count num">${people(r.n)}${extra}</div></div>
+      <div class="grid${dotsShown ? ' on' : ''}">${'<i></i>'.repeat(base)}${'<i class="tip"></i>'.repeat(dots - base)}</div></div>`;
+  }).join('');
+
+  // Scale cards
+  const day = perSec() * 86400, st = day / STADIUM, ref = refCountry();
+  $('cDay').textContent = people(day);
+  $('eqDay').innerHTML = st >= 1 ? t('eqDayN', { n: ratio(st) }) : t('eqDayP', { p: Math.max(1, Math.round(st * 100)) });
+  $('iDay').innerHTML = blocks(st);
+  $('capDay').innerHTML = t('capDay');
+  $('cYear').textContent = people(perYear());
+  $('eqYear').innerHTML = popPhrase(perYear());
+  $('iYear').innerHTML = blocks(perYear() / ref.pop);
+  $('capYear').innerHTML = t('capPop', { ref: lang === 'ja' ? ref.ja : ref.enIn });
+  $('c2050').textContent = people(c50);
+  $('eq2050').innerHTML = popPhrase(c50);
+  const x50 = c50 / ref.pop;
+  $('i2050').innerHTML = blocks(x50 >= 2 ? Math.round(x50) : x50);
+  $('cap2050').innerHTML = t('capPop', { ref: lang === 'ja' ? ref.ja : ref.enIn });
+  const pc = C().gt * 1e9 / C().pop, life = pc * 80 / TPD * mult();
+  $('cLife').textContent = life.toFixed(2) + (lang === 'ja' ? '人' : ' people');
+  $('eqLife').innerHTML = t('eqLife', { where: state.country === 'world' ? (lang === 'ja' ? '世界' : 'the world') : where(), pc: trim(pc.toFixed(1)) });
+
+  // Scenario
+  $('scnLead').innerHTML = t('scnLead', { where: where() });
+  setScenario(state.r);
+
+  // Method
+  const m = mult() === 1 ? '' : ` × <span class="num">${mult()}</span>`;
+  $('formula').innerHTML = t('formula', { where: where(), gt: gtText(C().gt), mult: m, perYear: people(perYear(), state.lang === 'ja') });
+  $('mList').innerHTML = L().mList.map(s => `<li>${s.replace(/\{(\w+)\}/g, (_, k) => ({ start: START, where: where(), gt: gtText(C().gt) })[k])}</li>`).join('');
+}
+
+function setScenario(r) {
+  state.r = r;
+  const base = cumulative(0, 25), lost = cumulative(r, 25), saved = base - lost;
+  document.querySelectorAll('.tab').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.r === r)));
+  $('lost').querySelector('.v').textContent = people(lost);
+  $('lost').querySelector('.s').textContent = t('lostS', { x: ratio(lost / WW2) });
+  $('saved').querySelector('.v').textContent = saved > 0 ? people(saved) : '—';
+  $('saved').querySelector('.s').innerHTML = saved > 0 ? popPhrase(saved).replace(/<br>/g, ' ') : t('savedNone');
+  $('barA').style.width = (lost / base * 100) + '%';
+  $('barB').style.width = (saved / base * 100) + '%';
+}
+
+/* ===================== LIVE ===================== */
+const t0 = performance.now();
+function tick() {
+  const now = new Date(), mid = new Date(now); mid.setHours(0, 0, 0, 0);
+  $('today').textContent = fmt((now - mid) / 1000 * perSec());
+  $('since').textContent = fmt((performance.now() - t0) / 1000 * perSec());
+  requestAnimationFrame(tick);
+}
+let heartTimer;
+function startHeart(iv) {
+  clearInterval(heartTimer);
+  const heart = $('heart');
+  heartTimer = setInterval(() => { heart.classList.remove('beat'); void heart.offsetWidth; heart.classList.add('beat'); }, Math.max(600, iv * 1000));
+}
+
+/* ===================== EVENTS ===================== */
+document.querySelectorAll('.lang button').forEach(b => b.addEventListener('click', () => {
+  state.lang = b.dataset.lang; store.set('scw-lang', state.lang); render();
+}));
+$('country').addEventListener('change', e => { state.country = e.target.value; render(); });
+$('tip').addEventListener('change', e => { state.tip = +e.target.value; render(); });
+document.querySelectorAll('.tab').forEach(b => b.addEventListener('click', () => setScenario(+b.dataset.r)));
+
+render();
+tick();
+
+/* --- Scroll reveal --- */
+const io = new IntersectionObserver(es => es.forEach(e => {
+  if (!e.isIntersecting) return;
+  e.target.classList.add('in');
+  io.unobserve(e.target);
+}), { threshold: 0.15 });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+// 点グリッドは最初に見えた時だけ順に点灯させる
+const dotIo = new IntersectionObserver(es => {
+  if (!es.some(e => e.isIntersecting) || dotsShown) return;
+  dotsShown = true; dotIo.disconnect();
+  const grids = [...document.querySelectorAll('#cmp .grid')];
+  grids.forEach(g => {
+    const ds = g.children, step = Math.max(1, Math.floor(ds.length / 60));
+    let i = 0; (function lit() {
+      for (let k = 0; k < step && i < ds.length; k++, i++) { ds[i].style.opacity = 1; ds[i].style.transform = 'none'; }
+      if (i < ds.length) requestAnimationFrame(lit); else g.classList.add('on');
+    })();
+  });
+}, { threshold: 0.1 });
+dotIo.observe($('cmp'));
+</script>
+</body>
+</html>
