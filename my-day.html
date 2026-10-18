@@ -91,9 +91,24 @@
   .step button { font: inherit; width: 30px; height: 30px; border-radius: 8px; border: 1px solid var(--faint); background: var(--bg3);
     color: var(--text); cursor: pointer; font-size: 16px; line-height: 1; }
   .step b { min-width: 28px; text-align: center; }
-  .dev-row { padding: 8px 0; border-top: 1px solid var(--faint); }
-  .dev-row .lbl { font-size: 13.5px; margin-bottom: 8px; }
-  .dev-row .lbl small { display: block; color: var(--muted); font-size: 11.5px; }
+  .shop-h { margin: 16px 0 8px; display: flex; flex-direction: column; gap: 2px; }
+  .shop-h b { font-size: 13.5px; }
+  .shop-h span { font-size: 12px; color: var(--muted); }
+  .item .big-kg { font-size: 18px; font-weight: 800; margin-top: 2px; }
+  .item.per .tick { position: absolute; top: 9px; right: 9px; width: 18px; height: 18px; border-radius: 5px; border: 1.5px solid #55595f; }
+  .item.per.on .tick { background: var(--c-shopping); border-color: var(--c-shopping); }
+  .item.per.on .tick::after { content: ""; position: absolute; left: 5px; top: 1px; width: 5px; height: 10px; border: solid #0b1a13; border-width: 0 2px 2px 0; transform: rotate(45deg); }
+  .item.per.off { opacity: .5; }
+  .item .assume { font-size: 11.5px; color: #c9c8c3; margin-top: 6px; padding-top: 6px; border-top: 1px dashed var(--faint); }
+  .item .assume .num { color: var(--c-shopping); font-weight: 700; }
+  .shop-tot { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 14px; }
+  .shop-tot > div { border-radius: 12px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px; }
+  .shop-tot span { font-size: 12px; color: #c9c8c3; }
+  .shop-tot b { font-size: 22px; font-weight: 900; }
+  .shop-tot small { font-size: 11px; color: var(--muted); }
+  .shop-tot .t-day { background: rgba(79,179,138,.1); border: 1px solid rgba(79,179,138,.45); }
+  .shop-tot .t-day b { color: var(--c-shopping); }
+  .shop-tot .t-simple { background: var(--bg3); border: 1px dashed #55595f; }
   .shop { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
   .item { position: relative; text-align: left; font: inherit; color: var(--text); background: var(--bg3); border: 1px solid var(--faint);
     border-radius: 12px; padding: 10px 12px; cursor: pointer; line-height: 1.4; }
@@ -356,20 +371,19 @@ const F = {
   shop: { bottle: 0.15, coffee: 0.3, parcel: 0.5, tshirt: 7, jeans: 25, shoes: 14, phone: 70, laptop: 300 },
 };
 const CATS = ['transport', 'food', 'home', 'flights', 'shopping'];
-// 買い物：品物ごとの「ふだん買う頻度」で入力し、飛行機と同じように1日あたりに割り戻す
+// 買い物は2種類：
+//   daily    … この1日を毎日続けるもの（数をそのまま1日分として数える）
+//   periodic … ときどき買うもの（想定の頻度 perYear で1日あたりに割り戻す）
 const SHOP = {
-  groups: [
-    { id: 'day',   days: 1,           items: ['bottle', 'coffee'] },
-    { id: 'month', days: 365.25 / 12, items: ['parcel'] },
-    { id: 'year',  days: 365.25,      items: ['tshirt', 'jeans', 'shoes'] },
-  ],
-  max: { bottle: 10, coffee: 10, parcel: 60, tshirt: 50, jeans: 20, shoes: 20 },
-  devices: ['phone', 'laptop'], cycles: [0, 2, 3, 4, 5, 7],   // 買い替えの周期（年）。0 ＝ 持っていない
+  daily: ['bottle', 'coffee'],
+  periodic: ['parcel', 'tshirt', 'jeans', 'shoes', 'phone', 'laptop'],
+  perYear: { parcel: 52, tshirt: 5, jeans: 1, shoes: 2, phone: 1 / 3, laptop: 1 / 5 },   // 想定の頻度（1年あたり）
 };
-const shopDays = k => SHOP.groups.find(g => g.items.includes(k)).days;
-const shopPerDay = (d, k) => SHOP.devices.includes(k)
-  ? (d.dev[k] ? F.shop[k] / (d.dev[k] * 365.25) : 0)
-  : F.shop[k] * d.shop[k] / shopDays(k);
+const shopPerDay = (d, k) => SHOP.daily.includes(k)
+  ? F.shop[k] * d.shop[k]
+  : (d.own[k] ? F.shop[k] * d.per[k] / 365.25 : 0);
+// 単純合計：割り戻さず、選んだ品物を今日まとめて買ったとした場合
+const shopSimple = d => SHOP.daily.reduce((a, k) => a + F.shop[k] * d.shop[k], 0) + SHOP.periodic.reduce((a, k) => a + (d.own[k] ? F.shop[k] : 0), 0);
 // 食事：Poore & Nemecek (2018, Science) のサプライチェーン段階別の値（Our World in Data 経由の概算）
 // stages = kg CO₂e / kg 食品 [森林破壊・土地利用変化, 農場(メタン・N₂O), 飼料, 加工・輸送・小売・包装]（中央値, GWP100）
 const STAGES = ['luc', 'farm', 'feed', 'post', 'coc'];
@@ -431,9 +445,12 @@ const I18N = {
     applOpt: { low: 'Low', avg: 'Average', high: 'High' },
     flightHint: 'Round trips per year, spread across 365 days',
     fShort: 'Short-haul', fShortD: '~1–2 h each way (domestic, regional)', fLong: 'Long-haul', fLongD: '~12 h each way (e.g. Tokyo–London)',
-    shopHint: 'Enter how often you usually buy each thing. Like flights, it is spread across days. Values cover making and shipping each item.',
-    shopGroup: { day: 'Every day (number per day)', month: 'Every month (number per month)', year: 'Every year (number per year)', dev: 'Devices — how often you replace them' },
-    each: 'each', perDayV: '≈ {kg} kg/day', everyY: 'every {n} yrs', none: 'Don’t own',
+    shopHint: 'Values cover making and shipping each item.',
+    shopDailyH: 'Every day', shopDailyD: 'Things you buy daily — counted as if you did this every day. Tap to add.',
+    shopPerH: 'Now and then', shopPerD: 'Things you buy occasionally — spread across days using the assumed frequency on each card. Tap to include or leave out.',
+    freq: { parcel: 'once a week', tshirt: '5 a year', jeans: '1 a year', shoes: '2 pairs a year', phone: 'one every 3 years', laptop: 'one every 5 years' },
+    assumed: 'Assumed: {f}', perDayV: '→ {kg} kg/day', perDayD: '{kg} kg/day',
+    totDay: 'Per day (spread out)', totDayS: 'Used in your total', totSimple: 'Simple total (not spread out)', totSimpleS: 'If you bought all of these today',
     shop: { bottle: 'Bottled drink', coffee: 'Takeaway coffee', parcel: 'Online delivery', tshirt: 'T-shirt', jeans: 'Jeans', shoes: 'Sneakers', phone: 'Smartphone', laptop: 'Laptop' },
     carEq: '≈ {km} km by car',
     gwpLabel: 'How to count methane', gwp100: '100-year (standard, GWP100)', gwp20: '20-year (near-term, GWP20)',
@@ -517,9 +534,12 @@ const I18N = {
     applOpt: { low: '少なめ', avg: 'ふつう', high: '多め' },
     flightHint: '1年間の往復回数を、365日で割って1日あたりに換算',
     fShort: '短距離', fShortD: '片道1〜2時間（国内線など）', fLong: '長距離', fLongD: '片道約12時間（例：東京–ロンドン）',
-    shopHint: '品物ごとに、ふだん買う頻度を入れてください。飛行機と同じように、1日あたりに割り戻します。値は製造から配送までの排出量です。',
-    shopGroup: { day: '毎日（1日あたりの数）', month: '毎月（1か月あたりの数）', year: '毎年（1年あたりの数）', dev: '機器（買い替えの周期）' },
-    each: '1個あたり', perDayV: '1日あたり約{kg} kg', everyY: '{n}年ごと', none: '持っていない',
+    shopHint: '値は製造から配送までの排出量です。',
+    shopDailyH: '毎日のもの', shopDailyD: '毎日買うもの。この1日を毎日続けるとして数えます。タップで追加。',
+    shopPerH: 'ときどき買うもの', shopPerD: 'ときどき買うもの。各カードの想定頻度で、1日あたりに割り戻します。タップで入れる／外す。',
+    freq: { parcel: '週1回', tshirt: '年5枚', jeans: '年1本', shoes: '年2足', phone: '3年に1台', laptop: '5年に1台' },
+    assumed: '想定：{f}', perDayV: '→ 1日 {kg} kg', perDayD: '1日 {kg} kg',
+    totDay: '1日あたり（割り戻し込み）', totDayS: '合計に使う値', totSimple: '単純合計（割り戻しなし）', totSimpleS: '今日まとめて買ったとした場合',
     shop: { bottle: 'ペットボトル飲料', coffee: 'テイクアウトのコーヒー', parcel: 'ネット通販の配送', tshirt: 'Tシャツ', jeans: 'ジーンズ', shoes: 'スニーカー', phone: 'スマートフォン', laptop: 'ノートPC' },
     carEq: '車で約{km} km分',
     gwpLabel: 'メタンの評価期間', gwp100: '100年（標準・GWP100）', gwp20: '20年（短期・GWP20）',
@@ -596,7 +616,8 @@ const store = { get(k) { try { return localStorage.getItem(k); } catch (e) { ret
 const S = {
   lang: store.get('scw-lang') === 'ja' ? 'ja' : 'en', country: 'japan', tip: 1, scale: 'country', gwp: 100, coc: false, cocRate: 0.5, basis: 'protein', sel: 'chicken',
   day: { mode: 'car', km: 20, meals: ['veg', 'chicken', 'beef'], hvac: 'cool', hours: 6, eco: false, appl: 'avg',
-         short: 1, long: 1, shop: { bottle: 1, coffee: 1, parcel: 4, tshirt: 5, jeans: 1, shoes: 2 }, dev: { phone: 3, laptop: 5 } },
+         short: 1, long: 1, shop: { bottle: 1, coffee: 1 }, own: { parcel: true, tshirt: true, jeans: true, shoes: true, phone: true, laptop: true },
+         per: { ...SHOP.perYear } },
   swaps: new Set(),
 };
 const $ = id => document.getElementById(id);
@@ -647,10 +668,10 @@ const SWAPS = [
   { id: 'keroToAC',      ok: d => d.hvac === 'kero' && d.hours > 0,                             apply: d => { d.hvac = 'heat'; } },
   { id: 'lessLong',      ok: d => d.long > 0,                                                   apply: d => { d.long = Math.max(0, d.long - 1); } },
   { id: 'lessShort',     ok: d => d.short > 0,                                                  apply: d => { d.short = Math.max(0, d.short - 1); } },
-  { id: 'fewerClothes',  ok: d => ['tshirt', 'jeans', 'shoes'].some(k => d.shop[k] > 0),
-    apply: d => { ['tshirt', 'jeans', 'shoes'].forEach(k => { d.shop[k] /= 2; }); } },
-  { id: 'keepDevices',   ok: d => SHOP.devices.some(k => d.dev[k] > 0),
-    apply: d => { SHOP.devices.forEach(k => { if (d.dev[k]) d.dev[k] += 2; }); } },
+  { id: 'fewerClothes',  ok: d => ['tshirt', 'jeans', 'shoes'].some(k => d.own[k]),
+    apply: d => { ['tshirt', 'jeans', 'shoes'].forEach(k => { d.per[k] /= 2; }); } },
+  { id: 'keepDevices',   ok: d => ['phone', 'laptop'].some(k => d.own[k]),
+    apply: d => { ['phone', 'laptop'].forEach(k => { d.per[k] = 1 / (1 / d.per[k] + 2); }); } },
   { id: 'refill',        ok: d => d.shop.bottle > 0,                                            apply: d => { d.shop.bottle = 0; } },
 ];
 const deathsPerKg = () => mult() / 1e6;       // 1,000 t = 1e6 kg ≒ 1人
@@ -693,19 +714,27 @@ function buildInputs() {
     </div>
     <div class="block">${head('shopping')}
       <p class="hint">${l.shopHint}</p>
-      ${SHOP.groups.map(g => `<div class="sub-label">${l.shopGroup[g.id]}</div>${g.items.map(k => `
-        <div class="stepper"><div class="lbl">${l.shop[k]}<small>${shopInfo(k)} · <span class="num" id="pd-${k}"></span></small></div>
-          <div class="step"><button data-sstep="${k}" data-d="-1" aria-label="−">−</button><b class="num" id="sn-${k}">${d.shop[k]}</b><button data-sstep="${k}" data-d="1" aria-label="+">+</button></div></div>`).join('')}`).join('')}
-      <div class="sub-label">${l.shopGroup.dev}</div>
-      ${SHOP.devices.map(k => `<div class="dev-row"><div class="lbl">${l.shop[k]}<small>${shopInfo(k)} · <span class="num" id="pd-${k}"></span></small></div>
-        <div class="chips">${SHOP.cycles.map(y => chip('dev-' + k, y, y ? tpl(l.everyY, { n: y }) : l.none, d.dev[k] === y)).join('')}</div></div>`).join('')}
+      <div class="shop-h"><b>${l.shopDailyH}</b><span>${l.shopDailyD}</span></div>
+      <div class="shop">${SHOP.daily.map(k => `
+        <div class="item${d.shop[k] ? ' on' : ''}" data-shop="${k}" role="button" tabindex="0">
+          <b>${l.shop[k]}</b><div class="big-kg num">${F.shop[k]} kg</div><div class="eq">${tpl(l.carEq, { km: fmt(F.shop[k] / F.transport.car) })}</div>
+          ${d.shop[k] ? `<span class="cnt num">×${d.shop[k]}</span><button class="minus" data-minus="${k}" aria-label="−">−</button>` : ''}
+        </div>`).join('')}</div>
+      <div class="shop-h"><b>${l.shopPerH}</b><span>${l.shopPerD}</span></div>
+      <div class="shop">${SHOP.periodic.map(k => `
+        <div class="item per${d.own[k] ? ' on' : ' off'}" data-own="${k}" role="button" tabindex="0" aria-pressed="${d.own[k]}">
+          <span class="tick"></span>
+          <b>${l.shop[k]}</b><div class="big-kg num">${F.shop[k]} kg</div><div class="eq">${tpl(l.carEq, { km: fmt(F.shop[k] / F.transport.car) })}</div>
+          <div class="assume">${tpl(l.assumed, { f: l.freq[k] })}<br><span class="num">${tpl(l.perDayV, { kg: shopKg(F.shop[k] * SHOP.perYear[k] / 365.25) })}</span></div>
+        </div>`).join('')}</div>
+      <div class="shop-tot">
+        <div class="t-day"><span>${l.totDay}</span><b class="num" id="shopDay"></b><small>${l.totDayS}</small></div>
+        <div class="t-simple"><span>${l.totSimple}</span><b class="num" id="shopSimple"></b><small>${l.totSimpleS}</small></div>
+      </div>
     </div>`;
 }
 
-function shopInfo(k) {
-  const l = L();
-  return `${F.shop[k]} kg ${l.each} · ${tpl(l.carEq, { km: fmt(F.shop[k] / F.transport.car) })}`;
-}
+const shopKg = v => v >= 0.1 ? v.toFixed(2) : v.toFixed(3);
 
 /* ===================== RENDER ===================== */
 function renderStatic() {
@@ -730,7 +759,8 @@ function update() {
   $('kmV').textContent = d.km + ' km';
   if ($('hoursV')) $('hoursV').textContent = d.hours + (S.lang === 'ja' ? ' 時間' : ' h');
   CATS.forEach(k => { $('kg-' + k).textContent = kg(fp[k]) + ' kg'; });
-  Object.keys(F.shop).forEach(k => { const v = shopPerDay(d, k); $('pd-' + k).textContent = v ? tpl(l.perDayV, { kg: v >= 0.1 ? v.toFixed(2) : v.toFixed(3) }) : '—'; });
+  $('shopDay').textContent = kg(fp.shopping) + ' kg';
+  $('shopSimple').textContent = kg(shopSimple(d)) + ' kg';
 
   // 合計と内訳
   $('total').textContent = kg(fp.total);
@@ -896,7 +926,9 @@ document.addEventListener('click', e => {
   if (t.dataset.scale) { S.scale = t.dataset.scale; update(); return; }
   if (t.dataset.swap) { S.swaps.has(t.dataset.swap) ? S.swaps.delete(t.dataset.swap) : S.swaps.add(t.dataset.swap); update(); return; }
   if (t.dataset.step) { const k = t.dataset.step; d[k] = Math.min(20, Math.max(0, d[k] + +t.dataset.d)); $('n-' + k).textContent = d[k]; update(); return; }
-  if (t.dataset.sstep) { const k = t.dataset.sstep; d.shop[k] = Math.min(SHOP.max[k], Math.max(0, Math.round(d.shop[k]) + +t.dataset.d)); $('sn-' + k).textContent = d.shop[k]; update(); return; }
+  if (t.dataset.minus) { e.stopPropagation(); d.shop[t.dataset.minus] = Math.max(0, d.shop[t.dataset.minus] - 1); buildInputs(); update(); return; }
+  if (t.dataset.shop) { d.shop[t.dataset.shop] = Math.min(20, d.shop[t.dataset.shop] + 1); buildInputs(); update(); return; }
+  if (t.dataset.own) { d.own[t.dataset.own] = !d.own[t.dataset.own]; buildInputs(); update(); return; }
   if (t.dataset.g) {
     const g = t.dataset.g, v = t.dataset.v;
     if (g === 'gwp') { S.gwp = +v; buildInputs(); update(); return; }
@@ -906,7 +938,6 @@ document.addEventListener('click', e => {
     if (g === 'mode') d.mode = v;
     else if (g === 'hvac') { d.hvac = v; $('hvacMore').hidden = v === 'off'; }
     else if (g === 'appl') d.appl = v;
-    else if (g.startsWith('dev-')) d.dev[g.slice(4)] = +v;
     else if (g.startsWith('meal')) d.meals[+g.slice(4)] = v;
     t.parentElement.querySelectorAll('.chip').forEach(b => b.setAttribute('aria-pressed', String(b === t)));
     update();
