@@ -150,6 +150,19 @@
   .legend div { display: flex; align-items: center; gap: 6px; }
   .legend i { width: 9px; height: 9px; border-radius: 2px; flex: none; }
   .legend .n { margin-left: auto; color: var(--muted); }
+  .whole { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--faint); }
+  .whole-h { font-size: 12px; color: #c9c8c3; line-height: 1.5; margin-bottom: 8px; }
+  .whole-bar { position: relative; display: flex; height: 14px; border-radius: 5px; overflow: hidden; background: var(--bg); }
+  .whole-bar span { border-right: 1px solid rgba(0,0,0,.35); transition: width .35s ease; }
+  .whole-bar .hh-mark { position: absolute; top: 0; bottom: 0; width: 2px; background: #ecebe7; transform: translateX(-1px); }
+  .whole-leg { display: grid; gap: 3px; margin-top: 8px; font-size: 11.5px; color: #c9c8c3; }
+  .whole-leg div { display: flex; align-items: flex-start; gap: 6px; line-height: 1.4; }
+  .whole-leg i { width: 9px; height: 9px; border-radius: 2px; flex: none; margin-top: 3px; }
+  .whole-leg .num { margin-left: auto; color: var(--muted); white-space: nowrap; padding-left: 8px; }
+  .whole-leg .over { margin: 4px 0 0; color: var(--amber); font-size: 11.5px; }
+  .whole-note { margin-top: 8px; font-size: 11.5px; color: var(--muted); }
+  .whole-note summary { cursor: pointer; color: var(--amber); }
+  .whole-note p { margin: 6px 0 0; line-height: 1.6; }
   .scale-tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; background: var(--bg); padding: 4px; border-radius: 10px; margin: 22px 0 16px; }
   .scale-tabs button { font: inherit; font-size: 12px; background: transparent; color: var(--muted); border: 0; border-radius: 7px; padding: 8px 4px; cursor: pointer; line-height: 1.3; }
   .scale-tabs button[aria-pressed="true"] { background: var(--bg3); color: var(--text); font-weight: 700; box-shadow: 0 0 0 1px var(--faint); }
@@ -276,10 +289,16 @@
 
     <aside class="result" aria-live="polite">
       <div class="k" data-i18n="resTitle"></div>
-      <div class="total num"><span id="total">0</span><small>kg CO₂</small></div>
+      <div class="total num"><span id="total">0</span><small>kg CO₂e</small></div>
       <div class="vs" id="vs"></div>
       <div class="stack" id="stack"></div>
       <div class="legend" id="legend"></div>
+      <div class="whole">
+        <div class="whole-h" id="wholeH"></div>
+        <div class="whole-bar" id="wholeBar"></div>
+        <div class="whole-leg" id="wholeLeg"></div>
+        <details class="whole-note"><summary data-i18n="wholeNoteH"></summary><p data-i18n="wholeNote"></p></details>
+      </div>
       <div class="scale-tabs" role="group" id="scaleTabs"></div>
       <div class="impact">
         <div class="big num" id="impBig"></div>
@@ -358,18 +377,18 @@
 
 <div class="mbar"><div><span data-i18n="mToday"></span><br><b class="num" id="mKg">0</b> kg CO₂</div><div class="r" style="text-align:right"><span id="mScale"></span><br><b class="num" id="mImp">—</b></div></div>
 
-<script src="site.js?v=20261019d"></script>
+<script src="site.js?v=20261019e"></script>
 <script>
 /* ===================== DATA ===================== */
 const COUNTRIES = {
-  world:  { en: 'World',          ja: '世界全体', enIn: 'the world',         jaIn: '世界',   gt: 42,   pop: 8.2e9,  grid: 0.48, area: 104e6 },
-  china:  { en: 'China',          ja: '中国',     enIn: 'China',             jaIn: '中国',   gt: 12.3, pop: 1.42e9, grid: 0.55, area: 9.6e6 },
-  us:     { en: 'United States',  ja: '米国',     enIn: 'the United States', jaIn: '米国',   gt: 4.9,  pop: 3.45e8, grid: 0.37, area: 9.83e6 },
-  india:  { en: 'India',          ja: 'インド',   enIn: 'India',             jaIn: 'インド', gt: 3.2,  pop: 1.45e9, grid: 0.70, area: 3.29e6 },
-  eu:     { en: 'European Union', ja: 'EU',       enIn: 'the EU',            jaIn: 'EU',     gt: 2.4,  pop: 4.49e8, grid: 0.25, area: 4.23e6 },
-  russia: { en: 'Russia',         ja: 'ロシア',   enIn: 'Russia',            jaIn: 'ロシア', gt: 1.8,  pop: 1.44e8, grid: 0.35, area: 17.1e6 },
-  japan:  { en: 'Japan',          ja: '日本',     enIn: 'Japan',             jaIn: '日本',   gt: 0.96,  pop: 1.24e8, grid: 0.45, area: 0.378e6 },
-  uk:     { en: 'United Kingdom', ja: '英国',     enIn: 'the UK',            jaIn: '英国',   gt: 0.31, pop: 6.9e7,  grid: 0.20, area: 0.244e6 },
+  world:  { en: 'World',          ja: '世界全体', enIn: 'the world',         jaIn: '世界',   gt: 42,   pop: 8.2e9,  grid: 0.48, area: 104e6, cb: 6.73 },
+  china:  { en: 'China',          ja: '中国',     enIn: 'China',             jaIn: '中国',   gt: 12.3, pop: 1.42e9, grid: 0.55, area: 9.6e6, cb: 8.76 },
+  us:     { en: 'United States',  ja: '米国',     enIn: 'the United States', jaIn: '米国',   gt: 4.9,  pop: 3.45e8, grid: 0.37, area: 9.83e6, cb: 19.52 },
+  india:  { en: 'India',          ja: 'インド',   enIn: 'India',             jaIn: 'インド', gt: 3.2,  pop: 1.45e9, grid: 0.70, area: 3.29e6, cb: 2.36 },
+  eu:     { en: 'European Union', ja: 'EU',       enIn: 'the EU',            jaIn: 'EU',     gt: 2.4,  pop: 4.49e8, grid: 0.25, area: 4.23e6, cb: 9.17 },
+  russia: { en: 'Russia',         ja: 'ロシア',   enIn: 'Russia',            jaIn: 'ロシア', gt: 1.8,  pop: 1.44e8, grid: 0.35, area: 17.1e6, cb: 14.82 },
+  japan:  { en: 'Japan',          ja: '日本',     enIn: 'Japan',             jaIn: '日本',   gt: 0.96,  pop: 1.24e8, grid: 0.45, area: 0.378e6, cb: 9.62 },
+  uk:     { en: 'United Kingdom', ja: '英国',     enIn: 'the UK',            jaIn: '英国',   gt: 0.31, pop: 6.9e7,  grid: 0.20, area: 0.244e6, cb: 8.85 },
 };
 const TIPS = [
   { m: 1,   en: 'None (1,000-ton rule only)',     ja: 'なし（1,000トン・ルールのみ）' },
@@ -383,11 +402,15 @@ const F = {
   transport: { walk: 0, train: 0.02, bus: 0.06, ev: null /* 0.15 kWh/km × 電力係数 */, hybrid: 0.08, car: 0.14 },
   evKwhPerKm: 0.15,
   hvacKwhPerH: { cool: 0.5, heat: 0.8 }, keroKgPerH: 0.6, eco: 0.9,
-  applKwh: { low: 3, avg: 5, high: 8 },
+  applKwh: { low: 1.5, avg: 3, high: 5 },   // 冷暖房以外の電気（1人1日あたりの kWh、目安）
   flight: { short: 150, long: 1500 },       // 往復1回あたり
   shop: { bottle: 0.15, coffee: 0.3, parcel: 0.5, tshirt: 7, jeans: 25, shoes: 14, phone: 70, laptop: 300 },
 };
 const CATS = ['transport', 'food', 'home', 'flights', 'shopping'];
+// 国全体の消費ベースの排出（cb, t CO₂e/人・年）＝ 消費ベースCO₂（2023年, Global Carbon Budget）×（国内の全ガス / 国内CO₂, 2024年）。
+// EU は加盟27か国の人口加重平均、世界は世界の温室効果ガス総量 ÷ 人口。いずれも概算。
+// 最終需要の内訳は世界全体の推計を当てはめる（家庭72%・政府10%・投資18%, Hertwich & Peters 2009）。
+const FINAL = { household: 0.72, government: 0.10, investment: 0.18 };
 // 買い物は2種類：
 //   daily    … この1日を毎日続けるもの（数をそのまま1日分として数える）
 //   periodic … ときどき買うもの（想定の頻度 perYear で1日あたりに割り戻す）
@@ -545,8 +568,13 @@ const I18N = {
     toChicken: 'Beef → chicken', toPlant: 'Beef → plant-based (tofu, beans)',
     swapNote: 'Lives saved assume everyone in {name} replaces one beef meal a day for a year, using the methane setting above.',
     notIncl: '<b>Still not included:</b> indirect land-use change (e.g. soy for feed pushing cattle ranching deeper into the Amazon), conversion of savannas such as the Cerrado and of peatlands, soil-carbon loss, and land cleared more than 20 years ago are only partly captured or missed. The “land’s lost carbon” option above is a rough way to see how large land-related effects could be. Water use, biodiversity loss and fertiliser run-off are also left out. And the 1,000-ton rule was derived for CO₂; applying it to CO₂-equivalent (especially on a 20-year basis) is an approximation.',
+    wholeH: 'Where this sits in the whole picture — per person in {where}, consumption-based (rough): ≈ {t} kg/day',
+    whole: { mine: 'Your day (what this simulator counts)', rest: 'Rest of household life not counted here (eating out, services, hot water, home upkeep…)', gov: 'Government & public services (schools, hospitals, admin…)', inv: 'Investment (buildings, infrastructure, machinery…)' },
+    wholeOver: 'Your day is {kg} kg above the estimated household average.',
+    wholeNoteH: 'How this is estimated',
+    wholeNote: 'All emissions in the economy — including factories, power plants and imports — are assigned to whoever finally uses the goods and services (“consumption-based”). The total is consumption-based CO₂ (2023, Global Carbon Budget via Our World in Data) scaled up for other gases (2024 ratio). It is split using global shares: households 72%, government 10%, investment 18% (Hertwich & Peters, 2009). Later studies put the household share at 58–72%, and it differs by country. Most construction falls under investment. A rough guide only.',
     resTitle: 'Your day',
-    vs: 'Average per person in {where}: {avg} kg/day (all sources, incl. industry)',
+    vs: 'Average household (lifestyle) footprint in {where}: ≈ {avg} kg/day (estimate)',
     scale: { you: 'You', country: 'Everyone in {name}', world: 'Everyone on Earth' },
     youBig: '1 in {n}', youCap: 'Live this day for {n} and it locks in one future death.',
     youSub: 'Over a lifetime (80 years): <b>{x}</b> future deaths',
@@ -651,8 +679,13 @@ const I18N = {
     toChicken: '牛肉 → 鶏肉', toPlant: '牛肉 → 植物性（豆腐・豆）',
     swapNote: '救える命は、{name}の全員が1日1食の牛肉を1年間置き換えた場合の数です（上で選んだメタンの評価期間で計算）。',
     notIncl: '<b>まだ含めていないもの：</b>間接的な土地利用変化（飼料用の大豆畑が広がり、押し出された放牧がアマゾンの奥へ移るなど）、セラードのようなサバンナや泥炭地の転換、土壌炭素の損失、20年以上前に開墾された土地の分は、一部しかとらえていないか、含まれていません。上の「土地の機会費用」は、土地を通じた影響がどれほど大きくなりうるかを見るための概算です。水の使用、生物多様性の損失、肥料の流出も含めていません。また、1,000トン・ルールはCO₂について導かれたもので、CO₂換算（特に20年基準）に当てはめるのは近似です。',
+    wholeH: '全体像のなかでの位置 — {where}の1人あたり（消費ベース・概算）：約{t} kg/日',
+    whole: { mine: 'あなたの1日（このシミュレータで計算した分）', rest: '生活のうち計算していない分（外食・サービス・給湯・住まいの維持など）', gov: '政府・公共サービス（学校・病院・行政など）', inv: '投資（建物・インフラ・設備の建設など）' },
+    wholeOver: 'あなたの1日は、生活由来の平均（推計）より{kg} kg多くなっています。',
+    wholeNoteH: 'この推計について',
+    wholeNote: '工場・発電所・輸入品なども含め、国全体の排出を、最終的にモノやサービスを使う人に割り振った「消費ベース」の推計です。総量は、消費ベースのCO₂（2023年、Global Carbon Budget／Our World in Data）に、CO₂以外のガスの比率（2024年）を掛けた概算です。家庭・政府・投資への割り振りには、世界全体の推計（家庭72%・政府10%・投資18%、Hertwich & Peters 2009）を当てはめています。家庭の割合は研究によって58〜72%と幅があり、国によっても違います。建設の多くは「投資」に含まれます。あくまで目安です。',
     resTitle: 'あなたの1日',
-    vs: '{where}の1人あたり平均：{avg} kg/日（産業なども含む全排出）',
+    vs: '{where}の平均的な人の生活由来（家庭の消費）の排出：約{avg} kg/日（推計）',
     scale: { you: 'あなた', country: '{name}の全員', world: '世界の全員' },
     youBig: '{n}で1人', youCap: 'この1日を{n}続けると、将来の死者1人が確定します。',
     youSub: '一生（80年）続けると：将来の死者 <b>{x}人</b>',
@@ -695,8 +728,9 @@ const store = { get(k) { try { return localStorage.getItem(k); } catch (e) { ret
                 set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} } };
 const S = {
   lang: store.get('scw-lang') === 'ja' ? 'ja' : 'en', country: 'japan', tip: 1, scale: 'country', ref: null, gwp: 100, coc: false, cocRate: 0.5, basis: 'protein', sel: 'chicken',
-  day: { mode: 'car', km: 20, meals: ['veg', 'chicken', 'beef'], hvac: 'cool', hours: 6, eco: false, appl: 'avg',
-         short: 1, long: 1, shop: { bottle: 1, coffee: 1 }, own: { parcel: true, tshirt: true, jeans: true, shoes: true, phone: true, laptop: true },
+  // 初期設定は平均的な日本人に近い1日（車で通勤・買い物15 km、肉や魚は豚・魚中心、牛肉は毎日ではない、国内線は年1往復、長距離は飛ばない）
+  day: { mode: 'car', km: 15, meals: ['veg', 'fish', 'pork'], hvac: 'cool', hours: 4, eco: false, appl: 'avg',
+         short: 1, long: 0, shop: { bottle: 1, coffee: 0 }, own: { parcel: true, tshirt: true, jeans: true, shoes: true, phone: true, laptop: true },
          per: { ...SHOP.perYear }, other: 'mid' },
   swaps: new Set(),
 };
@@ -862,10 +896,25 @@ function update() {
   // 合計と内訳
   $('total').textContent = kg(fp.total);
   $('mKg').textContent = kg(fp.total);
-  const avg = c.gt * 1e12 / c.pop / 365;
+  const cbDay = c.cb * 1000 / 365.25, avg = cbDay * FINAL.household;
   $('vs').textContent = tpl(l.vs, { where: cname(), avg: avg.toFixed(1) });
   $('stack').innerHTML = CATS.map(k => `<span style="width:${fp.total ? fp[k] / fp.total * 100 : 0}%;background:var(--c-${k})"></span>`).join('');
   $('legend').innerHTML = CATS.map(k => `<div><i style="background:var(--c-${k})"></i>${l.cat[k]}<span class="n num">${fp.total ? Math.round(fp[k] / fp.total * 100) : 0}%</span></div>`).join('');
+
+  // 全体像：1人あたりの国全体（消費ベース）の中での位置
+  const hh = avg, mine = Math.min(fp.total, hh), rest = Math.max(0, hh - fp.total), over = Math.max(0, fp.total - hh);
+  const segs = [
+    { k: 'mine', v: mine + over, c: 'var(--red)' },
+    { k: 'rest', v: rest, c: '#8a6a4a' },
+    { k: 'gov', v: cbDay * FINAL.government, c: '#5b6b7a' },
+    { k: 'inv', v: cbDay * FINAL.investment, c: '#3d4752' },
+  ];
+  const wholeSum = segs.reduce((a, x) => a + x.v, 0);
+  $('wholeH').innerHTML = tpl(l.wholeH, { where: cname(), t: kg(cbDay) });
+  $('wholeBar').innerHTML = segs.filter(x => x.v > 0).map(x => `<span style="width:${x.v / wholeSum * 100}%;background:${x.c}"></span>`).join('')
+    + `<i class="hh-mark" style="left:${hh / wholeSum * 100}%"></i>`;
+  $('wholeLeg').innerHTML = segs.map(x => `<div><i style="background:${x.c}"></i>${l.whole[x.k]}<span class="num">${kg(x.v)} kg · ${Math.round(x.v / wholeSum * 100)}%</span></div>`).join('')
+    + (over > 0 ? `<p class="over">${tpl(l.wholeOver, { kg: kg(over) })}</p>` : '');
 
   // 規模の切り替え
   $('scaleTabs').innerHTML = ['you', 'country', 'world'].map(s =>
