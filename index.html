@@ -63,6 +63,7 @@
   .hero h1 { font-size: clamp(15px, 2.4vw, 18px); font-weight: 500; color: #c9c8c3; margin: 0 0 12px; }
   .big { font-size: clamp(56px, 15vw, 150px); font-weight: 800; color: var(--red); line-height: 1; margin: 8px 0 12px; }
   .unit { font-size: clamp(16px, 2.6vw, 20px); color: var(--text); font-weight: 700; }
+  .since0 { font-size: 12px; color: var(--muted); margin-top: 4px; }
   .hero .since { margin-top: 36px; color: var(--muted); font-size: 14px; }
   .hero .since b { color: var(--text); font-size: 18px; }
   .chip { display: inline-block; margin-top: 14px; font-size: 12px; color: var(--amber); border: 1px solid rgba(224,164,59,.4);
@@ -187,6 +188,7 @@
     <h1 id="heroTitle"></h1>
     <div class="big num" id="today">0</div>
     <div class="unit" data-i18n="people"></div>
+    <div class="since0" data-i18n="since0"></div>
     <div><span class="chip" id="chip" hidden></span></div>
     <p class="since"><span data-i18n="since"></span>　<b class="num" id="since">0</b> <span data-i18n="peopleShort"></span></p>
   </div>
@@ -337,6 +339,7 @@ const I18N = {
     ctlCountry: 'Region', ctlTip: 'Tipping effects',
     heroTitle: 'Future deaths locked in today<br>by CO₂ emissions from {where}',
     people: 'people', peopleShort: 'people', since: 'Since you opened this page',
+    since0: 'counted from midnight, your local time',
     chip: 'Includes tipping effects: {tip}',
     pulseH: 'About one person every <em class="num">{s}</em> {unit}.',
     sec: 'seconds', min: 'minutes',
@@ -384,6 +387,7 @@ const I18N = {
     ctlCountry: '国・地域', ctlTip: 'ティッピング効果',
     heroTitle: '今日、{where}のCO₂排出によって<br>将来失われることが確定した命',
     people: '人', peopleShort: '人', since: 'あなたがこのページを開いてから',
+    since0: '（あなたの地域の今日0時から）',
     chip: 'ティッピング効果を含む：{tip}',
     pulseH: 'およそ<em class="num">{s}</em>{unit}に1人。',
     sec: '秒', min: '分',
