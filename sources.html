@@ -52,7 +52,6 @@
 </head>
 <body>
 <div class="top"><div class="wrap">
-  <a href="index.html" data-i18n="navStory"></a><a href="simulator.html" data-i18n="navSim"></a><a href="my-day.html" data-i18n="navDay"></a>
   <div class="lang" role="group" aria-label="Language"><button data-lang="en">EN</button><button data-lang="ja">日本語</button></div>
 </div></div>
 
@@ -71,11 +70,12 @@
 
   <h2 data-i18n="allH"></h2>
   <div id="sources"></div>
+  <div id="next" style="margin-top:56px"></div>
 </div>
 
 <footer data-i18n="footer"></footer>
 
-<script src="site.js"></script>
+<script src="site.js?v=20261018"></script>
 <script>
 const I18N = {
   en: {
@@ -87,10 +87,10 @@ const I18N = {
     cols: ['Number', 'Value used', 'Source'],
     rows: [
       ['Deaths per tonne of CO₂', '1 future death per 1,000 t (the “1,000-ton rule”)', 'Pearce & Parncutt (2023)', 'data'],
-      ['World emissions', '~40 Gt CO₂ a year (incl. land-use change)', 'Global Carbon Budget 2024', 'data'],
-      ['Country emissions', 'Fossil CO₂, approx. 2023', 'Global Carbon Budget 2024 / Our World in Data', 'data'],
-      ['Tipping multipliers', '×1.5 (default) / ×2 / ×3', 'Our illustrative assumption, informed by Armstrong McKay et al. (2022)', 'est'],
-      ['Reduction pathways', '−3% / −7% a year', 'See the note below; UNEP Emissions Gap Report 2024, Forster et al. (2025)', 'est'],
+      ['World emissions', '~42 Gt CO₂ a year (2024, incl. land-use change)', 'Global Carbon Budget 2025', 'data'],
+      ['Country emissions', 'Fossil CO₂ in 2024', 'Global Carbon Budget 2025 / Our World in Data', 'data'],
+      ['Tipping multipliers', '×1.5 (default) / ×2 / ×3', 'Our illustrative assumption, informed by Armstrong McKay et al. (2022) and the Global Tipping Points Report 2025', 'est'],
+      ['Reduction pathways', '−3% / −7% a year', 'See the note below; UNEP Emissions Gap Report 2025, Global Carbon Budget 2025', 'est'],
       ['War deaths', 'WWII 80 million, WWI 20 million', 'Commonly cited estimates (see Wikipedia summaries)', 'data'],
       ['Food impacts', 'Emissions by stage, land, water, pollution', 'Poore & Nemecek (2018) via Our World in Data', 'data'],
       ['Methane warming', '×2.9 when switching from a 100- to a 20-year view', 'IPCC AR6 WGI Ch. 7', 'data'],
@@ -99,7 +99,7 @@ const I18N = {
     ],
     tagData: 'published data', tagEst: 'our estimate',
     pathH: 'Why we call −7% a year a “2 °C pathway”',
-    pathNote: 'UNEP estimates that cuts of about 7.5% a year to 2035 are needed for 1.5 °C, and about 4% a year for 2 °C. But the 1.5 °C figure assumes large-scale carbon removal later and/or a temporary overshoot. Judged against the remaining carbon budget instead, cutting 7% a year from 2025 would still release about 570 Gt CO₂ in total (40 ÷ 0.07) — more than four times the ~130 Gt left for 1.5 °C, but within the budget for staying below 2 °C. Given how late action already is, we think “2 °C” is the more honest label.',
+    pathNote: 'UNEP’s Emissions Gap Report 2025 finds that greenhouse-gas emissions must fall about 55% below 2019 levels by 2035 for 1.5 °C, and about 35% for 2 °C (its 2024 edition put this at roughly 7.5% and 4% a year). Those 1.5 °C pathways assume a temporary overshoot and later carbon removal. Judged against the remaining carbon budget instead (Global Carbon Budget 2025, from the start of 2026, 50% chance): about 170 Gt CO₂ for 1.5 °C, 525 Gt for 1.7 °C and 1,055 Gt for 2 °C. Cutting CO₂ by 7% a year from 2025 would still release about 560 Gt from 2026 onward (42 × 0.93 ÷ 0.07) — more than three times the 1.5 °C budget, about the 1.7 °C budget, and well within 2 °C. Given how late action already is, we think “2 °C pathway” is the more honest label.',
     allH: 'All sources',
     footer: '<a href="index.html">The Slow War</a> · Model-based approximations. Found an error or a better source? Please let us know.',
   },
@@ -112,10 +112,10 @@ const I18N = {
     cols: ['項目', '使っている値', '出典'],
     rows: [
       ['CO₂ 1トンあたりの死者', '1,000 tで将来の死者1人（1,000トン・ルール）', 'Pearce & Parncutt (2023)', 'data'],
-      ['世界の排出量', '年約40 Gt CO₂（土地利用変化を含む）', 'Global Carbon Budget 2024', 'data'],
-      ['国別の排出量', '化石燃料由来CO₂、2023年ごろの概算', 'Global Carbon Budget 2024 / Our World in Data', 'data'],
-      ['ティッピング係数', '×1.5（初期値）／×2／×3', '私たちが置いた目安（Armstrong McKay ら 2022 を参考）', 'est'],
-      ['削減の道筋', '年 −3%／−7%', '下の注記を参照。UNEP Emissions Gap Report 2024、Forster ら 2025', 'est'],
+      ['世界の排出量', '年約42 Gt CO₂（2024年、土地利用変化を含む）', 'Global Carbon Budget 2025', 'data'],
+      ['国別の排出量', '2024年の化石燃料由来CO₂', 'Global Carbon Budget 2025 / Our World in Data', 'data'],
+      ['ティッピング係数', '×1.5（初期値）／×2／×3', '私たちが置いた目安（Armstrong McKay ら 2022、Global Tipping Points Report 2025 を参考）', 'est'],
+      ['削減の道筋', '年 −3%／−7%', '下の注記を参照。UNEP Emissions Gap Report 2025、Global Carbon Budget 2025', 'est'],
       ['戦争の死者数', '第二次世界大戦 8,000万人、第一次世界大戦 2,000万人', 'よく引用される推計（Wikipedia のまとめを参照）', 'data'],
       ['食べ物の環境負荷', '段階別の排出・土地・水・汚染', 'Poore & Nemecek (2018)、Our World in Data 経由', 'data'],
       ['メタンの温暖化効果', '100年基準から20年基準に切り替えると ×2.9', 'IPCC AR6 WGI 第7章', 'data'],
@@ -124,7 +124,7 @@ const I18N = {
     ],
     tagData: '公表データ', tagEst: '私たちの概算',
     pathH: '年 −7% を「2℃目標の道」と呼ぶ理由',
-    pathNote: 'UNEP は、1.5℃には2035年まで年約7.5%、2℃には年約4%の削減が必要と推計しています。ただし1.5℃の数字は、将来の大規模なCO₂除去や、一時的に1.5℃を超えること（オーバーシュート）を前提にしています。残りのカーボンバジェットで判断すると、2025年から毎年7%ずつ減らしても合計で約570 Gt CO₂（40 ÷ 0.07）を排出します。これは1.5℃のために残された約130 Gtの4倍以上ですが、2℃未満にとどめるバジェットには収まります。対策がすでにこれだけ遅れていることを踏まえ、「2℃」と呼ぶほうが誠実だと考えています。',
+    pathNote: 'UNEP の Emissions Gap Report 2025 は、温室効果ガスの排出を2035年までに2019年比で、1.5℃なら約55%、2℃なら約35%減らす必要があるとしています（2024年版では年約7.5%と年約4%）。ただし、その1.5℃の道筋は、一時的に1.5℃を超えること（オーバーシュート）と、将来のCO₂除去を前提にしています。残りのカーボンバジェット（Global Carbon Budget 2025、2026年初めから、確率50%）で判断すると、1.5℃は約170 Gt CO₂、1.7℃は525 Gt、2℃は1,055 Gtです。2025年から毎年7%ずつ減らしても、2026年以降に約560 Gt（42 × 0.93 ÷ 0.07）を排出します。これは1.5℃のバジェットの3倍以上で、1.7℃のバジェットとほぼ同じ、2℃には十分収まる量です。対策がすでにこれだけ遅れていることを踏まえ、「2℃目標の道」と呼ぶほうが誠実だと考えています。',
     allH: 'すべての出典',
     footer: '<a href="index.html">静かな戦争</a> ・ 推計モデルによる概算です。誤りやより良い出典があれば、ぜひお知らせください。',
   },
@@ -141,6 +141,8 @@ function render() {
   document.getElementById('keyTable').innerHTML = `<tr>${l.cols.map(c => `<th>${c}</th>`).join('')}</tr>` +
     l.rows.map(([a, b, c, t]) => `<tr><td>${a}<br><span class="tag ${t === 'est' ? 'est' : ''}">${t === 'est' ? l.tagEst : l.tagData}</span></td><td>${b}</td><td>${c}</td></tr>`).join('');
   swRenderSources(document.getElementById('sources'), lang);
+  const $ = id => document.getElementById(id);
+  if (typeof swNav === 'function') { swNav(lang); swNext($('next'), lang); }
 }
 document.querySelectorAll('.lang button').forEach(b => b.addEventListener('click', () => {
   lang = b.dataset.lang; store.set('scw-lang', lang); render();

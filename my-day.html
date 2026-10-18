@@ -302,6 +302,8 @@
     </div>
   </section>
 
+  <section style="padding:40px 0 8px"><div id="next"></div></section>
+
   <section class="about">
     <p class="eyebrow">About the numbers</p>
     <h2 style="font-size:22px" data-i18n="aboutH"></h2>
@@ -317,18 +319,18 @@
 
 <div class="mbar"><div><span data-i18n="mToday"></span><br><b class="num" id="mKg">0</b> kg CO₂</div><div class="r" style="text-align:right"><span id="mScale"></span><br><b class="num" id="mImp">—</b></div></div>
 
-<script src="site.js"></script>
+<script src="site.js?v=20261018"></script>
 <script>
 /* ===================== DATA ===================== */
 const COUNTRIES = {
-  world:  { en: 'World',          ja: '世界全体', enIn: 'the world',         jaIn: '世界',   gt: 40,   pop: 8.1e9,  grid: 0.48, area: 104e6 },
-  china:  { en: 'China',          ja: '中国',     enIn: 'China',             jaIn: '中国',   gt: 11.9, pop: 1.41e9, grid: 0.55, area: 9.6e6 },
-  us:     { en: 'United States',  ja: '米国',     enIn: 'the United States', jaIn: '米国',   gt: 4.9,  pop: 3.35e8, grid: 0.37, area: 9.83e6 },
-  india:  { en: 'India',          ja: 'インド',   enIn: 'India',             jaIn: 'インド', gt: 3.1,  pop: 1.43e9, grid: 0.70, area: 3.29e6 },
-  eu:     { en: 'European Union', ja: 'EU',       enIn: 'the EU',            jaIn: 'EU',     gt: 2.6,  pop: 4.48e8, grid: 0.25, area: 4.23e6 },
+  world:  { en: 'World',          ja: '世界全体', enIn: 'the world',         jaIn: '世界',   gt: 42,   pop: 8.2e9,  grid: 0.48, area: 104e6 },
+  china:  { en: 'China',          ja: '中国',     enIn: 'China',             jaIn: '中国',   gt: 12.3, pop: 1.42e9, grid: 0.55, area: 9.6e6 },
+  us:     { en: 'United States',  ja: '米国',     enIn: 'the United States', jaIn: '米国',   gt: 4.9,  pop: 3.45e8, grid: 0.37, area: 9.83e6 },
+  india:  { en: 'India',          ja: 'インド',   enIn: 'India',             jaIn: 'インド', gt: 3.2,  pop: 1.45e9, grid: 0.70, area: 3.29e6 },
+  eu:     { en: 'European Union', ja: 'EU',       enIn: 'the EU',            jaIn: 'EU',     gt: 2.4,  pop: 4.49e8, grid: 0.25, area: 4.23e6 },
   russia: { en: 'Russia',         ja: 'ロシア',   enIn: 'Russia',            jaIn: 'ロシア', gt: 1.8,  pop: 1.44e8, grid: 0.35, area: 17.1e6 },
-  japan:  { en: 'Japan',          ja: '日本',     enIn: 'Japan',             jaIn: '日本',   gt: 1.0,  pop: 1.24e8, grid: 0.45, area: 0.378e6 },
-  uk:     { en: 'United Kingdom', ja: '英国',     enIn: 'the UK',            jaIn: '英国',   gt: 0.31, pop: 6.8e7,  grid: 0.20, area: 0.244e6 },
+  japan:  { en: 'Japan',          ja: '日本',     enIn: 'Japan',             jaIn: '日本',   gt: 0.96,  pop: 1.24e8, grid: 0.45, area: 0.378e6 },
+  uk:     { en: 'United Kingdom', ja: '英国',     enIn: 'the UK',            jaIn: '英国',   gt: 0.31, pop: 6.9e7,  grid: 0.20, area: 0.244e6 },
 };
 const TIPS = [
   { m: 1,   en: 'None (1,000-ton rule only)',     ja: 'なし（1,000トン・ルールのみ）' },
@@ -683,6 +685,7 @@ function renderStatic() {
   $('country').value = S.country;
   $('tip').innerHTML = TIPS.map((x, i) => `<option value="${i}">${x[S.lang]}</option>`).join('');
   $('tip').value = S.tip;
+  if (typeof swNav === 'function') { swNav(S.lang); swNext($('next'), S.lang); }
   if (typeof swRenderSources === 'function') swRenderSources($('sources'), S.lang, ['core', 'food', 'land', 'energy', 'emissions', 'further']);
   buildInputs();
   update();

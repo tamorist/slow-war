@@ -7,6 +7,8 @@ Visualizes future deaths "locked in" by CO₂ emissions, based on the 1,000-ton 
 - `index.html` — story page for a general audience
 - `simulator.html` — detailed simulator
 - `my-day.html` — personal simulator (your day, at scale; food impacts beyond carbon)
+- `sources.html` — sources, key assumptions and further reading
+- `site.js` — shared navigation, source list and analytics
 
 All figures are model-based approximations. See the notes on each page for sources and caveats.
 

@@ -13,7 +13,7 @@
 <meta property="og:image" content="https://tamorist.github.io/slow-war/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="A counter showing 40,000,000 future deaths locked in every year by the world’s CO₂ emissions">
+<meta property="og:image:alt" content="A counter showing 63,000,000 future deaths locked in every year by the world’s CO₂ emissions, including moderate feedbacks">
 <meta property="og:locale" content="en_US">
 <meta property="og:locale:alternate" content="ja_JP">
 <meta name="twitter:card" content="summary_large_image">
@@ -56,7 +56,7 @@
   .lang button[aria-pressed="true"] { background: var(--text); color: var(--bg); font-weight: 700; }
 
   /* ---------- Hero ---------- */
-  .hero { min-height: calc(100svh - 56px); display: flex; flex-direction: column; justify-content: center; text-align: center;
+  .hero { min-height: calc(100svh - 104px); display: flex; flex-direction: column; justify-content: center; text-align: center;
     background: radial-gradient(ellipse at 50% 40%, rgba(229,72,59,.10), transparent 60%), var(--bg); position: relative; }
   .hero h1 { font-size: clamp(15px, 2.4vw, 18px); font-weight: 500; color: #c9c8c3; margin: 0 0 12px; }
   .big { font-size: clamp(56px, 15vw, 150px); font-weight: 800; color: var(--red); line-height: 1; margin: 8px 0 12px; }
@@ -282,7 +282,7 @@
     </div>
     <div class="bar"><div class="a" id="barA"></div><div class="b" id="barB"></div></div>
     <div class="bar-legend"><span><b style="color:var(--red)">■</b> <span data-i18n="lostL"></span></span><span><b style="color:var(--green)">■</b> <span data-i18n="savedL"></span></span></div>
-    <a class="cta" href="my-day.html"><span data-i18n="ctaK"></span><b data-i18n="ctaV"></b></a>
+    <div id="next" style="margin-top:56px"></div>
   </div>
 </section>
 
@@ -303,19 +303,19 @@
 
 <footer data-i18n="footer"></footer>
 
-<script src="site.js"></script>
+<script src="site.js?v=20261018"></script>
 <script>
 /* ===================== DATA ===================== */
 // 化石燃料CO₂（2023年頃の概算, Global Carbon Project）。世界合計は土地利用変化を含む 40 Gt。
 const COUNTRIES = {
-  world:  { en: 'World',          ja: '世界全体', enIn: 'the whole world',   jaIn: '世界全体', gt: 40,   pop: 8.1e9 },
-  china:  { en: 'China',          ja: '中国',     enIn: 'China',             jaIn: '中国',     gt: 11.9, pop: 1.41e9 },
-  us:     { en: 'United States',  ja: '米国',     enIn: 'the United States', jaIn: '米国',     gt: 4.9,  pop: 3.35e8 },
-  india:  { en: 'India',          ja: 'インド',   enIn: 'India',             jaIn: 'インド',   gt: 3.1,  pop: 1.43e9 },
-  eu:     { en: 'European Union', ja: 'EU',       enIn: 'the EU',            jaIn: 'EU',       gt: 2.6,  pop: 4.48e8 },
+  world:  { en: 'World',          ja: '世界全体', enIn: 'the whole world',   jaIn: '世界全体', gt: 42,   pop: 8.2e9 },
+  china:  { en: 'China',          ja: '中国',     enIn: 'China',             jaIn: '中国',     gt: 12.3, pop: 1.42e9 },
+  us:     { en: 'United States',  ja: '米国',     enIn: 'the United States', jaIn: '米国',     gt: 4.9,  pop: 3.45e8 },
+  india:  { en: 'India',          ja: 'インド',   enIn: 'India',             jaIn: 'インド',   gt: 3.2,  pop: 1.45e9 },
+  eu:     { en: 'European Union', ja: 'EU',       enIn: 'the EU',            jaIn: 'EU',       gt: 2.4,  pop: 4.49e8 },
   russia: { en: 'Russia',         ja: 'ロシア',   enIn: 'Russia',            jaIn: 'ロシア',   gt: 1.8,  pop: 1.44e8 },
-  japan:  { en: 'Japan',          ja: '日本',     enIn: 'Japan',             jaIn: '日本',     gt: 1.0,  pop: 1.24e8 },
-  uk:     { en: 'United Kingdom', ja: '英国',     enIn: 'the UK',            jaIn: '英国',     gt: 0.31, pop: 6.8e7 },
+  japan:  { en: 'Japan',          ja: '日本',     enIn: 'Japan',             jaIn: '日本',     gt: 0.96,  pop: 1.24e8 },
+  uk:     { en: 'United Kingdom', ja: '英国',     enIn: 'the UK',            jaIn: '英国',     gt: 0.31, pop: 6.9e7 },
 };
 // ティッピング等の効果：線形推計に掛ける概算の係数（例示であり査読済みの推計ではない）
 const TIPS = [
@@ -365,11 +365,11 @@ const I18N = {
     formula: 'Annual emissions of {where} <span class="num">≈ {gt}</span> ÷ <span class="num">1,000 t</span>{mult} = <span class="num">≈ {perYear}</span> deaths a year',
     mList: [
       'Calculated from {start}, holding annual emissions of {where} at about {gt} (unless a pathway is chosen).',
-      'By default we show <b>moderate feedbacks (×1.5)</b>. With tipping effects set to “None” it is a <b>conservative lower bound</b>. Tipping multipliers (×1.5 / ×2 / ×3) are <b>rough illustrative assumptions, not peer-reviewed estimates</b>. They show how the linear estimate could grow if feedbacks such as permafrost thaw and forest dieback, and societal cascades (conflict, famine, mass migration), are included.',
+      'By default we show <b>moderate feedbacks (×1.5)</b>. With tipping effects set to “None” it is a <b>conservative lower bound</b>. Tipping multipliers (×1.5 / ×2 / ×3) are <b>rough illustrative assumptions, not peer-reviewed estimates</b>. They show how the linear estimate could grow if feedbacks such as permafrost thaw and forest dieback, and societal cascades (conflict, famine, mass migration), are included. The Global Tipping Points Report 2025 finds that warm-water coral reefs have already passed their tipping point.',
       '“Locked in” means the harm becomes unavoidable once the CO₂ is emitted; the deaths themselves may occur decades later.',
-      'Country figures: fossil CO₂, approx. 2023 (Global Carbon Project). The world total (40 Gt) also includes land-use change, so countries do not add up exactly.',
+      'Country figures: fossil CO₂ in 2024 (Global Carbon Budget 2025, via Our World in Data). The world total (42 Gt) also includes land-use change, so countries do not add up exactly.',
       'War deaths: World War II ≈ 70–85 million (median 80 million shown); World War I ≈ 20 million.',
-      'Pathways: “gradual cuts” = −3% a year; “2 °C pathway” = −7% a year. UNEP frames ~7.5% a year as a 1.5 °C pathway, but judged by the remaining carbon budget, cutting 7% a year from 2025 is closer to 2 °C (<a href="sources.html">why</a>).',
+      'Pathways: “gradual cuts” = −3% a year; “2 °C pathway” = −7% a year. UNEP treats cuts this steep as 1.5 °C pathways (with overshoot), but judged by the remaining carbon budget (Global Carbon Budget 2025), cutting 7% a year from 2025 lands between 1.7 °C and 2 °C (<a href="sources.html">why</a>).',
     ],
     simLink: 'Want to tweak the numbers yourself? Try the <a href="simulator.html">detailed simulator</a>, or see <a href="my-day.html">what your own day adds up to</a>.',
     srcH: 'Sources & further reading', srcAll: 'All sources and key assumptions →',
@@ -412,11 +412,11 @@ const I18N = {
     formula: '{where}の年間排出量 <span class="num">約{gt}</span> ÷ <span class="num">1,000トン</span>{mult} ＝ 年間 <span class="num">約{perYear}</span>',
     mList: [
       '{start}年を起点に、{where}の年間排出量を約{gt}として計算しています（シナリオを選んだ場合を除く）。',
-      '初期表示は<b>中程度のフィードバック（×1.5）</b>です。ティッピング効果を「なし」にすると<b>控えめな下限</b>の推計になります。×1.5／×2／×3 の係数は<b>査読済みの推計ではなく、目安として示した概算</b>です。永久凍土の融解や森林の枯死などのフィードバック、紛争・飢饉・大規模移民といった社会の連鎖的危機を含めた場合に、線形推計がどこまで膨らみうるかを示しています。',
+      '初期表示は<b>中程度のフィードバック（×1.5）</b>です。ティッピング効果を「なし」にすると<b>控えめな下限</b>の推計になります。×1.5／×2／×3 の係数は<b>査読済みの推計ではなく、目安として示した概算</b>です。永久凍土の融解や森林の枯死などのフィードバック、紛争・飢饉・大規模移民といった社会の連鎖的危機を含めた場合に、線形推計がどこまで膨らみうるかを示しています。Global Tipping Points Report 2025 は、暖かい海のサンゴ礁がすでにティッピング・ポイントを超えたと報告しています。',
       '「確定」とは、排出された時点でその被害が避けられなくなるという意味です。実際に亡くなるのは数十年先になることがあります。',
-      '国別の数値：化石燃料由来のCO₂、2023年ごろの概算（Global Carbon Project）。世界合計（40 Gt）は土地利用変化を含むため、各国の合計とは一致しません。',
+      '国別の数値：2024年の化石燃料由来のCO₂（Global Carbon Budget 2025、Our World in Data 経由）。世界合計（42 Gt）は土地利用変化を含むため、各国の合計とは一致しません。',
       '戦争の死者数：第二次世界大戦 約7,000万〜8,500万人（中央値8,000万人で表示）、第一次世界大戦 約2,000万人。',
-      '削減の道筋：「ゆるやかに削減」は年 −3%、「2℃目標の道」は年 −7%。UNEP は年約7.5%を1.5℃の道筋としていますが、残りのカーボンバジェットで判断すると、2025年から年7%の削減は2℃に近い道筋です（<a href="sources.html">理由</a>）。',
+      '削減の道筋：「ゆるやかに削減」は年 −3%、「2℃目標の道」は年 −7%。UNEP はこれほど急な削減を（オーバーシュートを伴う）1.5℃の道筋としていますが、残りのカーボンバジェット（Global Carbon Budget 2025）で判断すると、2025年から年7%の削減は1.7℃〜2℃の間に着地します（<a href="sources.html">理由</a>）。',
     ],
     simLink: '数値を細かく変えて試したい方は <a href="simulator.html">詳細シミュレータ</a> をどうぞ。自分の1日に置き換えるなら <a href="my-day.html">個人シミュレータ</a> へ。',
     srcH: '出典と参考資料', srcAll: 'すべての出典と主な前提 →',
@@ -541,6 +541,7 @@ function render() {
   // Method
   const m = mult() === 1 ? '' : ` × <span class="num">${mult()}</span>`;
   $('formula').innerHTML = t('formula', { where: where(), gt: gtText(C().gt), mult: m, perYear: people(perYear(), state.lang === 'ja') });
+  if (typeof swNav === 'function') { swNav(lang); swNext($('next'), lang); }
   if (typeof swRenderSources === 'function') swRenderSources($('sources'), lang, ['core', 'emissions', 'pathways', 'tipping', 'war', 'further']);
   $('mList').innerHTML = L().mList.map(s => `<li>${s.replace(/\{(\w+)\}/g, (_, k) => ({ start: START, where: where(), gt: gtText(C().gt) })[k])}</li>`).join('');
 }
