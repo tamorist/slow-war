@@ -91,6 +91,9 @@
   .step button { font: inherit; width: 30px; height: 30px; border-radius: 8px; border: 1px solid var(--faint); background: var(--bg3);
     color: var(--text); cursor: pointer; font-size: 16px; line-height: 1; }
   .step b { min-width: 28px; text-align: center; }
+  .dev-row { padding: 8px 0; border-top: 1px solid var(--faint); }
+  .dev-row .lbl { font-size: 13.5px; margin-bottom: 8px; }
+  .dev-row .lbl small { display: block; color: var(--muted); font-size: 11.5px; }
   .shop { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
   .item { position: relative; text-align: left; font: inherit; color: var(--text); background: var(--bg3); border: 1px solid var(--faint);
     border-radius: 12px; padding: 10px 12px; cursor: pointer; line-height: 1.4; }
@@ -353,6 +356,20 @@ const F = {
   shop: { bottle: 0.15, coffee: 0.3, parcel: 0.5, tshirt: 7, jeans: 25, shoes: 14, phone: 70, laptop: 300 },
 };
 const CATS = ['transport', 'food', 'home', 'flights', 'shopping'];
+// 買い物：品物ごとの「ふだん買う頻度」で入力し、飛行機と同じように1日あたりに割り戻す
+const SHOP = {
+  groups: [
+    { id: 'day',   days: 1,           items: ['bottle', 'coffee'] },
+    { id: 'month', days: 365.25 / 12, items: ['parcel'] },
+    { id: 'year',  days: 365.25,      items: ['tshirt', 'jeans', 'shoes'] },
+  ],
+  max: { bottle: 10, coffee: 10, parcel: 60, tshirt: 50, jeans: 20, shoes: 20 },
+  devices: ['phone', 'laptop'], cycles: [0, 2, 3, 4, 5, 7],   // 買い替えの周期（年）。0 ＝ 持っていない
+};
+const shopDays = k => SHOP.groups.find(g => g.items.includes(k)).days;
+const shopPerDay = (d, k) => SHOP.devices.includes(k)
+  ? (d.dev[k] ? F.shop[k] / (d.dev[k] * 365.25) : 0)
+  : F.shop[k] * d.shop[k] / shopDays(k);
 // 食事：Poore & Nemecek (2018, Science) のサプライチェーン段階別の値（Our World in Data 経由の概算）
 // stages = kg CO₂e / kg 食品 [森林破壊・土地利用変化, 農場(メタン・N₂O), 飼料, 加工・輸送・小売・包装]（中央値, GWP100）
 const STAGES = ['luc', 'farm', 'feed', 'post', 'coc'];
@@ -404,7 +421,7 @@ const I18N = {
     title: 'Your Day, at Scale', ctlCountry: 'Region', ctlTip: 'Tipping effects',
     h1: 'Your day, multiplied.',
     lead: 'On its own, one person’s day emits only a few kilograms of CO₂. Multiply it by everyone in a country — or on Earth — and it becomes a count of lives. Tell us how your day went.',
-    cat: { transport: 'Getting around', food: 'Meals', home: 'Heating, cooling & power', flights: 'Flights', shopping: 'Shopping today' },
+    cat: { transport: 'Getting around', food: 'Meals', home: 'Heating, cooling & power', flights: 'Flights', shopping: 'Shopping & stuff' },
     mode: { walk: 'Walk / bike', train: 'Train', bus: 'Bus', ev: 'Electric car', hybrid: 'Hybrid car', car: 'Petrol car' },
     distance: 'Distance today (round trip)',
     mealSlot: ['Breakfast', 'Lunch', 'Dinner'],
@@ -414,7 +431,9 @@ const I18N = {
     applOpt: { low: 'Low', avg: 'Average', high: 'High' },
     flightHint: 'Round trips per year, spread across 365 days',
     fShort: 'Short-haul', fShortD: '~1–2 h each way (domestic, regional)', fLong: 'Long-haul', fLongD: '~12 h each way (e.g. Tokyo–London)',
-    shopHint: 'Tap to add. Emissions from making and shipping each item.',
+    shopHint: 'Enter how often you usually buy each thing. Like flights, it is spread across days. Values cover making and shipping each item.',
+    shopGroup: { day: 'Every day (number per day)', month: 'Every month (number per month)', year: 'Every year (number per year)', dev: 'Devices — how often you replace them' },
+    each: 'each', perDayV: '≈ {kg} kg/day', everyY: 'every {n} yrs', none: 'Don’t own',
     shop: { bottle: 'Bottled drink', coffee: 'Takeaway coffee', parcel: 'Online delivery', tshirt: 'T-shirt', jeans: 'Jeans', shoes: 'Sneakers', phone: 'Smartphone', laptop: 'Laptop' },
     carEq: '≈ {km} km by car',
     gwpLabel: 'How to count methane', gwp100: '100-year (standard, GWP100)', gwp20: '20-year (near-term, GWP20)',
@@ -462,7 +481,7 @@ const I18N = {
       toTrain: 'Take the train instead', toBike: 'Walk or cycle this short trip', beefToChicken: 'Swap beef for chicken',
       onePlant: 'Make one more meal plant-based', eco: 'Set heating/cooling 1 °C milder', keroToAC: 'Switch the heater to an A/C heat pump',
       lessLong: 'One fewer long-haul trip a year', lessShort: 'One fewer short-haul trip a year',
-      noNew: 'Skip new clothes & gadgets (buy used, or wait)', refill: 'Carry a refillable bottle',
+      fewerClothes: 'Buy half as many new clothes (or buy used)', keepDevices: 'Keep your phone and laptop 2 years longer', refill: 'Carry a refillable bottle',
     },
     swD: '<span class="g">−{kg} kg</span>/day · saves {lives} a year in {name}',
     noSwaps: 'Your day is already very low-carbon — nothing obvious left to swap.',
@@ -488,7 +507,7 @@ const I18N = {
     title: 'あなたの1日を、世界の規模で', ctlCountry: '国・地域', ctlTip: 'ティッピング効果',
     h1: 'あなたの1日を、<br>かけ算する。',
     lead: '1人の1日の排出は、数キログラムにすぎません。けれど、それを国の全員、世界の全員でかけ算すると、命の数になります。あなたの今日を選んでみてください。',
-    cat: { transport: '移動', food: '食事', home: '冷暖房・電気', flights: '飛行機', shopping: '今日の買い物' },
+    cat: { transport: '移動', food: '食事', home: '冷暖房・電気', flights: '飛行機', shopping: '買い物・モノ' },
     mode: { walk: '徒歩・自転車', train: '電車', bus: 'バス', ev: '電気自動車', hybrid: 'ハイブリッド車', car: 'ガソリン車' },
     distance: '今日の移動距離（往復）',
     mealSlot: ['朝食', '昼食', '夕食'],
@@ -498,7 +517,9 @@ const I18N = {
     applOpt: { low: '少なめ', avg: 'ふつう', high: '多め' },
     flightHint: '1年間の往復回数を、365日で割って1日あたりに換算',
     fShort: '短距離', fShortD: '片道1〜2時間（国内線など）', fLong: '長距離', fLongD: '片道約12時間（例：東京–ロンドン）',
-    shopHint: 'タップで追加。製造から配送までの排出量です。',
+    shopHint: '品物ごとに、ふだん買う頻度を入れてください。飛行機と同じように、1日あたりに割り戻します。値は製造から配送までの排出量です。',
+    shopGroup: { day: '毎日（1日あたりの数）', month: '毎月（1か月あたりの数）', year: '毎年（1年あたりの数）', dev: '機器（買い替えの周期）' },
+    each: '1個あたり', perDayV: '1日あたり約{kg} kg', everyY: '{n}年ごと', none: '持っていない',
     shop: { bottle: 'ペットボトル飲料', coffee: 'テイクアウトのコーヒー', parcel: 'ネット通販の配送', tshirt: 'Tシャツ', jeans: 'ジーンズ', shoes: 'スニーカー', phone: 'スマートフォン', laptop: 'ノートPC' },
     carEq: '車で約{km} km分',
     gwpLabel: 'メタンの評価期間', gwp100: '100年（標準・GWP100）', gwp20: '20年（短期・GWP20）',
@@ -546,7 +567,7 @@ const I18N = {
       toTrain: '車をやめて電車にする', toBike: 'この距離なら徒歩・自転車にする', beefToChicken: '牛肉を鶏肉にする',
       onePlant: 'もう1食を植物性にする', eco: '冷暖房の設定を1℃ゆるめる', keroToAC: 'ストーブをエアコン暖房に替える',
       lessLong: '長距離フライトを年1回減らす', lessShort: '短距離フライトを年1回減らす',
-      noNew: '新品の服・機器を見送る（中古か、今は買わない）', refill: 'マイボトルを持ち歩く',
+      fewerClothes: '新しい服を半分にする（または古着を選ぶ）', keepDevices: 'スマホとPCを2年長く使う', refill: 'マイボトルを持ち歩く',
     },
     swD: '1日 <span class="g">−{kg} kg</span> ・ {name}全体で年{lives}を救う',
     noSwaps: 'あなたの1日はすでにとても低炭素です。目立って変えられる点は見当たりません。',
@@ -575,7 +596,7 @@ const store = { get(k) { try { return localStorage.getItem(k); } catch (e) { ret
 const S = {
   lang: store.get('scw-lang') === 'ja' ? 'ja' : 'en', country: 'japan', tip: 1, scale: 'country', gwp: 100, coc: false, cocRate: 0.5, basis: 'protein', sel: 'chicken',
   day: { mode: 'car', km: 20, meals: ['veg', 'chicken', 'beef'], hvac: 'cool', hours: 6, eco: false, appl: 'avg',
-         short: 1, long: 1, shop: { coffee: 1, bottle: 1, parcel: 1, tshirt: 0, jeans: 0, shoes: 0, phone: 0, laptop: 0 } },
+         short: 1, long: 1, shop: { bottle: 1, coffee: 1, parcel: 4, tshirt: 5, jeans: 1, shoes: 2 }, dev: { phone: 3, laptop: 5 } },
   swaps: new Set(),
 };
 const $ = id => document.getElementById(id);
@@ -609,7 +630,7 @@ function footprint(d) {
     food: d.meals.reduce((s, m) => s + mealKg(m), 0),
     home: hvac * (d.eco ? F.eco : 1) + F.applKwh[d.appl] * grid,
     flights: (d.short * F.flight.short + d.long * F.flight.long) / 365,
-    shopping: Object.entries(d.shop).reduce((s, [k, n]) => s + F.shop[k] * n, 0),
+    shopping: Object.keys(F.shop).reduce((s, k) => s + shopPerDay(d, k), 0),
   };
   r.total = CATS.reduce((s, c) => s + r[c], 0);
   return r;
@@ -626,8 +647,10 @@ const SWAPS = [
   { id: 'keroToAC',      ok: d => d.hvac === 'kero' && d.hours > 0,                             apply: d => { d.hvac = 'heat'; } },
   { id: 'lessLong',      ok: d => d.long > 0,                                                   apply: d => { d.long = Math.max(0, d.long - 1); } },
   { id: 'lessShort',     ok: d => d.short > 0,                                                  apply: d => { d.short = Math.max(0, d.short - 1); } },
-  { id: 'noNew',         ok: d => ['tshirt', 'jeans', 'shoes', 'phone', 'laptop'].some(k => d.shop[k] > 0),
-    apply: d => { ['tshirt', 'jeans', 'shoes', 'phone', 'laptop'].forEach(k => { d.shop[k] = 0; }); } },
+  { id: 'fewerClothes',  ok: d => ['tshirt', 'jeans', 'shoes'].some(k => d.shop[k] > 0),
+    apply: d => { ['tshirt', 'jeans', 'shoes'].forEach(k => { d.shop[k] /= 2; }); } },
+  { id: 'keepDevices',   ok: d => SHOP.devices.some(k => d.dev[k] > 0),
+    apply: d => { SHOP.devices.forEach(k => { if (d.dev[k]) d.dev[k] += 2; }); } },
   { id: 'refill',        ok: d => d.shop.bottle > 0,                                            apply: d => { d.shop.bottle = 0; } },
 ];
 const deathsPerKg = () => mult() / 1e6;       // 1,000 t = 1e6 kg ≒ 1人
@@ -670,12 +693,18 @@ function buildInputs() {
     </div>
     <div class="block">${head('shopping')}
       <p class="hint">${l.shopHint}</p>
-      <div class="shop">${Object.keys(F.shop).map(k => `
-        <div class="item${d.shop[k] ? ' on' : ''}" data-shop="${k}" role="button" tabindex="0">
-          <b>${l.shop[k]}</b><div class="k num">${F.shop[k]} kg</div><div class="eq">${tpl(l.carEq, { km: fmt(F.shop[k] / F.transport.car) })}</div>
-          ${d.shop[k] ? `<span class="cnt num">${d.shop[k]}</span><button class="minus" data-minus="${k}" aria-label="−">−</button>` : ''}
-        </div>`).join('')}</div>
+      ${SHOP.groups.map(g => `<div class="sub-label">${l.shopGroup[g.id]}</div>${g.items.map(k => `
+        <div class="stepper"><div class="lbl">${l.shop[k]}<small>${shopInfo(k)} · <span class="num" id="pd-${k}"></span></small></div>
+          <div class="step"><button data-sstep="${k}" data-d="-1" aria-label="−">−</button><b class="num" id="sn-${k}">${d.shop[k]}</b><button data-sstep="${k}" data-d="1" aria-label="+">+</button></div></div>`).join('')}`).join('')}
+      <div class="sub-label">${l.shopGroup.dev}</div>
+      ${SHOP.devices.map(k => `<div class="dev-row"><div class="lbl">${l.shop[k]}<small>${shopInfo(k)} · <span class="num" id="pd-${k}"></span></small></div>
+        <div class="chips">${SHOP.cycles.map(y => chip('dev-' + k, y, y ? tpl(l.everyY, { n: y }) : l.none, d.dev[k] === y)).join('')}</div></div>`).join('')}
     </div>`;
+}
+
+function shopInfo(k) {
+  const l = L();
+  return `${F.shop[k]} kg ${l.each} · ${tpl(l.carEq, { km: fmt(F.shop[k] / F.transport.car) })}`;
 }
 
 /* ===================== RENDER ===================== */
@@ -701,6 +730,7 @@ function update() {
   $('kmV').textContent = d.km + ' km';
   if ($('hoursV')) $('hoursV').textContent = d.hours + (S.lang === 'ja' ? ' 時間' : ' h');
   CATS.forEach(k => { $('kg-' + k).textContent = kg(fp[k]) + ' kg'; });
+  Object.keys(F.shop).forEach(k => { const v = shopPerDay(d, k); $('pd-' + k).textContent = v ? tpl(l.perDayV, { kg: v >= 0.1 ? v.toFixed(2) : v.toFixed(3) }) : '—'; });
 
   // 合計と内訳
   $('total').textContent = kg(fp.total);
@@ -866,8 +896,7 @@ document.addEventListener('click', e => {
   if (t.dataset.scale) { S.scale = t.dataset.scale; update(); return; }
   if (t.dataset.swap) { S.swaps.has(t.dataset.swap) ? S.swaps.delete(t.dataset.swap) : S.swaps.add(t.dataset.swap); update(); return; }
   if (t.dataset.step) { const k = t.dataset.step; d[k] = Math.min(20, Math.max(0, d[k] + +t.dataset.d)); $('n-' + k).textContent = d[k]; update(); return; }
-  if (t.dataset.minus) { e.stopPropagation(); d.shop[t.dataset.minus] = Math.max(0, d.shop[t.dataset.minus] - 1); buildInputs(); update(); return; }
-  if (t.dataset.shop) { d.shop[t.dataset.shop] = Math.min(20, d.shop[t.dataset.shop] + 1); buildInputs(); update(); return; }
+  if (t.dataset.sstep) { const k = t.dataset.sstep; d.shop[k] = Math.min(SHOP.max[k], Math.max(0, Math.round(d.shop[k]) + +t.dataset.d)); $('sn-' + k).textContent = d.shop[k]; update(); return; }
   if (t.dataset.g) {
     const g = t.dataset.g, v = t.dataset.v;
     if (g === 'gwp') { S.gwp = +v; buildInputs(); update(); return; }
@@ -877,6 +906,7 @@ document.addEventListener('click', e => {
     if (g === 'mode') d.mode = v;
     else if (g === 'hvac') { d.hvac = v; $('hvacMore').hidden = v === 'off'; }
     else if (g === 'appl') d.appl = v;
+    else if (g.startsWith('dev-')) d.dev[g.slice(4)] = +v;
     else if (g.startsWith('meal')) d.meals[+g.slice(4)] = v;
     t.parentElement.querySelectorAll('.chip').forEach(b => b.setAttribute('aria-pressed', String(b === t)));
     update();
