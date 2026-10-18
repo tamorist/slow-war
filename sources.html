@@ -78,7 +78,7 @@
 
 <footer data-i18n="footer"></footer>
 
-<script src="site.js?v=20261019k"></script>
+<script src="site.js?v=20261019l"></script>
 <script>
 const I18N = {
   en: {
@@ -100,7 +100,8 @@ const I18N = {
       ['Land’s lost carbon', 'Land used × 0.1–1.5 kg CO₂/m²/yr (default 0.5)', 'Our estimate, guided by Cook-Patton et al. (2020), Searchinger et al. (2018)', 'est'],
       ['Transport, power, products', 'Typical factors; grid factor by region', 'UK DESNZ, MLIT, Ember / OWID; product values approximate', 'est'],
       ['Whole picture (personal simulator)', 'Consumption-based footprint per person, split households 72% / government 10% / investment 18%', 'Global Carbon Budget & Our World in Data (2023–24); Hertwich & Peters (2009). Rough estimate', 'est'],
-      ['Hot water and electricity plan', 'Shower ≈ 3.5 kWh of heat per person a day, daily bath ≈ 4.4 kWh; heater efficiency gas 0.85 / electric 0.9 / heat pump 3; city gas ≈ 0.05 kg CO₂/MJ; renewable plan 0.03 kg/kWh', 'Our physical estimate (water volume × temperature rise); typical efficiencies', 'est'],
+      ['Household size by region', 'Japan 2.2, US 2.5, UK 2.4, EU 2.3, China 2.6, Russia 2.5, India 4.4, world ≈ 3.5 (rounded); bath default: daily bath in Japan, shower elsewhere', 'National statistics / UN DESA (rounded); other defaults are Japan-based', 'est'],
+      ['Hot water and electricity plan', 'Shower ≈ 3.5 kWh of heat per person a day; daily bath ≈ 5.8 kWh shared by the household + a short shower (≈ 4.4 kWh in Japan); heater efficiency gas 0.85 / electric 0.9 / heat pump 3; city gas ≈ 0.05 kg CO₂/MJ; renewable plan 0.03 kg/kWh', 'Our physical estimate (water volume × temperature rise); typical efficiencies', 'est'],
       ['Shopping: item frequencies', 'Assumed (e.g. 5 T-shirts a year, a phone every 3 years), spread across days', 'Our assumption; per-item footprints approximate (e.g. Berners-Lee 2020)', 'est'],
       ['Shopping: big purchases', 'Making a petrol car ≈ 7 t; building a wooden house ≈ 34 t; a fridge ≈ 0.25 t, an A/C ≈ 0.31 t, a bed ≈ 0.44 t; spread over assumed lifetimes and household size', 'Transport & Environment; MLIT (Wood Miles group); ADEME Impact CO2; Cabinet Office (years of use)', 'est'],
       ['Shopping: average consumer goods', 'Japan ≈ 1,030 kg/yr; Canada 2.5 t, UK 1.0 t, Finland 1.4 t, China 0.4 t, India under 0.1 t (2019); high-income average derived. Rough guide only: values vary a lot by method', 'Hot or Cool Institute (2021) Table 3.1; IGES et al. (2019)', 'data'],
@@ -130,7 +131,8 @@ const I18N = {
       ['土地の機会費用', '使っている農地 × 年0.1〜1.5 kg CO₂/m²（初期値0.5）', '私たちの概算（Cook-Patton ら 2020、Searchinger ら 2018 を参考）', 'est'],
       ['交通・電気・製品', '代表的な係数。電気は地域別の係数', '英国 DESNZ、国土交通省、Ember / OWID。製品の値は概算', 'est'],
       ['全体像（個人シミュレータ）', '1人あたりの消費ベースの排出を、家庭72%・政府10%・投資18%に分割', 'Global Carbon Budget・Our World in Data（2023〜24年）、Hertwich & Peters (2009)。概算', 'est'],
-      ['給湯と電気の契約', 'シャワー 1人1日 約3.5 kWh分の熱、毎日の湯船 約4.4 kWh。給湯器の効率はガス0.85・電気温水器0.9・ヒートポンプ3。都市ガス 約0.05 kg CO₂/MJ。再エネプラン 0.03 kg/kWh', '私たちの物理的な概算（湯量 × 温度差）と一般的な効率', 'est'],
+      ['国・地域ごとの世帯人数', '日本2.2、米国2.5、英国2.4、EU 2.3、中国2.6、ロシア2.5、インド4.4、世界 約3.5（概数）。お風呂の初期設定は日本が毎日湯船、ほかはシャワー', '各国統計・国連の概数。そのほかの初期設定は日本の条件', 'est'],
+      ['給湯と電気の契約', 'シャワー 1人1日 約3.5 kWh分の熱。毎日の湯船は約5.8 kWhを世帯で分け、短いシャワーを足す（日本では約4.4 kWh）。給湯器の効率はガス0.85・電気温水器0.9・ヒートポンプ3。都市ガス 約0.05 kg CO₂/MJ。再エネプラン 0.03 kg/kWh', '私たちの物理的な概算（湯量 × 温度差）と一般的な効率', 'est'],
       ['買い物：品物の頻度', '想定の頻度（例：Tシャツ年5枚、スマホ3年に1台）で1日あたりに割り戻し', '私たちの想定。品物ごとの排出は概算（Berners-Lee 2020 など）', 'est'],
       ['買い物：大きな買い物', 'ガソリン車の製造 約7 t、木造戸建ての建設 約34 t、冷蔵庫 約0.25 t・エアコン 約0.31 t・ベッド 約0.44 tの製造。想定の使用年数と世帯人数で割り戻し', 'Transport & Environment、国土交通省（ウッドマイルズ研究会の試算）、ADEME Impact CO2、内閣府（平均使用年数）', 'est'],
       ['買い物：平均的な消費財', '日本 年約1,030 kg。カナダ2.5 t、英国1.0 t、フィンランド1.4 t、中国0.4 t、インド0.1 t未満（2019年）。高所得国の平均は計算値。手法で大きく変わるため目安', 'Hot or Cool Institute (2021) 表3.1、IGES ほか (2019)', 'data'],

@@ -162,6 +162,7 @@
   details.adv > summary { cursor: pointer; color: var(--muted); font-size: 12.5px; }
   details.adv > summary:hover { color: var(--text); }
   details.adv[open] > summary { color: var(--text); margin-bottom: 4px; }
+  .region-note { margin-top: 6px; color: var(--amber); }
   .whole { margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--faint); }
   .whole > summary { cursor: pointer; font-size: 12.5px; color: #c9c8c3; list-style: revert; }
   .whole > summary:hover { color: var(--text); }
@@ -396,18 +397,18 @@
 
 <div class="mbar"><div><span data-i18n="mToday"></span><br><b class="num" id="mKg">0</b> kg CO₂</div><div class="r" style="text-align:right"><span id="mScale"></span><br><b class="num" id="mImp">—</b></div></div>
 
-<script src="site.js?v=20261019k"></script>
+<script src="site.js?v=20261019l"></script>
 <script>
 /* ===================== DATA ===================== */
 const COUNTRIES = {
-  world:  { en: 'World',          ja: '世界全体', enIn: 'the world',         jaIn: '世界',   gt: 42,   pop: 8.2e9,  grid: 0.48, area: 104e6, cb: 6.73 },
-  china:  { en: 'China',          ja: '中国',     enIn: 'China',             jaIn: '中国',   gt: 12.3, pop: 1.42e9, grid: 0.55, area: 9.6e6, cb: 8.76 },
-  us:     { en: 'United States',  ja: '米国',     enIn: 'the United States', jaIn: '米国',   gt: 4.9,  pop: 3.45e8, grid: 0.37, area: 9.83e6, cb: 19.52 },
-  india:  { en: 'India',          ja: 'インド',   enIn: 'India',             jaIn: 'インド', gt: 3.2,  pop: 1.45e9, grid: 0.70, area: 3.29e6, cb: 2.36 },
-  eu:     { en: 'European Union', ja: 'EU',       enIn: 'the EU',            jaIn: 'EU',     gt: 2.4,  pop: 4.49e8, grid: 0.25, area: 4.23e6, cb: 9.17 },
-  russia: { en: 'Russia',         ja: 'ロシア',   enIn: 'Russia',            jaIn: 'ロシア', gt: 1.8,  pop: 1.44e8, grid: 0.35, area: 17.1e6, cb: 14.82 },
-  japan:  { en: 'Japan',          ja: '日本',     enIn: 'Japan',             jaIn: '日本',   gt: 0.96,  pop: 1.24e8, grid: 0.45, area: 0.378e6, cb: 9.62 },
-  uk:     { en: 'United Kingdom', ja: '英国',     enIn: 'the UK',            jaIn: '英国',   gt: 0.31, pop: 6.9e7,  grid: 0.20, area: 0.244e6, cb: 8.85 },
+  world:  { en: 'World',          ja: '世界全体', enIn: 'the world',         jaIn: '世界',   gt: 42,   pop: 8.2e9,  grid: 0.48, area: 104e6, cb: 6.73, hh: 3.5 },
+  china:  { en: 'China',          ja: '中国',     enIn: 'China',             jaIn: '中国',   gt: 12.3, pop: 1.42e9, grid: 0.55, area: 9.6e6, cb: 8.76, hh: 2.6 },
+  us:     { en: 'United States',  ja: '米国',     enIn: 'the United States', jaIn: '米国',   gt: 4.9,  pop: 3.45e8, grid: 0.37, area: 9.83e6, cb: 19.52, hh: 2.5 },
+  india:  { en: 'India',          ja: 'インド',   enIn: 'India',             jaIn: 'インド', gt: 3.2,  pop: 1.45e9, grid: 0.70, area: 3.29e6, cb: 2.36, hh: 4.4 },
+  eu:     { en: 'European Union', ja: 'EU',       enIn: 'the EU',            jaIn: 'EU',     gt: 2.4,  pop: 4.49e8, grid: 0.25, area: 4.23e6, cb: 9.17, hh: 2.3 },
+  russia: { en: 'Russia',         ja: 'ロシア',   enIn: 'Russia',            jaIn: 'ロシア', gt: 1.8,  pop: 1.44e8, grid: 0.35, area: 17.1e6, cb: 14.82, hh: 2.5 },
+  japan:  { en: 'Japan',          ja: '日本',     enIn: 'Japan',             jaIn: '日本',   gt: 0.96,  pop: 1.24e8, grid: 0.45, area: 0.378e6, cb: 9.62, hh: 2.2 },
+  uk:     { en: 'United Kingdom', ja: '英国',     enIn: 'the UK',            jaIn: '英国',   gt: 0.31, pop: 6.9e7,  grid: 0.20, area: 0.244e6, cb: 8.85, hh: 2.4 },
 };
 const TIPS = [
   { m: 1,   en: 'None (1,000-ton rule only)',     ja: 'なし（1,000トン・ルールのみ）' },
@@ -423,7 +424,8 @@ const F = {
   hvacKwhPerH: { cool: 0.5, heat: 0.8 }, keroKgPerH: 0.6, eco: 0.9,
   // 給湯（1人1日あたりに必要な熱、kWh）：シャワー10分 ≒ 120 L を25℃温める ≒ 3.5 kWh、
   // 湯船（約200 Lを世帯2.2人で分ける）＋短いシャワー ≒ 4.4 kWh。給湯器の効率で割ってエネルギー量にする
-  water: { shower: 3.5, bath: 4.4 }, waterEff: { gas: 0.85, electric: 0.9, heatpump: 3.0 },
+  water: { shower: 3.5, tub: 5.8, short: 1.75 },   // 湯船（約200 L）は世帯人数で分け、短いシャワー分を足す
+  waterEff: { gas: 0.85, electric: 0.9, heatpump: 3.0 },
   gasKgPerKwh: 0.18,   // 都市ガス ≒ 0.05 kg CO₂/MJ
   greenGrid: 0.03,     // 再エネ100%プランの電気（kg CO₂e/kWh、ライフサイクルの目安）
   applKwh: { low: 1.5, avg: 3, high: 5 },   // 冷暖房以外の電気（1人1日あたりの kWh、目安）
@@ -437,6 +439,11 @@ const CATS = ['transport', 'food', 'home', 'flights', 'shopping'];
 // EU は加盟27か国の人口加重平均、世界は世界の温室効果ガス総量 ÷ 人口。いずれも概算。
 // 最終需要の内訳は世界全体の推計を当てはめる（家庭72%・政府10%・投資18%, Hertwich & Peters 2009）。
 const FINAL = { household: 0.72, government: 0.10, investment: 0.18 };
+// hh ＝ 平均世帯人数（各国統計の概数）。湯船・冷蔵庫・エアコン・家を世帯で分ける計算に使う。想定頻度は日本（2.2人）基準で、他の国はこの比で補正する
+const HH_JP = 2.2;
+const hhOf = () => C().hh;
+const SHARED = ['fridge', 'aircon', 'house'];
+const hhAdj = k => SHARED.includes(k) ? HH_JP / hhOf() : 1;
 // 買い物は2種類：
 //   daily    … この1日を毎日続けるもの（数をそのまま1日分として数える）
 //   periodic … ときどき買うもの（想定の頻度 perYear で1日あたりに割り戻す）
@@ -476,15 +483,15 @@ const itemsDaily = d => SHOP.periodic.reduce((a, k) => a + shopPerDay(d, k), 0);
 const drinksDaily = d => SHOP.daily.reduce((a, k) => a + shopPerDay(d, k), 0);
 // その他のモノ：「平均に合わせる」は、参考の平均から上の品物の分を引いた残り
 // 上の品物の初期設定の分（1日あたり）。ときどき買うものを想定頻度ですべて含めた場合
-const DEFAULT_ITEMS = SHOP.periodic.reduce((a, k) => a + F.shop[k] * SHOP.perYear[k] / 365.25, 0);
+const defaultItems = () => SHOP.periodic.reduce((a, k) => a + F.shop[k] * SHOP.perYear[k] * hhAdj(k) / 365.25, 0);
 // その他のモノ：上の品物を初期設定のままにしたとき、買い物全体が「比べる平均 × 倍率」になる量
 // （品物を外したり増やしたりすると、その分だけ合計が変わる）
 const shopTarget = o => SHOP.other[o] * goodsRefDaily();
-const otherFor = o => o === 'none' ? 0 : Math.max(0, shopTarget(o) - DEFAULT_ITEMS);
+const otherFor = o => o === 'none' ? 0 : Math.max(0, shopTarget(o) - defaultItems());
 const otherDaily = d => otherFor(d.other);
 const shopPerDay = (d, k) => SHOP.daily.includes(k)
   ? F.shop[k] * d.shop[k]
-  : (d.own[k] ? F.shop[k] * d.per[k] / 365.25 : 0);
+  : (d.own[k] ? F.shop[k] * d.per[k] * hhAdj(k) / 365.25 : 0);
 const shopItems = () => [...SHOP.daily, ...SHOP.periodic];
 // 食事：Poore & Nemecek (2018, Science) のサプライチェーン段階別の値（Our World in Data 経由の概算）
 // stages = kg CO₂e / kg 食品 [森林破壊・土地利用変化, 農場(メタン・N₂O), 飼料, 加工・輸送・小売・包装]（中央値, GWP100）
@@ -548,13 +555,15 @@ const I18N = {
     bathLbl: 'Bath and hot water', bathOpt: { shower: 'Shower only', bath: 'A bath every day' },
     heaterLbl: 'Water heater', heaterOpt: { gas: 'Gas', electric: 'Electric (resistance)', heatpump: 'Heat pump' },
     powerLbl: 'Electricity plan', powerOpt: { grid: 'Standard (regional average)', green: '100% renewable plan' },
+    homeKg: 'home {kg} kg',
+    regionNote: 'In {where}: electricity ≈ {grid} kg CO₂/kWh, average household ≈ {hh} people (used to share the bath, fridge, A/C and home). Other defaults are based on Japan.',
     powerHint: 'A 100% renewable plan is counted as low-carbon electricity (0.03 kg CO₂e per kWh here). Some plans rely on certificates, so the real effect varies by plan.',
     flightHint: 'Round trips per year, spread across 365 days',
     fShort: 'Short-haul', fShortD: '~1–2 h each way (domestic, regional)', fLong: 'Long-haul', fLongD: '~12 h each way (e.g. Tokyo–London)',
     shopHint: 'Values cover making and shipping each item.',
     shopDailyH: 'Drinks (every day)', shopDailyD: 'Bought drinks — counted as if every day. Tap to add. (Meals above do not include drinks.)',
     shopPerH: 'Now and then', shopPerD: 'Things you buy occasionally — spread across days using the assumed frequency on each card. Tap to include or leave out.',
-    freq: { parcel: 'once a week', tshirt: '5 a year', jeans: '1 a year', shoes: '2 pairs a year', phone: 'one every 3 years', laptop: 'one every 5 years', fridge: 'used 13 years, one per household (≈ one per person every 29 years)', aircon: 'used 13.5 years, ~3 per household (≈ one per person every 10 years)', bed: 'one per person, used 15 years (our assumption)', car: 'replaced every 13 years, shared by 2 (≈ one per person every 26 years)', house: 'used 35 years, shared by 2.2 people (≈ one per person every 77 years)' },
+    freq: { parcel: 'once a week', tshirt: '5 a year', jeans: '1 a year', shoes: '2 pairs a year', phone: 'one every 3 years', laptop: 'one every 5 years', fridge: 'used 13 years, one per household of {hh}', aircon: 'used 13.5 years, ~3 per household of {hh}', bed: 'one per person, used 15 years (our assumption)', car: 'replaced every 13 years, shared by 2 (≈ one per person every 26 years)', house: 'used 35 years, shared by a household of {hh}' },
     assumed: 'Assumed: {f}', perDayV: '→ {kg} kg/day', perDayD: '{kg} kg/day',
     otherH: 'Everything else you buy', otherD: 'Appliances, furniture, toiletries, books, toys… things not listed above. How much do you buy compared with the average person you chose?',
     otherOpt: { low: 'Less (half the average)', mid: 'Average', high: 'More (twice the average)' },
@@ -648,7 +657,8 @@ const I18N = {
       '<b>Rough estimates.</b> Emission factors are approximate lifecycle values; published figures vary by up to ~2× depending on source, region and method.',
       '<b>Food</b> uses supply-chain values from Poore &amp; Nemecek (2018, <i>Science</i>) via Our World in Data: median greenhouse-gas emissions and mean land use per kg, for a 120 g main portion (150 g tofu) plus rice and vegetables. Methane and N₂O are converted to CO₂-equivalent (100- or 20-year basis, as selected).',
       'Electricity uses an approximate grid factor for {where}: <b>{grid} kg CO₂/kWh</b>. Electric-car and air-con emissions change with the region you choose.',
-      'Your total covers only the activities above. The national average also includes industry, public services, construction and more, so it is usually higher.',
+      '<b>What changes with the region:</b> the electricity factor, population and national averages, household size (used to share the bath, appliances and the home) and the default bath habit (a daily bath in Japan, a shower elsewhere). Other assumptions — the default day, appliance and house lifetimes, a car shared by two, kerosene heaters — are based on Japan.',
+      'Your total covers only the activities above. The household average also includes eating out, services, home upkeep and more, so it is usually higher — see the whole-picture bar.',
       'Deaths use the 1,000-ton rule (1 t CO₂ ≈ 0.001 future deaths) × the tipping multiplier you select.',
       '<b>This is not about blame.</b> One person’s choices are tiny on their own. The point is what becomes possible when habits — and the systems behind them — change at scale.',
     ],
@@ -673,13 +683,15 @@ const I18N = {
     bathLbl: 'お風呂・給湯', bathOpt: { shower: 'シャワーのみ', bath: '毎日湯船につかる' },
     heaterLbl: '給湯器', heaterOpt: { gas: 'ガス', electric: '電気温水器', heatpump: 'ヒートポンプ（エコキュート）' },
     powerLbl: '電気の契約', powerOpt: { grid: 'ふつう（地域の平均）', green: '再エネ100%プラン' },
+    homeKg: '住まい {kg} kg',
+    regionNote: '{where}では、電気は1 kWhあたり約{grid} kg CO₂、平均世帯人数は約{hh}人として計算しています（湯船・冷蔵庫・エアコン・家を世帯で分ける計算に使います）。そのほかの初期設定は日本の条件にもとづきます。',
     powerHint: '再エネ100%のプランは、排出の小さい電気（ここでは1 kWhあたり0.03 kg CO₂e）として計算します。証書を使うプランもあり、実際の効果はプランによって違います。',
     flightHint: '1年間の往復回数を、365日で割って1日あたりに換算',
     fShort: '短距離', fShortD: '片道1〜2時間（国内線など）', fLong: '長距離', fLongD: '片道約12時間（例：東京–ロンドン）',
     shopHint: '値は製造から配送までの排出量です。',
     shopDailyH: '飲み物（毎日）', shopDailyD: '買った飲み物。この1日を毎日続けるとして数えます。タップで追加（上の食事には飲み物は含まれていません）。',
     shopPerH: 'ときどき買うもの', shopPerD: 'ときどき買うもの。各カードの想定頻度で、1日あたりに割り戻します。タップで入れる／外す。',
-    freq: { parcel: '週1回', tshirt: '年5枚', jeans: '年1本', shoes: '年2足', phone: '3年に1台', laptop: '5年に1台', fridge: '13年使用・世帯で1台（1人あたり約29年に1台）', aircon: '13.5年使用・世帯に約3台（1人あたり約10年に1台）', bed: '1人1台・15年使用（私たちの想定）', car: '13年ごとに買い替え・2人で1台（1人あたり26年に1台）', house: '35年使用・2.2人で1棟（1人あたり77年に1棟）' },
+    freq: { parcel: '週1回', tshirt: '年5枚', jeans: '年1本', shoes: '年2足', phone: '3年に1台', laptop: '5年に1台', fridge: '13年使用・世帯（{hh}人）で1台', aircon: '13.5年使用・世帯（{hh}人）に約3台', bed: '1人1台・15年使用（私たちの想定）', car: '13年ごとに買い替え・2人で1台（1人あたり26年に1台）', house: '35年使用・世帯（{hh}人）で1棟' },
     assumed: '想定：{f}', perDayV: '→ 1日 {kg} kg', perDayD: '1日 {kg} kg',
     otherH: 'その他のモノ', otherD: '家電・家具・日用品・本・おもちゃなど、上にない買い物。「比べる平均」の人と比べて、どのくらい買うかを選んでください。',
     otherOpt: { low: '少なめ（平均の半分）', mid: '平均並み', high: '多め（平均の2倍）' },
@@ -773,7 +785,8 @@ const I18N = {
       '<b>概算です。</b>排出係数はライフサイクル全体の目安で、出典・地域・算定方法によって最大2倍ほど違います。',
       '<b>食事</b>は Poore &amp; Nemecek（2018年、<i>Science</i>）のサプライチェーン段階別の値（Our World in Data 経由）を使っています。温室効果ガスは1kgあたりの中央値、土地は平均値で、主菜120 g（豆腐は150 g）にごはん・野菜を加えて計算しています。メタンとN₂OはCO₂換算です（選んだ100年／20年の基準）。',
       '電気は{where}の電力の概算係数 <b>{grid} kg CO₂/kWh</b> で計算しています。電気自動車やエアコンの排出は、選んだ国・地域によって変わります。',
-      'あなたの合計は上の項目だけです。国の平均には産業・公共サービス・建設なども含まれるため、ふつうはそれより高くなります。',
+      '<b>国・地域で変わるもの：</b>電気の排出係数、人口と国の平均値、世帯人数（湯船・家電・家を分ける計算）、お風呂の初期設定（日本は毎日湯船、ほかはシャワー）。そのほかの前提（初期設定の1日、家電や家の使用年数、車を2人で1台、石油ストーブなど）は日本の条件にもとづきます。',
+      'あなたの合計は上の項目だけです。生活由来の平均には外食・サービス・住まいの維持なども含まれるため、ふつうはそれより高くなります（全体像の帯を参照）。',
       '犠牲者数は1,000トン・ルール（CO₂ 1トン ≒ 将来の死者0.001人）に、選んだティッピング係数を掛けて求めています。',
       '<b>個人を責めるためのものではありません。</b>1人の選択だけでは小さな数字です。大切なのは、習慣と、それを支える社会の仕組みが大きな規模で変わったときに何が起きるかです。',
     ],
@@ -819,7 +832,8 @@ const span = days => days >= 365 ? tpl(L().years, { n: fmt(days / 365) }) : tpl(
 
 /* ===================== MODEL ===================== */
 const gridOf = d => d.green ? F.greenGrid : C().grid;
-const waterKg = d => d.heater === 'gas' ? F.water[d.bath] / F.waterEff.gas * F.gasKgPerKwh : F.water[d.bath] / F.waterEff[d.heater] * gridOf(d);
+const waterHeat = d => d.bath === 'shower' ? F.water.shower : F.water.tub / hhOf() + F.water.short;
+const waterKg = (d, heater = d.heater) => heater === 'gas' ? waterHeat(d) / F.waterEff.gas * F.gasKgPerKwh : waterHeat(d) / F.waterEff[heater] * gridOf(d);
 function footprint(d) {
   const grid = gridOf(d);
   const perKm = d.mode === 'ev' ? F.evKwhPerKm * grid : F.transport[d.mode];
@@ -896,12 +910,13 @@ function buildInputs() {
       <div class="sub-label">${l.appl}</div>
       <div class="chips">${Object.keys(F.applKwh).map(a => chip('appl', a, l.applOpt[a], d.appl === a)).join('')}</div>
       <div class="sub-label">${l.bathLbl}</div>
-      <div class="chips">${Object.keys(F.water).map(b => chip('bath', b, l.bathOpt[b], d.bath === b)).join('')}</div>
+      <div class="chips">${['shower', 'bath'].map(b => chip('bath', b, l.bathOpt[b], d.bath === b)).join('')}</div>
       <div class="sub-label">${l.heaterLbl}</div>
-      <div class="chips">${Object.keys(F.waterEff).map(h => chip('heater', h, l.heaterOpt[h], d.heater === h)).join('')}</div>
+      <div class="chips">${Object.keys(F.waterEff).map(h => chip('heater', h, l.heaterOpt[h], d.heater === h, `<small id="hk-${h}"></small>`)).join('')}</div>
       <div class="sub-label">${l.powerLbl}</div>
-      <div class="chips">${['grid', 'green'].map(g => chip('power', g, l.powerOpt[g], d.green === (g === 'green'))).join('')}</div>
+      <div class="chips">${['grid', 'green'].map(g => chip('power', g, l.powerOpt[g], d.green === (g === 'green'), `<small id="pk-${g}"></small>`)).join('')}</div>
       <p class="hint" style="margin-top:8px">${l.powerHint}</p>
+      <p class="hint region-note" id="regionNote"></p>
     </div>
     <div class="block">${head('flights')}
       <p class="hint">${l.flightHint}</p>
@@ -913,7 +928,7 @@ function buildInputs() {
       <p class="hint">${l.shopHint}</p>
       <div class="shop-h"><b>${l.totH}</b><span>${l.totD}</span></div>
       <div class="ref-row"><span>${l.refLbl}</span><select id="goodsRef">${Object.entries(GOODS_REF).map(([k, r]) => `<option value="${k}"${k === goodsRefKey() ? ' selected' : ''}>${r[S.lang]}</option>`).join('')}</select></div>
-      <div class="chips">${['low', 'mid', 'high'].map(o => chip('other', o, l.otherOpt[o], d.other === o, `<small>${tpl(l.otherTot, { kg: Math.max(shopTarget(o), DEFAULT_ITEMS).toFixed(1) })}</small>`)).join('')}</div>
+      <div class="chips">${['low', 'mid', 'high'].map(o => chip('other', o, l.otherOpt[o], d.other === o, `<small>${tpl(l.otherTot, { kg: Math.max(shopTarget(o), defaultItems()).toFixed(1) })}</small>`)).join('')}</div>
       <p class="hint" style="margin-top:8px" id="otherRef"></p>
       <details class="ref-note"><summary>${l.refNoteH}</summary><ul>${l.refNote.map(x => `<li>${x}</li>`).join('')}</ul></details>
       <div class="shop-brk">
@@ -935,7 +950,7 @@ function shopCard(k) {
   return `<div class="item per${d.own[k] ? ' on' : ' off'}" data-own="${k}" role="button" tabindex="0" aria-pressed="${d.own[k]}" style="--ic:${SHOP.colors[k]}">
     <span class="tick"></span><span class="swatch"></span>
     <b>${l.shop[k]}</b><div class="big-kg num">${fmt(F.shop[k])} kg</div><div class="eq">${tpl(l.carEq, { km: fmt(F.shop[k] / F.transport.car) })}</div>
-    <div class="assume">${tpl(l.assumed, { f: l.freq[k] })}<br><span class="num">${tpl(l.perDayV, { kg: shopKg(F.shop[k] * SHOP.perYear[k] / 365.25) })}</span></div>
+    <div class="assume">${tpl(l.assumed, { f: tpl(l.freq[k], { hh: hhOf() }) })}<br><span class="num">${tpl(l.perDayV, { kg: shopKg(F.shop[k] * SHOP.perYear[k] * hhAdj(k) / 365.25) })}</span></div>
   </div>`;
 }
 
@@ -968,12 +983,17 @@ function update() {
     ...SHOP.big.map(k => ({ k, v: shopPerDay(d, k), name: l.shop[k] }))];
   const scale = Math.max(4, fp.shopping, refD * 1.1);
   $('refMark').style.left = (refD / scale * 100) + '%';
-  $('otherRef').textContent = tpl(l.otherRef, { ref: ref[S.lang], y: fmt(ref.t * 1000), d: refD < 0.1 ? refD.toFixed(2) : refD.toFixed(1), p: pctTxt(ref.t / ref.total * 100), i: DEFAULT_ITEMS.toFixed(1) })
-    + (shopTarget(d.other) < DEFAULT_ITEMS ? l.otherOver : '');
+  $('otherRef').textContent = tpl(l.otherRef, { ref: ref[S.lang], y: fmt(ref.t * 1000), d: refD < 0.1 ? refD.toFixed(2) : refD.toFixed(1), p: pctTxt(ref.t / ref.total * 100), i: defaultItems().toFixed(1) })
+    + (shopTarget(d.other) < defaultItems() ? l.otherOver : '');
   $('brkTotal').textContent = kg(fp.shopping) + ' kg';
   $('brkBar').innerHTML = parts.filter(p => p.v > 0).map(p => `<span style="width:${p.v / scale * 100}%;background:${SHOP.colors[p.k]}" title="${p.name}: ${shopKg(p.v)} kg"></span>`).join('');
   $('brkLeg').innerHTML = parts.map(p => `<div class="${p.v > 0 ? '' : 'off'}"><i style="background:${SHOP.colors[p.k]}"></i>${p.name}<span class="num">${p.v > 0 ? shopKg(p.v) + ' kg · ' + Math.round(p.v / fp.shopping * 100) + '%' : l.excluded}</span></div>`).join('');
   $('brkShare').innerHTML = tpl(l.shareLine, { p: fp.total ? Math.round(fp.shopping / fp.total * 100) : 0, r: pctTxt(ref.t / ref.total * 100), ref: S.lang === 'ja' ? ref.sja : ref.sen });
+
+  // 給湯器・電気の契約：選んだ国での1日あたりの値を各ボタンに表示
+  Object.keys(F.waterEff).forEach(h => { $('hk-' + h).textContent = kg(waterKg(d, h)) + ' kg'; });
+  ['grid', 'green'].forEach(g => { const alt = { ...d, green: g === 'green' }; $('pk-' + g).textContent = tpl(l.homeKg, { kg: kg(footprint(alt).home) }); });
+  $('regionNote').textContent = tpl(l.regionNote, { where: cname(), hh: hhOf(), grid: gridOf({ ...d, green: false }) });
 
   // 合計と内訳
   $('total').textContent = kg(fp.total);
@@ -1064,7 +1084,7 @@ function update() {
     ...Object.keys(F.transport).map(m => [l.mode[m], (m === 'ev' ? +(F.evKwhPerKm * c.grid).toFixed(3) : F.transport[m]) + ' kg ' + fr.perKm]),
     ...Object.keys(MEAL.portion).map(m => [l.meal[m], mealKg(m).toFixed(2) + ' kg ' + fr.perMeal + (S.gwp === 20 ? ' (GWP20)' : '') + (S.coc ? ' +COC' : '')]),
     [l.hvac.cool, F.hvacKwhPerH.cool + ' kWh ' + fr.perH], [l.hvac.heat, F.hvacKwhPerH.heat + ' kWh ' + fr.perH], [l.hvac.kero, F.keroKgPerH + ' kg ' + fr.perH],
-    ...Object.keys(F.water).map(b => [l.bathLbl + ' — ' + l.bathOpt[b], F.water[b] + ' kWh ' + fr.perDay]),
+    ...['shower', 'bath'].map(b => [l.bathLbl + ' — ' + l.bathOpt[b], waterHeat({ ...d, bath: b }).toFixed(1) + ' kWh ' + fr.perDay]),
     [l.powerOpt.green, F.greenGrid + ' kg / kWh'],
     ...Object.keys(F.applKwh).map(a => [l.appl + ' — ' + l.applOpt[a], F.applKwh[a] + ' kWh ' + fr.perDay]),
     [l.fShort, F.flight.short + ' kg ' + fr.perTrip], [l.fLong, F.flight.long + ' kg ' + fr.perTrip],
@@ -1182,7 +1202,7 @@ document.addEventListener('click', e => {
     if (g === 'mode') d.mode = v;
     else if (g === 'hvac') { d.hvac = v; $('hvacMore').hidden = v === 'off'; }
     else if (g === 'appl') d.appl = v;
-    else if (g === 'bath') d.bath = v;
+    else if (g === 'bath') { d.bath = v; S.bathTouched = true; }
     else if (g === 'heater') d.heater = v;
     else if (g === 'power') d.green = v === 'green';
     else if (g === 'other') d.other = v;
@@ -1203,7 +1223,11 @@ document.addEventListener('input', e => {
   update();
 });
 document.addEventListener('change', e => { if (e.target.id === 'goodsRef') { S.ref = e.target.value; buildInputs(); update(); } });
-$('country').addEventListener('change', e => { S.country = e.target.value; update(); });
+$('country').addEventListener('change', e => {
+  S.country = e.target.value;
+  if (!S.bathTouched) S.day.bath = S.country === 'japan' ? 'bath' : 'shower';   // お風呂の初期設定は国ごと（触っていなければ）
+  buildInputs(); update();
+});
 $('tip').addEventListener('change', e => { S.tip = +e.target.value; update(); });
 
 renderStatic();
