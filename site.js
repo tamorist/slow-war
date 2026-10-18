@@ -132,6 +132,12 @@ const SW_SOURCES = [
   { g: 'energy', cite: 'Hot or Cool Institute (2021)', title: '1.5-Degree Lifestyles: Towards a Fair Consumption Space for All', venue: 'hotorcool.org', url: 'https://hotorcool.org/wp-content/uploads/2021/10/Hot_or_Cool_1_5_lifestyles_FULL_REPORT_AND_ANNEX_B.pdf',
     en: 'Lifestyle footprints for 10 countries (2019, Table 3.1), incl. consumer goods: Canada 2.5 t, Finland 1.4 t, UK 1.0 t, Japan 1.0 t, China 0.4 t, India under 0.1 t per person a year. The “high-income” reference on this site is our average of the first four. Values vary a lot with method; use as a rough guide.',
     ja: '10か国の生活由来の排出（2019年、表3.1）。消費財（モノ）は1人年あたり、カナダ2.5 t、フィンランド1.4 t、英国1.0 t、日本1.0 t、中国0.4 t、インド0.1 t未満。このサイトの「高所得国」の参考値は、最初の4か国から私たちが計算した平均です。手法で値が大きく変わるため、目安として使っています。' },
+  { g: 'energy', cite: '国土交通省 / MLIT Japan', title: '住宅・建築物に係る二酸化炭素の排出量及び削減量について (CO₂ emissions from housing and buildings)', venue: 'mlit.go.jp', url: 'https://www.mlit.go.jp/common/000224667.pdf',
+    en: 'Building a 126 m² detached house: about 34 t CO₂ (wood), 64 t (reinforced concrete), 57 t (steel) — an estimate by the Wood Miles research group. Used for “building a house”.',
+    ja: '床面積約126 m²の戸建てを建てると、木造で約34 t、鉄筋コンクリート造で約64 t、鉄骨造で約57 tのCO₂（ウッドマイルズ研究会の試算）。「家を建てる」の値に使っています。' },
+  { g: 'energy', cite: 'Transport & Environment', title: 'Are electric cars really more climate-friendly than other cars?', venue: 'transportenvironment.org', url: 'https://www.transportenvironment.org/discover/are-electrics-really-more-climate-friendly-other-cars',
+    en: 'Making a car: several tonnes of CO₂ before it is driven; more for electric cars because of the battery. We use ≈ 7 t for a small-to-mid petrol car (studies range ~6–8.5 t).',
+    ja: '車は走る前の製造だけで数トンのCO₂を出し、電気自動車は電池の分だけ多くなります。このサイトでは小〜中型のガソリン車を約7 tとしています（研究によって約6〜8.5 t）。' },
   { g: 'energy', cite: 'Berners-Lee, M. (2020)', title: 'How Bad Are Bananas? The Carbon Footprint of Everything (revised ed.)', venue: 'Profile Books', url: '',
     en: 'Rough footprints of everyday items. Shopping values on this site are approximations in this spirit; check before citing.',
     ja: '身の回りのものの排出量の目安。このサイトの買い物の値も同様の概算なので、引用する前に確認してください。' },
@@ -154,17 +160,27 @@ const SW_SOURCES = [
 ];
 
 /* 指定したグループの出典を container に描画する */
-function swRenderSources(container, lang, groups) {
+function swRenderSources(container, lang, groups, limit) {
   if (!container) return;
   const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
-  container.innerHTML = (groups || Object.keys(SW_GROUPS)).map(g => {
+  let idx = 0;
+  const html = (groups || Object.keys(SW_GROUPS)).map(g => {
     const items = SW_SOURCES.filter(s => s.g === g);
     if (!items.length) return '';
-    return `<div class="src-group"><h4>${SW_GROUPS[g][lang]}</h4><ul>${items.map(s => `<li>
+    const first = idx;
+    const lis = items.map(s => `<li${limit && idx++ >= limit ? ' class="src-more"' : ''}>
       ${s.url ? `<a href="${s.url}" target="_blank" rel="noopener">${esc(s.title)}</a>` : `<i>${esc(s.title)}</i>`}
       <span class="src-cite">— ${esc(s.cite)}${s.venue ? ', ' + esc(s.venue) : ''}</span>
-      <span class="src-use">${s[lang]}</span></li>`).join('')}</ul></div>`;
+      <span class="src-use">${s[lang]}</span></li>`).join('');
+    if (!limit) idx += items.length;
+    return `<div class="src-group${limit && first >= limit ? ' src-more' : ''}"><h4>${SW_GROUPS[g][lang]}</h4><ul>${lis}</ul></div>`;
   }).join('');
+  // limit を指定したページでは、最初の数件だけ見せて残りは「続きを表示」で開く
+  const rest = limit ? idx - limit : 0;
+  container.classList.toggle('src-collapsed', rest > 0);
+  container.innerHTML = html + (rest > 0 ? `<button type="button" class="src-toggle" data-more="${lang === 'ja' ? `続きを表示（あと${rest}件）` : `Show ${rest} more`}" data-less="${lang === 'ja' ? '閉じる' : 'Show less'}">${lang === 'ja' ? `続きを表示（あと${rest}件）` : `Show ${rest} more`}</button>` : '');
+  const btn = container.querySelector('.src-toggle');
+  if (btn) btn.onclick = () => { const c = container.classList.toggle('src-collapsed'); btn.textContent = c ? btn.dataset.more : btn.dataset.less; };
 }
 
 /* 出典リストの共通スタイル（各ページの配色を currentColor で引き継ぐ） */
@@ -175,7 +191,10 @@ function swRenderSources(container, lang, groups) {
 .src-group li { padding: 8px 0; border-top: 1px solid rgba(128,128,128,.25); font-size: 13.5px; line-height: 1.55; }
 .src-group li a { color: inherit; font-weight: 600; text-underline-offset: 3px; }
 .src-cite { opacity: .7; font-size: 12.5px; }
-.src-use { display: block; opacity: .75; font-size: 12.5px; margin-top: 2px; }`;
+.src-use { display: block; opacity: .75; font-size: 12.5px; margin-top: 2px; }
+.src-collapsed .src-more { display: none; }
+.src-toggle { margin-top: 12px; font: inherit; font-size: 13px; font-weight: 700; color: inherit; background: transparent; border: 1px solid rgba(128,128,128,.5); border-radius: 999px; padding: 7px 16px; cursor: pointer; }
+.src-toggle:hover { border-color: #e5483b; }`;
   const st = document.createElement('style');
   st.textContent = css;
   document.head.appendChild(st);

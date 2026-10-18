@@ -309,7 +309,7 @@
 
 <footer data-i18n="footer"></footer>
 
-<script src="site.js?v=20261019e"></script>
+<script src="site.js?v=20261019g"></script>
 <script>
 /* ===================== DATA ===================== */
 // 化石燃料CO₂（2023年頃の概算, Global Carbon Project）。世界合計は土地利用変化を含む 40 Gt。
@@ -550,7 +550,7 @@ function render() {
   const m = mult() === 1 ? '' : ` × <span class="num">${mult()}</span>`;
   $('formula').innerHTML = t('formula', { where: where(), gt: gtText(C().gt), mult: m, perYear: people(perYear(), state.lang === 'ja') });
   if (typeof swNav === 'function') { swNav(lang); swNext($('next'), lang); swAuthor($('author'), lang); }
-  if (typeof swRenderSources === 'function') swRenderSources($('sources'), lang, ['core', 'emissions', 'pathways', 'tipping', 'war', 'further']);
+  if (typeof swRenderSources === 'function') swRenderSources($('sources'), lang, ['core', 'emissions', 'pathways', 'tipping', 'war', 'further'], 4);
   $('mList').innerHTML = L().mList.map(s => `<li>${s.replace(/\{(\w+)\}/g, (_, k) => ({ start: START, where: where(), gt: gtText(C().gt) })[k])}</li>`).join('');
 }
 
