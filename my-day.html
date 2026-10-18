@@ -390,7 +390,7 @@ const SHOP = {
   perYear: { parcel: 52, tshirt: 5, jeans: 1, shoes: 2, phone: 1 / 3, laptop: 1 / 5 },   // 想定の頻度（1年あたり）
   // 上の品物以外のモノ（家電・家具・日用品など）の目安（kg CO₂e/日）。
   // 日本の平均的な人の消費財は年約1,030 kg ≒ 1日2.8 kg（1.5-Degree Lifestyles, 2019）。上の品物の初期値（約1 kg）＋「ふつう」でおおよそ一致する。
-  other: { none: 0, low: 0.5, mid: 1, high: 2 },   // 「比べる平均」に対する倍率
+  other: { none: 0, low: 0.5, mid: 1, high: 2 },   // 買い物全体が「比べる平均」の何倍になるか
   colors: { bottle: '#4fb38a', coffee: '#9ad17a', parcel: '#e0a43b', tshirt: '#5b9bd5', jeans: '#3f6fb0', shoes: '#a983e0', phone: '#e57a5a', laptop: '#d4c25a', other: '#6b7078' },
 };
 // 平均的な人の消費財（モノ）由来の排出：t = 年あたり t CO₂e、total = 生活由来の排出全体（t/年）
@@ -411,9 +411,11 @@ const itemsDaily = d => Object.keys(F.shop).reduce((a, k) => a + shopPerDay(d, k
 // その他のモノ：「平均に合わせる」は、参考の平均から上の品物の分を引いた残り
 // 上の品物の初期設定の分（1日あたり）。毎日のもの各1個＋ときどき買うものを想定頻度ですべて含めた場合
 const DEFAULT_ITEMS = SHOP.daily.reduce((a, k) => a + F.shop[k], 0) + SHOP.periodic.reduce((a, k) => a + F.shop[k] * SHOP.perYear[k] / 365.25, 0);
-// その他のモノの「平均並み」＝ 比べる平均から、上の品物（初期設定）の分を除いた残り
-const otherBase = () => Math.max(0, goodsRefDaily() - DEFAULT_ITEMS);
-const otherDaily = d => SHOP.other[d.other] * otherBase();
+// その他のモノ：上の品物を初期設定のままにしたとき、買い物全体が「比べる平均 × 倍率」になる量
+// （品物を外したり増やしたりすると、その分だけ合計が変わる）
+const shopTarget = o => SHOP.other[o] * goodsRefDaily();
+const otherFor = o => o === 'none' ? 0 : Math.max(0, shopTarget(o) - DEFAULT_ITEMS);
+const otherDaily = d => otherFor(d.other);
 const shopPerDay = (d, k) => SHOP.daily.includes(k)
   ? F.shop[k] * d.shop[k]
   : (d.own[k] ? F.shop[k] * d.per[k] / 365.25 : 0);
@@ -487,8 +489,9 @@ const I18N = {
     otherH: 'Everything else you buy', otherD: 'Appliances, furniture, toiletries, books, toys… things not listed above. How much do you buy compared with the average person you chose?',
     otherOpt: { none: 'None', low: 'Less (half the average)', mid: 'Average', high: 'More (twice the average)' },
     refLbl: 'Compare with the average person in',
-    otherRef: 'Reference — {ref}: consumer goods ≈ {y} kg a year (≈ {d} kg/day), about {p}% of the lifestyle footprint (Hot or Cool Institute, 2021). “Average” is what is left of this after the items above (≈ {i} kg/day at their defaults): ≈ {r} kg/day.',
-    otherRef0: 'Reference — {ref}: consumer goods ≈ {y} kg a year (≈ {d} kg/day), about {p}% of the lifestyle footprint (Hot or Cool Institute, 2021). The items above (≈ {i} kg/day at their defaults) already exceed this, so “everything else” adds nothing here.',
+    otherRef: 'Reference — {ref}: consumer goods ≈ {y} kg a year (≈ {d} kg/day), about {p}% of the lifestyle footprint (Hot or Cool Institute, 2021). Each option sets your whole shopping — with the items above at their defaults (≈ {i} kg/day) — to half, equal to, or twice this average; “everything else” fills the gap. Removing or adding items changes the total from there.',
+    otherOver: ' At this level the items above already exceed the target, so “everything else” is zero.',
+    otherTot: 'total ≈ {kg} kg',
     refMark: 'avg',
     brkH: 'What your shopping is made of (per day)', otherLbl: 'Everything else', excluded: 'not included',
     shareLine: 'Shopping is <b>{p}%</b> of your day · average in {ref}: about {r}%',
@@ -583,8 +586,9 @@ const I18N = {
     otherH: 'その他のモノ', otherD: '家電・家具・日用品・本・おもちゃなど、上にない買い物。「比べる平均」の人と比べて、どのくらい買うかを選んでください。',
     otherOpt: { none: 'なし', low: '少なめ（平均の半分）', mid: '平均並み', high: '多め（平均の2倍）' },
     refLbl: '比べる平均',
-    otherRef: '参考 — {ref}：平均的な人の消費財（モノ）由来の排出は年約{y} kg（1日約{d} kg）で、生活由来の排出全体の約{p}%です（Hot or Cool Institute、2021年）。「平均並み」は、この平均から上の品物の分（初期設定で1日約{i} kg）を除いた残りで、1日約{r} kgです。',
-    otherRef0: '参考 — {ref}：平均的な人の消費財（モノ）由来の排出は年約{y} kg（1日約{d} kg）で、生活由来の排出全体の約{p}%です（Hot or Cool Institute、2021年）。上の品物だけで（初期設定で1日約{i} kg）この平均を超えるため、その他のモノは加わりません。',
+    otherRef: '参考 — {ref}：平均的な人の消費財（モノ）由来の排出は年約{y} kg（1日約{d} kg）で、生活由来の排出全体の約{p}%です（Hot or Cool Institute、2021年）。選択肢は、上の品物を初期設定のまま（1日約{i} kg）にしたときの買い物全体を、この平均の半分・平均並み・2倍にするものです。その差を「その他のモノ」で補います。品物を外したり増やしたりすると、そこから合計が変わります。',
+    otherOver: 'この水準では、上の品物だけで目安を超えるため、その他のモノは0です。',
+    otherTot: '合計 約{kg} kg',
     refMark: '平均',
     brkH: '買い物の内訳（1日あたり）', otherLbl: 'その他のモノ', excluded: '計算に入れていない',
     shareLine: 'あなたの1日のうち買い物は <b>{p}%</b> ・ 参考：{ref}の平均は約{r}%',
@@ -778,7 +782,7 @@ function buildInputs() {
         </div>`).join('')}</div>
       <div class="shop-h"><b>${l.otherH}</b><span>${l.otherD}</span></div>
       <div class="ref-row"><span>${l.refLbl}</span><select id="goodsRef">${Object.entries(GOODS_REF).map(([k, r]) => `<option value="${k}"${k === goodsRefKey() ? ' selected' : ''}>${r[S.lang]}</option>`).join('')}</select></div>
-      <div class="chips">${Object.keys(SHOP.other).map(o => chip('other', o, l.otherOpt[o], d.other === o, o === 'none' ? '' : `<small>${(SHOP.other[o] * otherBase()).toFixed(1)} kg</small>`)).join('')}</div>
+      <div class="chips">${Object.keys(SHOP.other).map(o => chip('other', o, l.otherOpt[o], d.other === o, o === 'none' ? '' : `<small>${tpl(l.otherTot, { kg: shopTarget(o).toFixed(1) })}</small>`)).join('')}</div>
       <p class="hint" style="margin-top:8px" id="otherRef"></p>
       <div class="shop-brk">
         <div class="brk-h"><b>${l.brkH}</b><span class="num" id="brkTotal"></span></div>
@@ -819,7 +823,8 @@ function update() {
   const parts = [...shopItems().map(k => ({ k, v: shopPerDay(d, k), name: l.shop[k] })), { k: 'other', v: otherDaily(d), name: l.otherLbl }];
   const scale = Math.max(4, fp.shopping, refD * 1.1);
   $('refMark').style.left = (refD / scale * 100) + '%';
-  $('otherRef').textContent = tpl(otherBase() > 0 ? l.otherRef : l.otherRef0, { ref: ref[S.lang], y: fmt(ref.t * 1000), d: refD.toFixed(1), p: Math.round(ref.t / ref.total * 100), i: DEFAULT_ITEMS.toFixed(1), r: otherBase().toFixed(1) });
+  $('otherRef').textContent = tpl(l.otherRef, { ref: ref[S.lang], y: fmt(ref.t * 1000), d: refD.toFixed(1), p: Math.round(ref.t / ref.total * 100), i: DEFAULT_ITEMS.toFixed(1) })
+    + (d.other !== 'none' && shopTarget(d.other) < DEFAULT_ITEMS ? l.otherOver : '');
   $('brkTotal').textContent = kg(fp.shopping) + ' kg';
   $('brkBar').innerHTML = parts.filter(p => p.v > 0).map(p => `<span style="width:${p.v / scale * 100}%;background:${SHOP.colors[p.k]}" title="${p.name}: ${shopKg(p.v)} kg"></span>`).join('');
   $('brkLeg').innerHTML = parts.map(p => `<div class="${p.v > 0 ? '' : 'off'}"><i style="background:${SHOP.colors[p.k]}"></i>${p.name}<span class="num">${p.v > 0 ? shopKg(p.v) + ' kg · ' + Math.round(p.v / fp.shopping * 100) + '%' : l.excluded}</span></div>`).join('');
@@ -889,7 +894,7 @@ function update() {
     ...Object.keys(F.applKwh).map(a => [l.appl + ' — ' + l.applOpt[a], F.applKwh[a] + ' kWh ' + fr.perDay]),
     [l.fShort, F.flight.short + ' kg ' + fr.perTrip], [l.fLong, F.flight.long + ' kg ' + fr.perTrip],
     ...Object.keys(F.shop).map(k => [l.shop[k], F.shop[k] + ' kg ' + fr.perItem]),
-    ...['low', 'mid', 'high'].map(o => [l.otherLbl + ' — ' + l.otherOpt[o], (SHOP.other[o] * otherBase()).toFixed(2) + ' kg ' + fr.perDay]),
+    ...['low', 'mid', 'high'].map(o => [l.otherLbl + ' — ' + l.otherOpt[o], otherFor(o).toFixed(2) + ' kg ' + fr.perDay]),
   ];
   $('factors').innerHTML = rows.map(([a, b]) => `<tr><td>${a}</td><td class="num">${b}</td></tr>`).join('');
 }
