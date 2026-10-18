@@ -390,7 +390,7 @@
 
 <div class="mbar"><div><span data-i18n="mToday"></span><br><b class="num" id="mKg">0</b> kg CO₂</div><div class="r" style="text-align:right"><span id="mScale"></span><br><b class="num" id="mImp">—</b></div></div>
 
-<script src="site.js?v=20261019g"></script>
+<script src="site.js?v=20261019h"></script>
 <script>
 /* ===================== DATA ===================== */
 const COUNTRIES = {
@@ -418,7 +418,8 @@ const F = {
   applKwh: { low: 1.5, avg: 3, high: 5 },   // 冷暖房以外の電気（1人1日あたりの kWh、目安）
   flight: { short: 150, long: 1500 },       // 往復1回あたり
   shop: { bottle: 0.15, coffee: 0.3, parcel: 0.5, tshirt: 7, jeans: 25, shoes: 14, phone: 70, laptop: 300,
-          appliance: 300, car: 7000, house: 34000 },   // 製造・建設時の排出（kg/個）。家電は概算、車は小〜中型ガソリン車、家は木造戸建て約126 m²（国交省資料）
+          fridge: 250, washer: 300, aircon: 310, car: 7000, house: 34000 },
+  // 製造・建設時の排出（kg/個）。家電は ADEME「Impact CO2」の製造分、車は小〜中型ガソリン車、家は木造戸建て約126 m²（国交省資料）
 };
 const CATS = ['transport', 'food', 'home', 'flights', 'shopping'];
 // 国全体の消費ベースの排出（cb, t CO₂e/人・年）＝ 消費ベースCO₂（2023年, Global Carbon Budget）×（国内の全ガス / 国内CO₂, 2024年）。
@@ -430,17 +431,19 @@ const FINAL = { household: 0.72, government: 0.10, investment: 0.18 };
 //   periodic … ときどき買うもの（想定の頻度 perYear で1日あたりに割り戻す）
 const SHOP = {
   daily: ['bottle', 'coffee'],
-  periodic: ['parcel', 'tshirt', 'jeans', 'shoes', 'phone', 'laptop', 'appliance'],
+  periodic: ['parcel', 'tshirt', 'jeans', 'shoes', 'phone', 'laptop', 'fridge', 'washer', 'aircon'],
   big: ['car', 'house'],   // 大きな買い物：モノ（消費財）の平均とは別に加える（統計上は交通・住宅／投資に入るため）
   perYear: { parcel: 52, tshirt: 5, jeans: 1, shoes: 2, phone: 1 / 3, laptop: 1 / 5,
-             appliance: 1 / 7,   // 世帯で約3年に1台 ÷ 2.2人
+             fridge: 1 / (13 * 2.2),     // 13年使用・世帯で1台・2.2人
+             washer: 1 / (10 * 2.2),     // 10年使用・世帯で1台
+             aircon: 3 / (13.5 * 2.2),   // 13.5年使用・世帯に約3台
              car: 1 / 26,        // 13年ごとに買い替え・2人で1台
              house: 1 / 77 },    // 35年使用・2.2人で1棟
   // 想定の頻度（1人1年あたり）
   // 上の品物以外のモノ（家電・家具・日用品など）の目安（kg CO₂e/日）。
   // 日本の平均的な人の消費財は年約1,030 kg ≒ 1日2.8 kg（1.5-Degree Lifestyles, 2019）。上の品物の初期値（約1 kg）＋「ふつう」でおおよそ一致する。
   other: { none: 0, low: 0.5, mid: 1, high: 2 },   // 買い物全体が「比べる平均」の何倍になるか
-  colors: { bottle: '#4fb38a', coffee: '#9ad17a', parcel: '#e0a43b', tshirt: '#5b9bd5', jeans: '#3f6fb0', shoes: '#a983e0', phone: '#e57a5a', laptop: '#d4c25a', appliance: '#7fb7c9', car: '#c0504d', house: '#b08a5a', other: '#6b7078' },
+  colors: { bottle: '#4fb38a', coffee: '#9ad17a', parcel: '#e0a43b', tshirt: '#5b9bd5', jeans: '#3f6fb0', shoes: '#a983e0', phone: '#e57a5a', laptop: '#d4c25a', fridge: '#7fb7c9', washer: '#4f93ad', aircon: '#a9dde9', car: '#c0504d', house: '#b08a5a', other: '#6b7078' },
 };
 // 平均的な人の消費財（モノ）由来の排出：t = 年あたり t CO₂e、total = 生活由来の排出全体（t/年）
 // Hot or Cool Institute (2021) 表3.1（2019年時点）。日本は IGES ほか (2019) の 1,030 kg と同じ値を使う。
@@ -536,7 +539,7 @@ const I18N = {
     shopHint: 'Values cover making and shipping each item.',
     shopDailyH: 'Drinks (every day)', shopDailyD: 'Bought drinks — counted as if every day. Tap to add. (Meals above do not include drinks.)',
     shopPerH: 'Now and then', shopPerD: 'Things you buy occasionally — spread across days using the assumed frequency on each card. Tap to include or leave out.',
-    freq: { parcel: 'once a week', tshirt: '5 a year', jeans: '1 a year', shoes: '2 pairs a year', phone: 'one every 3 years', laptop: 'one every 5 years', appliance: 'one per household every ~3 years (≈ one per person every 7 years)', car: 'replaced every 13 years, shared by 2 (≈ one per person every 26 years)', house: 'used 35 years, shared by 2.2 people (≈ one per person every 77 years)' },
+    freq: { parcel: 'once a week', tshirt: '5 a year', jeans: '1 a year', shoes: '2 pairs a year', phone: 'one every 3 years', laptop: 'one every 5 years', fridge: 'used 13 years, one per household (≈ one per person every 29 years)', washer: 'used 10 years, one per household (≈ one per person every 22 years)', aircon: 'used 13.5 years, ~3 per household (≈ one per person every 10 years)', car: 'replaced every 13 years, shared by 2 (≈ one per person every 26 years)', house: 'used 35 years, shared by 2.2 people (≈ one per person every 77 years)' },
     assumed: 'Assumed: {f}', perDayV: '→ {kg} kg/day', perDayD: '{kg} kg/day',
     otherH: 'Everything else you buy', otherD: 'Appliances, furniture, toiletries, books, toys… things not listed above. How much do you buy compared with the average person you chose?',
     otherOpt: { low: 'Less (half the average)', mid: 'Average', high: 'More (twice the average)' },
@@ -556,7 +559,7 @@ const I18N = {
     refMark: 'avg',
     brkH: 'Your shopping per day', otherLbl: 'Everything else (small appliances, furniture, household goods…)', excluded: 'not included',
     shareLine: 'Shopping is <b>{p}%</b> of your day · average in {ref}: {r}',
-    shop: { bottle: 'Bottled drink', coffee: 'Takeaway coffee', parcel: 'Online delivery', tshirt: 'T-shirt', jeans: 'Jeans', shoes: 'Sneakers', phone: 'Smartphone', laptop: 'Laptop', appliance: 'Large appliance (fridge, washer or A/C)', car: 'Petrol car (making it)', house: 'House (building a wooden home)' },
+    shop: { bottle: 'Bottled drink', coffee: 'Takeaway coffee', parcel: 'Online delivery', tshirt: 'T-shirt', jeans: 'Jeans', shoes: 'Sneakers', phone: 'Smartphone', laptop: 'Laptop', fridge: 'Refrigerator (making it)', washer: 'Washing machine (making it)', aircon: 'Air conditioner (making one)', car: 'Petrol car (making it)', house: 'House (building a wooden home)' },
     bigH: '3. Big purchases', bigD: 'Making a car or building a home. Added on top of the average above (in statistics these count under transport, housing or investment). Tap to include or leave out — off by default for the house.',
     carEq: '≈ {km} km by car',
     gwpLabel: 'How to count methane', gwp100: '100-year (standard, GWP100)', gwp20: '20-year (near-term, GWP20)',
@@ -656,7 +659,7 @@ const I18N = {
     shopHint: '値は製造から配送までの排出量です。',
     shopDailyH: '飲み物（毎日）', shopDailyD: '買った飲み物。この1日を毎日続けるとして数えます。タップで追加（上の食事には飲み物は含まれていません）。',
     shopPerH: 'ときどき買うもの', shopPerD: 'ときどき買うもの。各カードの想定頻度で、1日あたりに割り戻します。タップで入れる／外す。',
-    freq: { parcel: '週1回', tshirt: '年5枚', jeans: '年1本', shoes: '年2足', phone: '3年に1台', laptop: '5年に1台', appliance: '世帯で約3年に1台（1人あたり約7年に1台）', car: '13年ごとに買い替え・2人で1台（1人あたり26年に1台）', house: '35年使用・2.2人で1棟（1人あたり77年に1棟）' },
+    freq: { parcel: '週1回', tshirt: '年5枚', jeans: '年1本', shoes: '年2足', phone: '3年に1台', laptop: '5年に1台', fridge: '13年使用・世帯で1台（1人あたり約29年に1台）', washer: '10年使用・世帯で1台（1人あたり約22年に1台）', aircon: '13.5年使用・世帯に約3台（1人あたり約10年に1台）', car: '13年ごとに買い替え・2人で1台（1人あたり26年に1台）', house: '35年使用・2.2人で1棟（1人あたり77年に1棟）' },
     assumed: '想定：{f}', perDayV: '→ 1日 {kg} kg', perDayD: '1日 {kg} kg',
     otherH: 'その他のモノ', otherD: '家電・家具・日用品・本・おもちゃなど、上にない買い物。「比べる平均」の人と比べて、どのくらい買うかを選んでください。',
     otherOpt: { low: '少なめ（平均の半分）', mid: '平均並み', high: '多め（平均の2倍）' },
@@ -676,7 +679,7 @@ const I18N = {
     refMark: '平均',
     brkH: 'あなたの買い物（1日あたり）', otherLbl: 'その他のモノ（小型家電・家具・日用品など）', excluded: '計算に入れていない',
     shareLine: 'あなたの1日のうち買い物は <b>{p}%</b> ・ 参考：{ref}の平均は{r}',
-    shop: { bottle: 'ペットボトル飲料', coffee: 'テイクアウトのコーヒー', parcel: 'ネット通販の配送', tshirt: 'Tシャツ', jeans: 'ジーンズ', shoes: 'スニーカー', phone: 'スマートフォン', laptop: 'ノートPC', appliance: '大型家電（冷蔵庫・洗濯機・エアコンのいずれか）', car: 'ガソリン車（製造）', house: '家（木造戸建てを建てる）' },
+    shop: { bottle: 'ペットボトル飲料', coffee: 'テイクアウトのコーヒー', parcel: 'ネット通販の配送', tshirt: 'Tシャツ', jeans: 'ジーンズ', shoes: 'スニーカー', phone: 'スマートフォン', laptop: 'ノートPC', fridge: '冷蔵庫（製造）', washer: '洗濯機（製造）', aircon: 'エアコン（製造・1台）', car: 'ガソリン車（製造）', house: '家（木造戸建てを建てる）' },
     bigH: '③ 大きな買い物', bigD: '車をつくる、家を建てる分です。上の平均とは別に加えます（統計では交通・住宅や「投資」に入るため）。タップで入れる／外す。家は初期設定では外しています。',
     carEq: '車で約{km} km分',
     gwpLabel: 'メタンの評価期間', gwp100: '100年（標準・GWP100）', gwp20: '20年（短期・GWP20）',
@@ -768,7 +771,7 @@ const S = {
   // 初期設定は平均的な日本人に近い1日（車15 km、国内線は年1往復、長距離は飛ばない）。
   // ただし夕食の牛肉は、影響の大きさを見てもらうために「あえて」入れている（画面にも明記）
   day: { mode: 'car', km: 15, meals: ['veg', 'fish', 'beef'], hvac: 'cool', hours: 4, eco: false, appl: 'avg',
-         short: 1, long: 0, shop: { bottle: 1, coffee: 0 }, own: { parcel: true, tshirt: true, jeans: true, shoes: true, phone: true, laptop: true, appliance: true, car: true, house: false },
+         short: 1, long: 0, shop: { bottle: 1, coffee: 0 }, own: { parcel: true, tshirt: true, jeans: true, shoes: true, phone: true, laptop: true, fridge: true, washer: true, aircon: true, car: true, house: false },
          per: { ...SHOP.perYear }, other: 'mid' },
   swaps: new Set(),
 };
