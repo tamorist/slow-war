@@ -150,6 +150,11 @@
   .legend div { display: flex; align-items: center; gap: 6px; }
   .legend i { width: 9px; height: 9px; border-radius: 2px; flex: none; }
   .legend .n { margin-left: auto; color: var(--muted); }
+  .beef-note { margin-top: 12px; font-size: 12.5px; line-height: 1.65; color: #c9c8c3; padding: 10px 12px; border-radius: 10px; background: var(--bg3); border-left: 3px solid var(--faint); }
+  .beef-note.on { border-left-color: var(--red); background: rgba(229,72,59,.08); }
+  .beef-note b { color: var(--text); }
+  .beef-note.on b { color: var(--red); }
+  .whole-leg b { color: var(--red); }
   .whole { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--faint); }
   .whole-h { font-size: 12px; color: #c9c8c3; line-height: 1.5; margin-bottom: 8px; }
   .whole-bar { position: relative; display: flex; height: 14px; border-radius: 5px; overflow: hidden; background: var(--bg); }
@@ -571,6 +576,9 @@ const I18N = {
     wholeH: 'Where this sits in the whole picture — per person in {where}, consumption-based (rough): ≈ {t} kg/day',
     whole: { mine: 'Your day (what this simulator counts)', rest: 'Rest of household life not counted here (eating out, services, hot water, home upkeep…)', gov: 'Government & public services (schools, hospitals, admin…)', inv: 'Investment (buildings, infrastructure, machinery…)' },
     wholeOver: 'Your day is {kg} kg above the estimated household average.',
+    mineBeef: 'Your day (what this simulator counts) — <b>beef makes it jump</b> (beef ≈ {kg} kg)',
+    beefNoteOn: '<b>Beef is included on purpose.</b> The average person doesn’t eat it every day, but its impact is so outsized that we want you to see it. Today’s beef ≈ <b>{kg} kg</b> — {p}% of your whole day. Switching it to chicken saves ≈ {save} kg.',
+    beefNoteOff: 'Choosing beef adds ≈ <b>{kg} kg</b> per meal compared with chicken (about {x}× as much). Try it and watch your total.',
     wholeNoteH: 'How this is estimated',
     wholeNote: 'All emissions in the economy — including factories, power plants and imports — are assigned to whoever finally uses the goods and services (“consumption-based”). The total is consumption-based CO₂ (2023, Global Carbon Budget via Our World in Data) scaled up for other gases (2024 ratio). It is split using global shares: households 72%, government 10%, investment 18% (Hertwich & Peters, 2009). Later studies put the household share at 58–72%, and it differs by country. Most construction falls under investment. A rough guide only.',
     resTitle: 'Your day',
@@ -682,6 +690,9 @@ const I18N = {
     wholeH: '全体像のなかでの位置 — {where}の1人あたり（消費ベース・概算）：約{t} kg/日',
     whole: { mine: 'あなたの1日（このシミュレータで計算した分）', rest: '生活のうち計算していない分（外食・サービス・給湯・住まいの維持など）', gov: '政府・公共サービス（学校・病院・行政など）', inv: '投資（建物・インフラ・設備の建設など）' },
     wholeOver: 'あなたの1日は、生活由来の平均（推計）より{kg} kg多くなっています。',
+    mineBeef: 'あなたの1日（このシミュレータで計算した分）— <b>牛肉が入ると跳ね上がります</b>（牛肉の分 約{kg} kg）',
+    beefNoteOn: '<b>牛肉は、あえて初期設定に入れています。</b>平均的な人が毎日食べるわけではありませんが、影響が飛び抜けて大きいことを見てもらうためです。今日の牛肉の分は約<b>{kg} kg</b>で、あなたの1日全体の{p}%にあたります。鶏肉に替えると約{save} kg減ります。',
+    beefNoteOff: '牛肉を選ぶと、鶏肉より1食あたり約<b>{kg} kg</b>増えます（約{x}倍）。試して、合計の変化を見てみてください。',
     wholeNoteH: 'この推計について',
     wholeNote: '工場・発電所・輸入品なども含め、国全体の排出を、最終的にモノやサービスを使う人に割り振った「消費ベース」の推計です。総量は、消費ベースのCO₂（2023年、Global Carbon Budget／Our World in Data）に、CO₂以外のガスの比率（2024年）を掛けた概算です。家庭・政府・投資への割り振りには、世界全体の推計（家庭72%・政府10%・投資18%、Hertwich & Peters 2009）を当てはめています。家庭の割合は研究によって58〜72%と幅があり、国によっても違います。建設の多くは「投資」に含まれます。あくまで目安です。',
     resTitle: 'あなたの1日',
@@ -728,8 +739,9 @@ const store = { get(k) { try { return localStorage.getItem(k); } catch (e) { ret
                 set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} } };
 const S = {
   lang: store.get('scw-lang') === 'ja' ? 'ja' : 'en', country: 'japan', tip: 1, scale: 'country', ref: null, gwp: 100, coc: false, cocRate: 0.5, basis: 'protein', sel: 'chicken',
-  // 初期設定は平均的な日本人に近い1日（車で通勤・買い物15 km、肉や魚は豚・魚中心、牛肉は毎日ではない、国内線は年1往復、長距離は飛ばない）
-  day: { mode: 'car', km: 15, meals: ['veg', 'fish', 'pork'], hvac: 'cool', hours: 4, eco: false, appl: 'avg',
+  // 初期設定は平均的な日本人に近い1日（車15 km、国内線は年1往復、長距離は飛ばない）。
+  // ただし夕食の牛肉は、影響の大きさを見てもらうために「あえて」入れている（画面にも明記）
+  day: { mode: 'car', km: 15, meals: ['veg', 'fish', 'beef'], hvac: 'cool', hours: 4, eco: false, appl: 'avg',
          short: 1, long: 0, shop: { bottle: 1, coffee: 0 }, own: { parcel: true, tshirt: true, jeans: true, shoes: true, phone: true, laptop: true },
          per: { ...SHOP.perYear }, other: 'mid' },
   swaps: new Set(),
@@ -814,6 +826,7 @@ function buildInputs() {
           <b>${l.shop[k]}</b><div class="big-kg num">${F.shop[k]} kg</div><div class="eq">${tpl(l.carEq, { km: fmt(F.shop[k] / F.transport.car) })}</div>
           ${d.shop[k] ? `<span class="cnt num">×${d.shop[k]}</span><button class="minus" data-minus="${k}" aria-label="−">−</button>` : ''}
         </div>`).join('')}</div>
+      <div class="beef-note" id="beefNote"></div>
       <div class="sub-label">${l.gwpLabel}</div><div class="chips">${gwpChips()}</div>
       <div class="sub-label">${l.cocLabel}</div><div class="chips">${cocChips()}</div>
     </div>
@@ -901,6 +914,14 @@ function update() {
   $('stack').innerHTML = CATS.map(k => `<span style="width:${fp.total ? fp[k] / fp.total * 100 : 0}%;background:var(--c-${k})"></span>`).join('');
   $('legend').innerHTML = CATS.map(k => `<div><i style="background:var(--c-${k})"></i>${l.cat[k]}<span class="n num">${fp.total ? Math.round(fp[k] / fp.total * 100) : 0}%</span></div>`).join('');
 
+  // 牛肉の影響
+  const beefN = d.meals.filter(m => m === 'beef').length, beefKg = beefN * mealKg('beef'), beefSave = beefN * (mealKg('beef') - mealKg('chicken'));
+  const bn = $('beefNote');
+  bn.classList.toggle('on', beefN > 0);
+  bn.innerHTML = beefN > 0
+    ? tpl(l.beefNoteOn, { kg: kg(beefKg), p: Math.round(beefKg / fp.total * 100), save: kg(beefSave) })
+    : tpl(l.beefNoteOff, { kg: kg(mealKg('beef') - mealKg('chicken')), x: trim((mealKg('beef') / mealKg('chicken')).toFixed(0)) });
+
   // 全体像：1人あたりの国全体（消費ベース）の中での位置
   const hh = avg, mine = Math.min(fp.total, hh), rest = Math.max(0, hh - fp.total), over = Math.max(0, fp.total - hh);
   const segs = [
@@ -913,7 +934,7 @@ function update() {
   $('wholeH').innerHTML = tpl(l.wholeH, { where: cname(), t: kg(cbDay) });
   $('wholeBar').innerHTML = segs.filter(x => x.v > 0).map(x => `<span style="width:${x.v / wholeSum * 100}%;background:${x.c}"></span>`).join('')
     + `<i class="hh-mark" style="left:${hh / wholeSum * 100}%"></i>`;
-  $('wholeLeg').innerHTML = segs.map(x => `<div><i style="background:${x.c}"></i>${l.whole[x.k]}<span class="num">${kg(x.v)} kg · ${Math.round(x.v / wholeSum * 100)}%</span></div>`).join('')
+  $('wholeLeg').innerHTML = segs.map(x => `<div><i style="background:${x.c}"></i>${x.k === 'mine' && beefN ? tpl(l.mineBeef, { kg: kg(beefKg) }) : l.whole[x.k]}<span class="num">${kg(x.v)} kg · ${Math.round(x.v / wholeSum * 100)}%</span></div>`).join('')
     + (over > 0 ? `<p class="over">${tpl(l.wholeOver, { kg: kg(over) })}</p>` : '');
 
   // 規模の切り替え
