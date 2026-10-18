@@ -164,34 +164,38 @@ function swRenderSources(container, lang, groups) {
 })();
 
 /* ===================== 共通ナビゲーション ===================== */
+// color：ページごとのテーマ色（メニューの点・カード・浮きボタンで共通に使う）
 const SW_PAGES = [
-  { file: 'index.html', icon: '●',
-    en: { nav: 'Story', title: 'The story', desc: 'How today’s emissions become tomorrow’s deaths — compared with history’s deadliest wars.' },
-    ja: { nav: 'ストーリー', title: 'ストーリー', desc: '今日の排出が、未来の犠牲者になるまで。史上最悪の戦争と比べて見る。' } },
-  { file: 'simulator.html', icon: '◐',
-    en: { nav: 'Simulator', title: 'Detailed simulator', desc: 'Change emissions, region, tipping effects and pathways yourself, and watch the numbers move.' },
-    ja: { nav: 'シミュレータ', title: '詳細シミュレータ', desc: '排出量・国・ティッピング効果・削減の道筋を自分で動かして、数字の変化を見る。' } },
-  { file: 'my-day.html', icon: '◔',
-    en: { nav: 'Your day', title: 'Personal simulator', desc: 'Travel, food, heating, shopping — what does your day add up to if everyone lived it?' },
-    ja: { nav: 'あなたの1日', title: '個人シミュレータ', desc: '移動・食事・冷暖房・買い物。あなたの1日を、国や世界の全員でかけ算すると？' } },
-  { file: 'sources.html', icon: '≡',
-    en: { nav: 'Sources & data', title: 'Sources & data', desc: 'Every number traced to its source, the key assumptions, and further reading.' },
-    ja: { nav: '出典とデータ', title: '出典とデータ', desc: 'すべての数値の出典と主な前提、さらに知りたい人への資料。' } },
+  { file: 'index.html', icon: '●', color: '#e5483b',
+    en: { nav: 'Story', title: 'The story', desc: 'How today’s emissions become tomorrow’s deaths — compared with history’s deadliest wars.', cta: 'Read the story' },
+    ja: { nav: 'ストーリー', title: 'ストーリー', desc: '今日の排出が、未来の犠牲者になるまで。史上最悪の戦争と比べて見る。', cta: 'ストーリーを読む' } },
+  { file: 'my-day.html', icon: '◔', color: '#f2a93b', featured: true,
+    en: { nav: 'Your day', title: 'What does YOUR day add up to?', desc: 'Pick your travel, meals, heating and shopping. See what your day means in lives — if everyone in your country, or on Earth, lived it.', cta: 'Try the personal simulator', float: 'Your day: how many lives?' },
+    ja: { nav: 'あなたの1日', title: 'あなたの1日は、何人分？', desc: '移動・食事・冷暖房・買い物を選ぶだけ。あなたの1日を、国や世界の全員でかけ算すると、命の数でいくつになるか。', cta: '個人シミュレータを試す', float: 'あなたの1日は、何人分？' } },
+  { file: 'simulator.html', icon: '◐', color: '#4f9be8',
+    en: { nav: 'Simulator', title: 'Detailed simulator', desc: 'Change emissions, region, tipping effects and pathways yourself, and watch the numbers move.', cta: 'Open simulator' },
+    ja: { nav: 'シミュレータ', title: '詳細シミュレータ', desc: '排出量・国・ティッピング効果・削減の道筋を自分で動かして、数字の変化を見る。', cta: 'シミュレータへ' } },
+  { file: 'sources.html', icon: '≡', color: '#9aa9ba',
+    en: { nav: 'Sources & data', title: 'Sources & data', desc: 'Every number traced to its source, the key assumptions, and further reading.', cta: 'See sources' },
+    ja: { nav: '出典とデータ', title: '出典とデータ', desc: 'すべての数値の出典と主な前提、さらに知りたい人への資料。', cta: '出典へ' } },
 ];
+const SW_NAV_ORDER = ['index.html', 'simulator.html', 'my-day.html', 'sources.html'];
 const SW_UI = {
-  en: { brand: 'The Slow War', next: 'Keep exploring', open: 'Open', here: 'You are here' },
-  ja: { brand: '静かな戦争', next: 'さらに探る', open: '開く', here: '表示中' },
+  en: { brand: 'The Slow War', next: 'Next: try it yourself', nextSub: 'Big numbers can feel distant. See what your own day adds up to.', next2: 'Keep exploring', nextSub2: 'See the bigger picture, or trace every number to its source.', rec: 'Recommended', close: 'Close' },
+  ja: { brand: '静かな戦争', next: '次は、自分で試してみる', nextSub: '大きな数字は遠く感じがちです。次は、あなた自身の1日に引き寄せてみましょう。', next2: 'さらに探る', nextSub2: '全体像を見る、またはすべての数値の出典をたどる。', rec: 'おすすめ', close: '閉じる' },
 };
 const swCurrent = () => { const f = location.pathname.split('/').pop(); return f && f.endsWith('.html') ? f : 'index.html'; };
+const swPage = f => SW_PAGES.find(p => p.file === f);
 
 /* ページ最上部のメニュー（各ページの描画関数から言語つきで呼ぶ） */
 function swNav(lang) {
   let nav = document.querySelector('.sw-nav');
   if (!nav) { nav = document.createElement('nav'); nav.className = 'sw-nav'; nav.setAttribute('aria-label', 'Site'); document.body.prepend(nav); }
   const cur = swCurrent(), ui = SW_UI[lang];
-  nav.innerHTML = `<div class="sw-nav-in"><a class="sw-brand" href="index.html"><i></i>${ui.brand}</a><div class="sw-tabs">${SW_PAGES.map(p =>
-    `<a href="${p.file}" class="sw-tab${p.file === cur ? ' on' : ''}"${p.file === cur ? ' aria-current="page"' : ''}>${p[lang].nav}</a>`).join('')}</div></div>`;
+  nav.innerHTML = `<div class="sw-nav-in"><a class="sw-brand" href="index.html"><i></i>${ui.brand}</a><div class="sw-tabs">${SW_NAV_ORDER.map(swPage).map(p =>
+    `<a href="${p.file}" class="sw-tab${p.file === cur ? ' on' : ''}${p.featured ? ' feat' : ''}" style="--c:${p.color}"${p.file === cur ? ' aria-current="page"' : ''}><i></i>${p[lang].nav}</a>`).join('')}</div></div>`;
   swFooterSource(lang);
+  swFloat(lang);
 }
 
 /* フッターの末尾に GitHub のソースへのリンクを付ける（フッターの文言が描画された後に呼ぶ） */
@@ -206,12 +210,39 @@ function swFooterSource(lang) {
   });
 }
 
-/* 他のページへの大きなカード（現在のページは除く） */
+/* 他のページへの大きなカード（現在のページは除く。個人シミュレータは「おすすめ」として大きく表示） */
 function swNext(container, lang) {
   if (!container) return;
   const cur = swCurrent(), ui = SW_UI[lang];
-  container.innerHTML = `<div class="sw-next"><h3>${ui.next}</h3><div class="sw-cards">${SW_PAGES.filter(p => p.file !== cur).map(p =>
-    `<a class="sw-card" href="${p.file}"><span class="sw-ic">${p.icon}</span><b>${p[lang].title}</b><span class="sw-d">${p[lang].desc}</span><span class="sw-btn">${ui.open} →</span></a>`).join('')}</div></div>`;
+  const pages = SW_PAGES.filter(p => p.file !== cur), feat = pages.some(p => p.featured);
+  container.innerHTML = `<div class="sw-next"><h3>${feat ? ui.next : ui.next2}</h3><p class="sw-next-sub">${feat ? ui.nextSub : ui.nextSub2}</p><div class="sw-cards${feat ? '' : ' n3'}">${pages.map(p =>
+    `<a class="sw-card${p.featured ? ' feat' : ''}" href="${p.file}" style="--c:${p.color}">
+      ${p.featured ? `<span class="sw-rec">${ui.rec}</span>` : ''}
+      <span class="sw-ic">${p.icon}</span><b>${p[lang].title}</b><span class="sw-d">${p[lang].desc}</span>
+      <span class="sw-btn">${p[lang].cta} →</span></a>`).join('')}</div></div>`;
+}
+
+/* 画面の隅に出る浮きボタン（個人シミュレータへ）。最初の画面を過ぎてから表示し、閉じたら同じ訪問中は出さない */
+let swFloatClosed = false;
+function swFloat(lang) {
+  const cur = swCurrent(), p = swPage('my-day.html');
+  if (cur === 'my-day.html' || swFloatClosed) return;
+  let f = document.querySelector('.sw-float');
+  if (!f) {
+    f = document.createElement('div');
+    f.className = 'sw-float';
+    document.body.appendChild(f);
+    const onScroll = () => {
+      const next = document.getElementById('next'), r = next && next.getBoundingClientRect();
+      const nearCards = r && r.top < innerHeight && r.bottom > 0;   // カードが見えている間は隠す
+      f.classList.toggle('show', scrollY > innerHeight * 0.7 && !nearCards && !swFloatClosed);
+    };
+    addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  }
+  f.innerHTML = `<a href="${p.file}" style="--c:${p.color}"><span class="sw-ic">${p.icon}</span>${p[lang].float}<b>→</b></a>
+    <button type="button" aria-label="${SW_UI[lang].close}">×</button>`;
+  f.querySelector('button').onclick = () => { swFloatClosed = true; f.classList.remove('show'); };
 }
 
 (function () {
@@ -221,21 +252,46 @@ function swNext(container, lang) {
 .sw-brand i { width: 10px; height: 10px; border-radius: 50%; background: #e5483b; box-shadow: 0 0 0 4px rgba(229,72,59,.2); }
 .sw-tabs { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; margin-left: auto; }
 .sw-tabs::-webkit-scrollbar { display: none; }
-.sw-tab { white-space: nowrap; font-size: 13px; color: #c9c8c3; text-decoration: none; padding: 6px 14px; border-radius: 999px; border: 1px solid #34373c; transition: background .15s, border-color .15s; }
-.sw-tab:hover { border-color: #e5483b; color: #fff; }
+.sw-tab { display: inline-flex; align-items: center; gap: 7px; white-space: nowrap; font-size: 13px; color: #c9c8c3; text-decoration: none; padding: 6px 14px;
+  border-radius: 999px; border: 1px solid #34373c; transition: background .15s, border-color .15s; }
+.sw-tab i { width: 7px; height: 7px; border-radius: 50%; background: var(--c); }
+.sw-tab:hover { border-color: var(--c); color: #fff; }
+.sw-tab.feat:not(.on) { border-color: var(--c); color: #fff; background: color-mix(in srgb, var(--c) 18%, transparent); font-weight: 700; }
 .sw-tab.on { background: #ecebe7; color: #0e0f11; border-color: #ecebe7; font-weight: 700; }
 @media (max-width: 560px) { .sw-tabs { margin-left: 0; width: 100%; } }
-.sw-next { margin: 8px 0; }
-.sw-next h3 { font-size: 13px; letter-spacing: .14em; text-transform: uppercase; opacity: .7; margin: 0 0 12px; font-weight: 600; }
-.sw-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
-.sw-card { display: flex; flex-direction: column; gap: 6px; padding: 18px; border-radius: 14px; text-decoration: none; color: inherit;
-  border: 1px solid rgba(128,128,128,.35); background: rgba(128,128,128,.07); transition: border-color .15s, transform .15s, background .15s; }
-.sw-card:hover { border-color: #e5483b; background: rgba(229,72,59,.07); transform: translateY(-2px); }
-.sw-ic { font-size: 18px; color: #e5483b; line-height: 1; }
-.sw-card b { font-size: 16px; }
-.sw-d { font-size: 13px; opacity: .75; line-height: 1.55; flex: 1; }
+
+.sw-next { margin: 8px 0; font-family: Inter, "Noto Sans JP", -apple-system, "Hiragino Sans", sans-serif; }
+.sw-next h3 { font-size: clamp(22px, 3.6vw, 28px); font-weight: 900; margin: 0 0 6px; line-height: 1.3; }
+.sw-next-sub { font-size: 14px; opacity: .75; margin: 0 0 18px; }
+.sw-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+@media (min-width: 760px) { .sw-cards { grid-template-columns: repeat(4, 1fr); } .sw-cards.n3 { grid-template-columns: repeat(3, 1fr); } .sw-card.feat { grid-column: span 2; } }
+.sw-card { position: relative; display: flex; flex-direction: column; gap: 8px; padding: 22px; border-radius: 18px; text-decoration: none; color: inherit;
+  border: 2px solid color-mix(in srgb, var(--c) 60%, transparent);
+  background: linear-gradient(145deg, color-mix(in srgb, var(--c) 26%, transparent), color-mix(in srgb, var(--c) 6%, transparent));
+  box-shadow: 0 10px 30px -14px color-mix(in srgb, var(--c) 70%, transparent);
+  transition: transform .18s, box-shadow .18s, border-color .18s; }
+.sw-card:hover { transform: translateY(-3px); border-color: var(--c); box-shadow: 0 16px 38px -12px color-mix(in srgb, var(--c) 85%, transparent); }
+.sw-card.feat { padding: 26px; border-width: 2px; background: linear-gradient(145deg, color-mix(in srgb, var(--c) 42%, transparent), color-mix(in srgb, var(--c) 12%, transparent)); }
+.sw-ic { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; font-size: 18px; line-height: 1;
+  background: var(--c); color: #111; }
+.sw-card b { font-size: 18px; line-height: 1.35; }
+.sw-card.feat b { font-size: clamp(20px, 2.6vw, 26px); }
+.sw-d { font-size: 13.5px; opacity: .85; line-height: 1.6; flex: 1; }
+.sw-btn { align-self: flex-start; margin-top: 8px; font-size: 14px; font-weight: 800; color: #111; background: var(--c); border-radius: 999px; padding: 9px 18px; }
+.sw-card.feat .sw-btn { font-size: 15px; padding: 11px 22px; }
+.sw-rec { position: absolute; top: 16px; right: 16px; font-size: 11.5px; font-weight: 800; letter-spacing: .06em; color: #111; background: var(--c); border-radius: 999px; padding: 3px 10px; }
 .sw-src a { color: inherit; }
-.sw-btn { align-self: flex-start; margin-top: 6px; font-size: 13px; font-weight: 700; color: #fff; background: #e5483b; border-radius: 999px; padding: 6px 14px; }`;
+
+.sw-float { position: fixed; right: 16px; bottom: 16px; z-index: 30; display: flex; align-items: center; gap: 6px; opacity: 0; transform: translateY(16px);
+  pointer-events: none; transition: opacity .3s, transform .3s; font-family: Inter, "Noto Sans JP", -apple-system, "Hiragino Sans", sans-serif; }
+.sw-float.show { opacity: 1; transform: none; pointer-events: auto; }
+.sw-float a { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; color: #111; background: var(--c); font-weight: 800; font-size: 14px;
+  padding: 8px 18px 8px 8px; border-radius: 999px; box-shadow: 0 10px 28px -8px rgba(0,0,0,.6), 0 0 0 4px color-mix(in srgb, var(--c) 30%, transparent); }
+.sw-float a .sw-ic { width: 30px; height: 30px; font-size: 15px; background: #111; color: var(--c); }
+.sw-float button { width: 28px; height: 28px; border-radius: 50%; border: 0; background: rgba(20,20,22,.85); color: #ddd; font-size: 16px; line-height: 1; cursor: pointer; }
+@media (prefers-reduced-motion: no-preference) { .sw-float.show a { animation: sw-pulse 2.6s ease-in-out 1s 3; } }
+@keyframes sw-pulse { 50% { box-shadow: 0 10px 28px -8px rgba(0,0,0,.6), 0 0 0 10px color-mix(in srgb, var(--c) 0%, transparent); } }
+@media (max-width: 899px) { body:has(.mbar) .sw-float { bottom: 76px; } }`;
   const st = document.createElement('style');
   st.textContent = css;
   document.head.appendChild(st);
