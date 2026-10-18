@@ -101,9 +101,15 @@
   .item.per.off { opacity: .5; }
   .item .assume { font-size: 11.5px; color: #c9c8c3; margin-top: 6px; padding-top: 6px; border-top: 1px dashed var(--faint); }
   .item .assume .num { color: var(--c-shopping); font-weight: 700; }
+  .ref-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 12.5px; color: #c9c8c3; margin: 4px 0 10px; }
+  .ref-row select { font-size: 12.5px; padding: 5px 26px 5px 8px; }
+  .brk-wrap { position: relative; }
+  .ref-mark { position: absolute; top: -4px; bottom: -4px; width: 2px; background: #ecebe7; transform: translateX(-1px); transition: left .35s ease; }
+  .ref-mark span { position: absolute; bottom: -16px; left: 50%; transform: translateX(-50%); font-size: 10px; font-style: normal; color: #ecebe7; white-space: nowrap; }
   .shop-brk { margin-top: 16px; padding: 14px; border-radius: 12px; background: var(--bg3); border: 1px solid var(--faint); }
   .brk-h { display: flex; justify-content: space-between; align-items: baseline; font-size: 13px; margin-bottom: 8px; }
   .brk-h span { font-size: 18px; font-weight: 900; color: var(--c-shopping); }
+  .brk-wrap { margin-bottom: 14px; }
   .brk-bar { display: flex; height: 18px; border-radius: 6px; overflow: hidden; background: var(--bg); }
   .brk-bar span { transition: width .35s ease; border-right: 1px solid rgba(0,0,0,.35); overflow: hidden; }
   .brk-bar.tall { height: 26px; }
@@ -355,7 +361,7 @@
 
 <div class="mbar"><div><span data-i18n="mToday"></span><br><b class="num" id="mKg">0</b> kg CO₂</div><div class="r" style="text-align:right"><span id="mScale"></span><br><b class="num" id="mImp">—</b></div></div>
 
-<script src="site.js?v=20261019a"></script>
+<script src="site.js?v=20261019b"></script>
 <script>
 /* ===================== DATA ===================== */
 const COUNTRIES = {
@@ -397,7 +403,23 @@ const SHOP = {
   other: { none: 0, low: 0.9, mid: 1.8, high: 3.6 },
   colors: { bottle: '#4fb38a', coffee: '#9ad17a', parcel: '#e0a43b', tshirt: '#5b9bd5', jeans: '#3f6fb0', shoes: '#a983e0', phone: '#e57a5a', laptop: '#d4c25a', other: '#6b7078' },
 };
-const JP_GOODS_SHARE = 14;   // 日本の平均で、消費財が生活由来の排出に占める割合（%）
+// 平均的な人の消費財（モノ）由来の排出：t = 年あたり t CO₂e、total = 生活由来の排出全体（t/年）
+// Hot or Cool Institute (2021) 表3.1（2019年時点）。日本は IGES ほか (2019) の 1,030 kg と同じ値を使う。
+// high ＝ カナダ・フィンランド・英国・日本の単純平均。world ＝ 調査10か国の人口加重平均（世界人口の約半分）。
+const GOODS_REF = {
+  world:   { t: 0.28, total: 4.2,  en: 'World (population-weighted average of 10 countries studied)', ja: '世界（調査10か国の人口加重平均）', sen: 'World', sja: '世界' },
+  high:    { t: 1.48, total: 10.0, en: 'High-income countries (average of Canada, Finland, UK, Japan)', ja: '高所得国（カナダ・フィンランド・英国・日本の平均）', sen: 'high-income countries', sja: '高所得国' },
+  japan:   { t: 1.03, total: 8.1,  en: 'Japan', ja: '日本', sen: 'Japan', sja: '日本' },
+  canada:  { t: 2.5,  total: 13.6, en: 'Canada', ja: 'カナダ', sen: 'Canada', sja: 'カナダ' },
+  uk:      { t: 1.0,  total: 8.5,  en: 'United Kingdom', ja: '英国', sen: 'UK', sja: '英国' },
+  finland: { t: 1.4,  total: 9.7,  en: 'Finland (an EU example)', ja: 'フィンランド（EUの例）', sen: 'Finland', sja: 'フィンランド' },
+  china:   { t: 0.41, total: 5.0,  en: 'China', ja: '中国', sen: 'China', sja: '中国' },
+};
+const goodsRefKey = () => S.ref || (S.lang === 'ja' ? 'japan' : 'high');
+const goodsRefDaily = () => GOODS_REF[goodsRefKey()].t * 1000 / 365.25;
+const itemsDaily = d => Object.keys(F.shop).reduce((a, k) => a + shopPerDay(d, k), 0);
+// その他のモノ：「平均に合わせる」は、参考の平均から上の品物の分を引いた残り
+const otherDaily = d => d.other === 'match' ? Math.max(0, goodsRefDaily() - itemsDaily(d)) : SHOP.other[d.other];
 const shopPerDay = (d, k) => SHOP.daily.includes(k)
   ? F.shop[k] * d.shop[k]
   : (d.own[k] ? F.shop[k] * d.per[k] / 365.25 : 0);
@@ -472,10 +494,12 @@ const I18N = {
     assumed: 'Assumed: {f}', perDayV: '→ {kg} kg/day', perDayD: '{kg} kg/day',
     otherH: 'Everything else you buy', otherD: 'Appliances, furniture, toiletries, books, toys… things not listed above. Pick a rough level.',
     otherOpt: { none: 'None', low: 'Low', mid: 'Average', high: 'High' },
-    otherRef: 'For reference: the average person in Japan’s consumer-goods footprint is about 1,030 kg a year (≈ 2.8 kg/day) — about 14% of their lifestyle footprint (1.5-Degree Lifestyles, 2019). “Average” plus the items above roughly matches that.',
+    refLbl: 'Compare with the average person in', match: 'Match the average',
+    otherRef: 'Reference — {ref}: consumer goods ≈ {y} kg a year (≈ {d} kg/day), about {p}% of the lifestyle footprint (Hot or Cool Institute, 2021). Choose “Match the average” to fill the rest of your shopping up to this level.',
+    refMark: 'avg',
     brk2H: 'Single-item impact (simple total, not spread out)', brk2D: 'The same items as if you bought them all today. A laptop is huge as a single purchase, but small once spread over years.',
     brkH: 'What your shopping is made of (per day)', otherLbl: 'Everything else', notIncl: 'not included',
-    shareLine: 'Shopping is <b>{p}%</b> of your day · reference: about {r}% for the average person in Japan',
+    shareLine: 'Shopping is <b>{p}%</b> of your day · average in {ref}: about {r}%',
     totDay: 'Per day (spread out)', totDayS: 'Used in your total', totSimple: 'Simple total (not spread out)', totSimpleS: 'If you bought all of these today',
     shop: { bottle: 'Bottled drink', coffee: 'Takeaway coffee', parcel: 'Online delivery', tshirt: 'T-shirt', jeans: 'Jeans', shoes: 'Sneakers', phone: 'Smartphone', laptop: 'Laptop' },
     carEq: '≈ {km} km by car',
@@ -567,10 +591,12 @@ const I18N = {
     assumed: '想定：{f}', perDayV: '→ 1日 {kg} kg', perDayD: '1日 {kg} kg',
     otherH: 'その他のモノ', otherD: '家電・家具・日用品・本・おもちゃなど、上にない買い物。おおよその量を選んでください。',
     otherOpt: { none: 'なし', low: '少なめ', mid: 'ふつう', high: '多め' },
-    otherRef: '参考：日本の平均的な人の消費財（モノ）由来の排出は年約1,030 kg（1日約2.8 kg）で、生活由来の排出全体の約14%です（1.5℃ライフスタイル報告、2019年）。上の品物の初期値に「ふつう」を加えると、おおよそこの値になります。',
+    refLbl: '比べる平均', match: '平均に合わせる',
+    otherRef: '参考 — {ref}：平均的な人の消費財（モノ）由来の排出は年約{y} kg（1日約{d} kg）で、生活由来の排出全体の約{p}%です（Hot or Cool Institute、2021年）。「平均に合わせる」を選ぶと、上の品物との差をその他のモノとして補います。',
+    refMark: '平均',
     brk2H: '単品のインパクト（単純合計の内訳・割り戻しなし）', brk2D: '同じ品物を今日まとめて買ったとした場合。ノートPCは1回の買い物としては大きいものの、何年にも割り戻すと小さくなります。',
     brkH: '買い物の内訳（1日あたり）', otherLbl: 'その他のモノ', notIncl: '計算に入れていない',
-    shareLine: 'あなたの1日のうち買い物は <b>{p}%</b> ・ 参考：日本の平均は約{r}%',
+    shareLine: 'あなたの1日のうち買い物は <b>{p}%</b> ・ 参考：{ref}の平均は約{r}%',
     totDay: '1日あたり（割り戻し込み）', totDayS: '合計に使う値', totSimple: '単純合計（割り戻しなし）', totSimpleS: '今日まとめて買ったとした場合',
     shop: { bottle: 'ペットボトル飲料', coffee: 'テイクアウトのコーヒー', parcel: 'ネット通販の配送', tshirt: 'Tシャツ', jeans: 'ジーンズ', shoes: 'スニーカー', phone: 'スマートフォン', laptop: 'ノートPC' },
     carEq: '車で約{km} km分',
@@ -646,7 +672,7 @@ const I18N = {
 const store = { get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
                 set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} } };
 const S = {
-  lang: store.get('scw-lang') === 'ja' ? 'ja' : 'en', country: 'japan', tip: 1, scale: 'country', gwp: 100, coc: false, cocRate: 0.5, basis: 'protein', sel: 'chicken',
+  lang: store.get('scw-lang') === 'ja' ? 'ja' : 'en', country: 'japan', tip: 1, scale: 'country', ref: null, gwp: 100, coc: false, cocRate: 0.5, basis: 'protein', sel: 'chicken',
   day: { mode: 'car', km: 20, meals: ['veg', 'chicken', 'beef'], hvac: 'cool', hours: 6, eco: false, appl: 'avg',
          short: 1, long: 1, shop: { bottle: 1, coffee: 1 }, own: { parcel: true, tshirt: true, jeans: true, shoes: true, phone: true, laptop: true },
          per: { ...SHOP.perYear }, other: 'mid' },
@@ -683,7 +709,7 @@ function footprint(d) {
     food: d.meals.reduce((s, m) => s + mealKg(m), 0),
     home: hvac * (d.eco ? F.eco : 1) + F.applKwh[d.appl] * grid,
     flights: (d.short * F.flight.short + d.long * F.flight.long) / 365,
-    shopping: Object.keys(F.shop).reduce((s, k) => s + shopPerDay(d, k), 0) + SHOP.other[d.other],
+    shopping: itemsDaily(d) + otherDaily(d),
   };
   r.total = CATS.reduce((s, c) => s + r[c], 0);
   return r;
@@ -761,11 +787,12 @@ function buildInputs() {
           <div class="assume">${tpl(l.assumed, { f: l.freq[k] })}<br><span class="num">${tpl(l.perDayV, { kg: shopKg(F.shop[k] * SHOP.perYear[k] / 365.25) })}</span></div>
         </div>`).join('')}</div>
       <div class="shop-h"><b>${l.otherH}</b><span>${l.otherD}</span></div>
-      <div class="chips">${Object.keys(SHOP.other).map(o => chip('other', o, l.otherOpt[o], d.other === o, o === 'none' ? '' : `<small>${SHOP.other[o]} kg</small>`)).join('')}</div>
-      <p class="hint" style="margin-top:8px">${l.otherRef}</p>
+      <div class="ref-row"><span>${l.refLbl}</span><select id="goodsRef">${Object.entries(GOODS_REF).map(([k, r]) => `<option value="${k}"${k === goodsRefKey() ? ' selected' : ''}>${r[S.lang]}</option>`).join('')}</select></div>
+      <div class="chips">${Object.keys(SHOP.other).map(o => chip('other', o, l.otherOpt[o], d.other === o, o === 'none' ? '' : `<small>${SHOP.other[o]} kg</small>`)).join('')}${chip('other', 'match', l.match, d.other === 'match', '<small id="matchKg"></small>')}</div>
+      <p class="hint" style="margin-top:8px" id="otherRef"></p>
       <div class="shop-brk">
         <div class="brk-h"><b>${l.brkH}</b><span class="num" id="brkTotal"></span></div>
-        <div class="brk-bar" id="brkBar"></div>
+        <div class="brk-wrap"><div class="brk-bar" id="brkBar"></div><i class="ref-mark" id="refMark"><span>${l.refMark}</span></i></div>
         <div class="brk-leg" id="brkLeg"></div>
         <div class="brk-share" id="brkShare"></div>
         <div class="brk-h" style="margin-top:14px"><b>${l.brk2H}</b><span class="num" id="brk2Total" style="color:var(--text)"></span></div>
@@ -806,8 +833,12 @@ function update() {
   CATS.forEach(k => { $('kg-' + k).textContent = kg(fp[k]) + ' kg'; });
   $('shopDay').textContent = kg(fp.shopping) + ' kg';
   // 買い物の内訳：目盛りは固定（8 kg/日、超えたら合計に合わせる）なので、品物を外すと棒が目に見えて短くなる
-  const parts = [...shopItems().map(k => ({ k, v: shopPerDay(d, k), name: l.shop[k] })), { k: 'other', v: SHOP.other[d.other], name: l.otherLbl }];
-  const scale = Math.max(4, fp.shopping);
+  const ref = GOODS_REF[goodsRefKey()], refD = goodsRefDaily();
+  const parts = [...shopItems().map(k => ({ k, v: shopPerDay(d, k), name: l.shop[k] })), { k: 'other', v: otherDaily(d), name: l.otherLbl }];
+  const scale = Math.max(4, fp.shopping, refD * 1.1);
+  $('refMark').style.left = (refD / scale * 100) + '%';
+  $('otherRef').textContent = tpl(l.otherRef, { ref: ref[S.lang], y: fmt(ref.t * 1000), d: refD.toFixed(1), p: Math.round(ref.t / ref.total * 100) });
+  $('matchKg').textContent = Math.max(0, refD - itemsDaily(d)).toFixed(1) + ' kg';
   $('brkTotal').textContent = kg(fp.shopping) + ' kg';
   $('brkBar').innerHTML = parts.filter(p => p.v > 0).map(p => `<span style="width:${p.v / scale * 100}%;background:${SHOP.colors[p.k]}" title="${p.name}: ${shopKg(p.v)} kg"></span>`).join('');
   $('brkLeg').innerHTML = parts.map(p => `<div class="${p.v > 0 ? '' : 'off'}"><i style="background:${SHOP.colors[p.k]}"></i>${p.name}<span class="num">${p.v > 0 ? shopKg(p.v) + ' kg · ' + Math.round(p.v / fp.shopping * 100) + '%' : l.notIncl}</span></div>`).join('');
@@ -817,7 +848,7 @@ function update() {
   $('brk2Total').textContent = kg(rawSum) + ' kg';
   $('brk2Bar').innerHTML = raw.map(p => { const w = p.v / Math.max(rawSum, 1) * 100;
     return `<span style="width:${w}%;background:${SHOP.colors[p.k]}" title="${p.name}: ${p.v} kg">${w >= 9 ? `<em>${p.name} ${Math.round(w)}%</em>` : ''}</span>`; }).join('');
-  $('brkShare').innerHTML = tpl(l.shareLine, { p: fp.total ? Math.round(fp.shopping / fp.total * 100) : 0, r: JP_GOODS_SHARE });
+  $('brkShare').innerHTML = tpl(l.shareLine, { p: fp.total ? Math.round(fp.shopping / fp.total * 100) : 0, r: Math.round(ref.t / ref.total * 100), ref: S.lang === 'ja' ? ref.sja : ref.sen });
   $('shopSimple').textContent = kg(shopSimple(d)) + ' kg';
 
   // 合計と内訳
@@ -1014,6 +1045,7 @@ document.addEventListener('input', e => {
   else return;
   update();
 });
+document.addEventListener('change', e => { if (e.target.id === 'goodsRef') { S.ref = e.target.value; update(); } });
 $('country').addEventListener('change', e => { S.country = e.target.value; update(); });
 $('tip').addEventListener('change', e => { S.tip = +e.target.value; update(); });
 
