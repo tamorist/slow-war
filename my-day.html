@@ -101,6 +101,10 @@
   .item.per.off { opacity: .5; }
   .item .assume { font-size: 11.5px; color: #c9c8c3; margin-top: 6px; padding-top: 6px; border-top: 1px dashed var(--faint); }
   .item .assume .num { color: var(--c-shopping); font-weight: 700; }
+  .ref-note { margin: 6px 0 4px; font-size: 12px; color: #c9c8c3; }
+  .ref-note summary { cursor: pointer; color: var(--amber); font-size: 12px; }
+  .ref-note ul { margin: 8px 0 0; padding-left: 18px; }
+  .ref-note li { margin-bottom: 4px; line-height: 1.6; }
   .ref-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 12.5px; color: #c9c8c3; margin: 4px 0 10px; }
   .ref-row select { font-size: 12.5px; padding: 5px 26px 5px 8px; }
   .brk-wrap { position: relative; }
@@ -351,7 +355,7 @@
 
 <div class="mbar"><div><span data-i18n="mToday"></span><br><b class="num" id="mKg">0</b> kg CO₂</div><div class="r" style="text-align:right"><span id="mScale"></span><br><b class="num" id="mImp">—</b></div></div>
 
-<script src="site.js?v=20261019c"></script>
+<script src="site.js?v=20261019d"></script>
 <script>
 /* ===================== DATA ===================== */
 const COUNTRIES = {
@@ -395,22 +399,25 @@ const SHOP = {
 };
 // 平均的な人の消費財（モノ）由来の排出：t = 年あたり t CO₂e、total = 生活由来の排出全体（t/年）
 // Hot or Cool Institute (2021) 表3.1（2019年時点）。日本は IGES ほか (2019) の 1,030 kg と同じ値を使う。
-// high ＝ カナダ・フィンランド・英国・日本の単純平均。world ＝ 調査10か国の人口加重平均（世界人口の約半分）。
+// high ＝ カナダ・フィンランド・英国・日本の単純平均。インドは図3.10の値（表3.1では「0.1未満」）。
 const GOODS_REF = {
-  world:   { t: 0.28, total: 4.2,  en: 'World (population-weighted average of 10 countries studied)', ja: '世界（調査10か国の人口加重平均）', sen: 'World', sja: '世界' },
   high:    { t: 1.48, total: 10.0, en: 'High-income countries (average of Canada, Finland, UK, Japan)', ja: '高所得国（カナダ・フィンランド・英国・日本の平均）', sen: 'high-income countries', sja: '高所得国' },
   japan:   { t: 1.03, total: 8.1,  en: 'Japan', ja: '日本', sen: 'Japan', sja: '日本' },
   canada:  { t: 2.5,  total: 13.6, en: 'Canada', ja: 'カナダ', sen: 'Canada', sja: 'カナダ' },
   uk:      { t: 1.0,  total: 8.5,  en: 'United Kingdom', ja: '英国', sen: 'UK', sja: '英国' },
   finland: { t: 1.4,  total: 9.7,  en: 'Finland (an EU example)', ja: 'フィンランド（EUの例）', sen: 'Finland', sja: 'フィンランド' },
   china:   { t: 0.41, total: 5.0,  en: 'China', ja: '中国', sen: 'China', sja: '中国' },
+  india:   { t: 0.01, total: 3.0,  en: 'India', ja: 'インド', sen: 'India', sja: 'インド' },
 };
 const goodsRefKey = () => S.ref || (S.lang === 'ja' ? 'japan' : 'high');
+const pctTxt = x => x >= 1 ? (S.lang === 'ja' ? '約' : 'about ') + Math.round(x) + '%' : (S.lang === 'ja' ? '1%未満' : 'under 1%');
 const goodsRefDaily = () => GOODS_REF[goodsRefKey()].t * 1000 / 365.25;
-const itemsDaily = d => Object.keys(F.shop).reduce((a, k) => a + shopPerDay(d, k), 0);
+// 買い物・モノの品物（ときどき買うもの）。飲み物は「食事・飲み物」に入れ、モノの平均との比較からは外す
+const itemsDaily = d => SHOP.periodic.reduce((a, k) => a + shopPerDay(d, k), 0);
+const drinksDaily = d => SHOP.daily.reduce((a, k) => a + shopPerDay(d, k), 0);
 // その他のモノ：「平均に合わせる」は、参考の平均から上の品物の分を引いた残り
-// 上の品物の初期設定の分（1日あたり）。毎日のもの各1個＋ときどき買うものを想定頻度ですべて含めた場合
-const DEFAULT_ITEMS = SHOP.daily.reduce((a, k) => a + F.shop[k], 0) + SHOP.periodic.reduce((a, k) => a + F.shop[k] * SHOP.perYear[k] / 365.25, 0);
+// 上の品物の初期設定の分（1日あたり）。ときどき買うものを想定頻度ですべて含めた場合
+const DEFAULT_ITEMS = SHOP.periodic.reduce((a, k) => a + F.shop[k] * SHOP.perYear[k] / 365.25, 0);
 // その他のモノ：上の品物を初期設定のままにしたとき、買い物全体が「比べる平均 × 倍率」になる量
 // （品物を外したり増やしたりすると、その分だけ合計が変わる）
 const shopTarget = o => SHOP.other[o] * goodsRefDaily();
@@ -471,7 +478,7 @@ const I18N = {
     title: 'Your Day, at Scale', ctlCountry: 'Region', ctlTip: 'Tipping effects',
     h1: 'Your day, multiplied.',
     lead: 'On its own, one person’s day emits only a few kilograms of CO₂. Multiply it by everyone in a country — or on Earth — and it becomes a count of lives. Tell us how your day went.',
-    cat: { transport: 'Getting around', food: 'Meals', home: 'Heating, cooling & power', flights: 'Flights', shopping: 'Shopping & stuff' },
+    cat: { transport: 'Getting around', food: 'Meals & drinks', home: 'Heating, cooling & power', flights: 'Flights', shopping: 'Shopping & stuff' },
     mode: { walk: 'Walk / bike', train: 'Train', bus: 'Bus', ev: 'Electric car', hybrid: 'Hybrid car', car: 'Petrol car' },
     distance: 'Distance today (round trip)',
     mealSlot: ['Breakfast', 'Lunch', 'Dinner'],
@@ -482,19 +489,26 @@ const I18N = {
     flightHint: 'Round trips per year, spread across 365 days',
     fShort: 'Short-haul', fShortD: '~1–2 h each way (domestic, regional)', fLong: 'Long-haul', fLongD: '~12 h each way (e.g. Tokyo–London)',
     shopHint: 'Values cover making and shipping each item.',
-    shopDailyH: 'Every day', shopDailyD: 'Things you buy daily — counted as if you did this every day. Tap to add.',
+    shopDailyH: 'Drinks (every day)', shopDailyD: 'Bought drinks — counted as if every day. Tap to add. (Meals above do not include drinks.)',
     shopPerH: 'Now and then', shopPerD: 'Things you buy occasionally — spread across days using the assumed frequency on each card. Tap to include or leave out.',
     freq: { parcel: 'once a week', tshirt: '5 a year', jeans: '1 a year', shoes: '2 pairs a year', phone: 'one every 3 years', laptop: 'one every 5 years' },
     assumed: 'Assumed: {f}', perDayV: '→ {kg} kg/day', perDayD: '{kg} kg/day',
     otherH: 'Everything else you buy', otherD: 'Appliances, furniture, toiletries, books, toys… things not listed above. How much do you buy compared with the average person you chose?',
     otherOpt: { none: 'None', low: 'Less (half the average)', mid: 'Average', high: 'More (twice the average)' },
     refLbl: 'Compare with the average person in',
-    otherRef: 'Reference — {ref}: consumer goods ≈ {y} kg a year (≈ {d} kg/day), about {p}% of the lifestyle footprint (Hot or Cool Institute, 2021). Each option sets your whole shopping — with the items above at their defaults (≈ {i} kg/day) — to half, equal to, or twice this average; “everything else” fills the gap. Removing or adding items changes the total from there.',
+    otherRef: 'Reference — {ref}: consumer goods ≈ {y} kg a year (≈ {d} kg/day), {p} of the lifestyle footprint (Hot or Cool Institute, 2021). Each option sets your whole shopping — with the items above at their defaults (≈ {i} kg/day) — to half, equal to, or twice this average; “everything else” fills the gap. Removing or adding items changes the total from there.',
+    refNoteH: 'About these reference values (please read)',
+    refNote: [
+      'They are for <b>2019</b>. Changes since then — for example, rising consumption in China — are not reflected.',
+      'Consumer-goods footprints are estimated as <b>spending × emissions per dollar</b>, so they shift a lot with how each country’s statistics are grouped and where imports come from. Part of the gap between countries (e.g. Japan vs Canada) may come from <b>method differences</b>, not only from how much people buy. The same group’s 2025 edition gives different values again.',
+      '“Goods” here means clothes and shoes, furniture, household goods and appliances, and miscellaneous products. It <b>excludes</b> food and drinks, cars and fuel, electricity and gas, eating out, and services.',
+      'Use them as a <b>rough guide</b>, not as precise figures.',
+    ],
     otherOver: ' At this level the items above already exceed the target, so “everything else” is zero.',
     otherTot: 'total ≈ {kg} kg',
     refMark: 'avg',
     brkH: 'What your shopping is made of (per day)', otherLbl: 'Everything else', excluded: 'not included',
-    shareLine: 'Shopping is <b>{p}%</b> of your day · average in {ref}: about {r}%',
+    shareLine: 'Shopping is <b>{p}%</b> of your day · average in {ref}: {r}',
     shop: { bottle: 'Bottled drink', coffee: 'Takeaway coffee', parcel: 'Online delivery', tshirt: 'T-shirt', jeans: 'Jeans', shoes: 'Sneakers', phone: 'Smartphone', laptop: 'Laptop' },
     carEq: '≈ {km} km by car',
     gwpLabel: 'How to count methane', gwp100: '100-year (standard, GWP100)', gwp20: '20-year (near-term, GWP20)',
@@ -568,7 +582,7 @@ const I18N = {
     title: 'あなたの1日を、世界の規模で', ctlCountry: '国・地域', ctlTip: 'ティッピング効果',
     h1: 'あなたの1日を、<br>かけ算する。',
     lead: '1人の1日の排出は、数キログラムにすぎません。けれど、それを国の全員、世界の全員でかけ算すると、命の数になります。あなたの今日を選んでみてください。',
-    cat: { transport: '移動', food: '食事', home: '冷暖房・電気', flights: '飛行機', shopping: '買い物・モノ' },
+    cat: { transport: '移動', food: '食事・飲み物', home: '冷暖房・電気', flights: '飛行機', shopping: '買い物・モノ' },
     mode: { walk: '徒歩・自転車', train: '電車', bus: 'バス', ev: '電気自動車', hybrid: 'ハイブリッド車', car: 'ガソリン車' },
     distance: '今日の移動距離（往復）',
     mealSlot: ['朝食', '昼食', '夕食'],
@@ -579,19 +593,26 @@ const I18N = {
     flightHint: '1年間の往復回数を、365日で割って1日あたりに換算',
     fShort: '短距離', fShortD: '片道1〜2時間（国内線など）', fLong: '長距離', fLongD: '片道約12時間（例：東京–ロンドン）',
     shopHint: '値は製造から配送までの排出量です。',
-    shopDailyH: '毎日のもの', shopDailyD: '毎日買うもの。この1日を毎日続けるとして数えます。タップで追加。',
+    shopDailyH: '飲み物（毎日）', shopDailyD: '買った飲み物。この1日を毎日続けるとして数えます。タップで追加（上の食事には飲み物は含まれていません）。',
     shopPerH: 'ときどき買うもの', shopPerD: 'ときどき買うもの。各カードの想定頻度で、1日あたりに割り戻します。タップで入れる／外す。',
     freq: { parcel: '週1回', tshirt: '年5枚', jeans: '年1本', shoes: '年2足', phone: '3年に1台', laptop: '5年に1台' },
     assumed: '想定：{f}', perDayV: '→ 1日 {kg} kg', perDayD: '1日 {kg} kg',
     otherH: 'その他のモノ', otherD: '家電・家具・日用品・本・おもちゃなど、上にない買い物。「比べる平均」の人と比べて、どのくらい買うかを選んでください。',
     otherOpt: { none: 'なし', low: '少なめ（平均の半分）', mid: '平均並み', high: '多め（平均の2倍）' },
     refLbl: '比べる平均',
-    otherRef: '参考 — {ref}：平均的な人の消費財（モノ）由来の排出は年約{y} kg（1日約{d} kg）で、生活由来の排出全体の約{p}%です（Hot or Cool Institute、2021年）。選択肢は、上の品物を初期設定のまま（1日約{i} kg）にしたときの買い物全体を、この平均の半分・平均並み・2倍にするものです。その差を「その他のモノ」で補います。品物を外したり増やしたりすると、そこから合計が変わります。',
+    otherRef: '参考 — {ref}：平均的な人の消費財（モノ）由来の排出は年約{y} kg（1日約{d} kg）で、生活由来の排出全体の{p}です（Hot or Cool Institute、2021年）。選択肢は、上の品物を初期設定のまま（1日約{i} kg）にしたときの買い物全体を、この平均の半分・平均並み・2倍にするものです。その差を「その他のモノ」で補います。品物を外したり増やしたりすると、そこから合計が変わります。',
+    refNoteH: 'この参考値について（注意）',
+    refNote: [
+      '<b>2019年</b>時点のデータです。その後の変化（たとえば中国の消費の伸び）は反映されていません。',
+      'モノの排出は<b>「支出額 × 1ドルあたりの排出係数」</b>で推計されており、国ごとの統計の分類や輸入元の違いで大きく変わります。国の差の一部（たとえば日本とカナダの差）は、実際の買い物の量ではなく<b>計算方法の違い</b>による可能性があります。同じ研究グループの2025年版でも値は変わっています。',
+      'ここでの「モノ」には、衣類・履物、家具・家庭用品・家電、雑貨などが入ります。食料品・飲み物、車と燃料、電気・ガス、外食、サービスは<b>含みません</b>。',
+      'あくまで<b>目安</b>として使ってください。',
+    ],
     otherOver: 'この水準では、上の品物だけで目安を超えるため、その他のモノは0です。',
     otherTot: '合計 約{kg} kg',
     refMark: '平均',
     brkH: '買い物の内訳（1日あたり）', otherLbl: 'その他のモノ', excluded: '計算に入れていない',
-    shareLine: 'あなたの1日のうち買い物は <b>{p}%</b> ・ 参考：{ref}の平均は約{r}%',
+    shareLine: 'あなたの1日のうち買い物は <b>{p}%</b> ・ 参考：{ref}の平均は{r}',
     shop: { bottle: 'ペットボトル飲料', coffee: 'テイクアウトのコーヒー', parcel: 'ネット通販の配送', tshirt: 'Tシャツ', jeans: 'ジーンズ', shoes: 'スニーカー', phone: 'スマートフォン', laptop: 'ノートPC' },
     carEq: '車で約{km} km分',
     gwpLabel: 'メタンの評価期間', gwp100: '100年（標準・GWP100）', gwp20: '20年（短期・GWP20）',
@@ -700,7 +721,7 @@ function footprint(d) {
   const hvac = d.hvac === 'off' ? 0 : d.hvac === 'kero' ? F.keroKgPerH * d.hours : F.hvacKwhPerH[d.hvac] * d.hours * grid;
   const r = {
     transport: perKm * d.km,
-    food: d.meals.reduce((s, m) => s + mealKg(m), 0),
+    food: d.meals.reduce((s, m) => s + mealKg(m), 0) + drinksDaily(d),
     home: hvac * (d.eco ? F.eco : 1) + F.applKwh[d.appl] * grid,
     flights: (d.short * F.flight.short + d.long * F.flight.long) / 365,
     shopping: itemsDaily(d) + otherDaily(d),
@@ -746,6 +767,12 @@ function buildInputs() {
     <div class="block">${head('food')}
       ${l.mealSlot.map((slot, i) => `<div class="meal-row"><span>${slot}</span><div class="chips">${Object.keys(MEAL.portion).map(m =>
         chip('meal' + i, m, l.meal[m], d.meals[i] === m)).join('')}</div></div>`).join('')}
+      <div class="shop-h"><b>${l.shopDailyH}</b><span>${l.shopDailyD}</span></div>
+      <div class="shop">${SHOP.daily.map(k => `
+        <div class="item${d.shop[k] ? ' on' : ''}" data-shop="${k}" role="button" tabindex="0">
+          <b>${l.shop[k]}</b><div class="big-kg num">${F.shop[k]} kg</div><div class="eq">${tpl(l.carEq, { km: fmt(F.shop[k] / F.transport.car) })}</div>
+          ${d.shop[k] ? `<span class="cnt num">×${d.shop[k]}</span><button class="minus" data-minus="${k}" aria-label="−">−</button>` : ''}
+        </div>`).join('')}</div>
       <div class="sub-label">${l.gwpLabel}</div><div class="chips">${gwpChips()}</div>
       <div class="sub-label">${l.cocLabel}</div><div class="chips">${cocChips()}</div>
     </div>
@@ -767,12 +794,6 @@ function buildInputs() {
     </div>
     <div class="block">${head('shopping')}
       <p class="hint">${l.shopHint}</p>
-      <div class="shop-h"><b>${l.shopDailyH}</b><span>${l.shopDailyD}</span></div>
-      <div class="shop">${SHOP.daily.map(k => `
-        <div class="item${d.shop[k] ? ' on' : ''}" data-shop="${k}" role="button" tabindex="0">
-          <b>${l.shop[k]}</b><div class="big-kg num">${F.shop[k]} kg</div><div class="eq">${tpl(l.carEq, { km: fmt(F.shop[k] / F.transport.car) })}</div>
-          ${d.shop[k] ? `<span class="cnt num">×${d.shop[k]}</span><button class="minus" data-minus="${k}" aria-label="−">−</button>` : ''}
-        </div>`).join('')}</div>
       <div class="shop-h"><b>${l.shopPerH}</b><span>${l.shopPerD}</span></div>
       <div class="shop">${SHOP.periodic.map(k => `
         <div class="item per${d.own[k] ? ' on' : ' off'}" data-own="${k}" role="button" tabindex="0" aria-pressed="${d.own[k]}">
@@ -784,6 +805,7 @@ function buildInputs() {
       <div class="ref-row"><span>${l.refLbl}</span><select id="goodsRef">${Object.entries(GOODS_REF).map(([k, r]) => `<option value="${k}"${k === goodsRefKey() ? ' selected' : ''}>${r[S.lang]}</option>`).join('')}</select></div>
       <div class="chips">${Object.keys(SHOP.other).map(o => chip('other', o, l.otherOpt[o], d.other === o, o === 'none' ? '' : `<small>${tpl(l.otherTot, { kg: shopTarget(o).toFixed(1) })}</small>`)).join('')}</div>
       <p class="hint" style="margin-top:8px" id="otherRef"></p>
+      <details class="ref-note"><summary>${l.refNoteH}</summary><ul>${l.refNote.map(x => `<li>${x}</li>`).join('')}</ul></details>
       <div class="shop-brk">
         <div class="brk-h"><b>${l.brkH}</b><span class="num" id="brkTotal"></span></div>
         <div class="brk-wrap"><div class="brk-bar" id="brkBar"></div><i class="ref-mark" id="refMark"><span>${l.refMark}</span></i></div>
@@ -820,15 +842,15 @@ function update() {
   CATS.forEach(k => { $('kg-' + k).textContent = kg(fp[k]) + ' kg'; });
   // 買い物の内訳：目盛りは固定（8 kg/日、超えたら合計に合わせる）なので、品物を外すと棒が目に見えて短くなる
   const ref = GOODS_REF[goodsRefKey()], refD = goodsRefDaily();
-  const parts = [...shopItems().map(k => ({ k, v: shopPerDay(d, k), name: l.shop[k] })), { k: 'other', v: otherDaily(d), name: l.otherLbl }];
+  const parts = [...SHOP.periodic.map(k => ({ k, v: shopPerDay(d, k), name: l.shop[k] })), { k: 'other', v: otherDaily(d), name: l.otherLbl }];
   const scale = Math.max(4, fp.shopping, refD * 1.1);
   $('refMark').style.left = (refD / scale * 100) + '%';
-  $('otherRef').textContent = tpl(l.otherRef, { ref: ref[S.lang], y: fmt(ref.t * 1000), d: refD.toFixed(1), p: Math.round(ref.t / ref.total * 100), i: DEFAULT_ITEMS.toFixed(1) })
+  $('otherRef').textContent = tpl(l.otherRef, { ref: ref[S.lang], y: fmt(ref.t * 1000), d: refD < 0.1 ? refD.toFixed(2) : refD.toFixed(1), p: pctTxt(ref.t / ref.total * 100), i: DEFAULT_ITEMS.toFixed(1) })
     + (d.other !== 'none' && shopTarget(d.other) < DEFAULT_ITEMS ? l.otherOver : '');
   $('brkTotal').textContent = kg(fp.shopping) + ' kg';
   $('brkBar').innerHTML = parts.filter(p => p.v > 0).map(p => `<span style="width:${p.v / scale * 100}%;background:${SHOP.colors[p.k]}" title="${p.name}: ${shopKg(p.v)} kg"></span>`).join('');
   $('brkLeg').innerHTML = parts.map(p => `<div class="${p.v > 0 ? '' : 'off'}"><i style="background:${SHOP.colors[p.k]}"></i>${p.name}<span class="num">${p.v > 0 ? shopKg(p.v) + ' kg · ' + Math.round(p.v / fp.shopping * 100) + '%' : l.excluded}</span></div>`).join('');
-  $('brkShare').innerHTML = tpl(l.shareLine, { p: fp.total ? Math.round(fp.shopping / fp.total * 100) : 0, r: Math.round(ref.t / ref.total * 100), ref: S.lang === 'ja' ? ref.sja : ref.sen });
+  $('brkShare').innerHTML = tpl(l.shareLine, { p: fp.total ? Math.round(fp.shopping / fp.total * 100) : 0, r: pctTxt(ref.t / ref.total * 100), ref: S.lang === 'ja' ? ref.sja : ref.sen });
 
   // 合計と内訳
   $('total').textContent = kg(fp.total);
