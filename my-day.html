@@ -158,6 +158,10 @@
   .coc-line { font-size: 12.5px; color: #c9c8c3; margin: 2px 0 6px; padding: 6px 10px; border-radius: 8px; background: rgba(47,125,98,.14); border: 1px solid rgba(47,125,98,.45); }
   .coc-line b { color: #6fd0a9; }
   .coc-line a { color: #6fd0a9; margin-left: 4px; }
+  details.adv { margin-top: 14px; font-size: 13px; }
+  details.adv > summary { cursor: pointer; color: var(--muted); font-size: 12.5px; }
+  details.adv > summary:hover { color: var(--text); }
+  details.adv[open] > summary { color: var(--text); margin-bottom: 4px; }
   .whole { margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--faint); }
   .whole > summary { cursor: pointer; font-size: 12.5px; color: #c9c8c3; list-style: revert; }
   .whole > summary:hover { color: var(--text); }
@@ -325,6 +329,7 @@
     <p class="eyebrow">Your plate, unpacked</p>
     <h2 data-i18n="plateH"></h2>
     <p class="lead" data-i18n="plateLead"></p>
+    <details class="adv"><summary data-i18n="advFood"></summary>
     <div class="gwp-row"><span data-i18n="gwpLabel"></span><div class="chips" id="gwpChips2"></div></div>
     <p class="hint" data-i18n="gwpHint"></p>
     <div class="gwp-row"><span data-i18n="cocLabel"></span><div class="chips" id="cocChips2"></div></div>
@@ -333,6 +338,7 @@
       <div class="row"><input type="range" id="cocRate" min="0.1" max="1.5" step="0.1" value="0.5"><span class="val num" id="cocRateV" style="min-width:120px"></span></div>
     </div>
     <p class="hint" data-i18n="cocHint"></p>
+    </details>
     <div class="pstats">
       <div><div class="k" data-i18n="pFoodK"></div><div class="v num" id="pFoodV"></div><div class="s" id="pFoodS"></div></div>
       <div><div class="k" data-i18n="pLandK"></div><div class="v num" id="pLandV"></div><div class="s" id="pLandS"></div></div>
@@ -390,7 +396,7 @@
 
 <div class="mbar"><div><span data-i18n="mToday"></span><br><b class="num" id="mKg">0</b> kg CO₂</div><div class="r" style="text-align:right"><span id="mScale"></span><br><b class="num" id="mImp">—</b></div></div>
 
-<script src="site.js?v=20261019j"></script>
+<script src="site.js?v=20261019k"></script>
 <script>
 /* ===================== DATA ===================== */
 const COUNTRIES = {
@@ -415,10 +421,15 @@ const F = {
   transport: { walk: 0, train: 0.02, bus: 0.06, ev: null /* 0.15 kWh/km × 電力係数 */, hybrid: 0.08, car: 0.14 },
   evKwhPerKm: 0.15,
   hvacKwhPerH: { cool: 0.5, heat: 0.8 }, keroKgPerH: 0.6, eco: 0.9,
+  // 給湯（1人1日あたりに必要な熱、kWh）：シャワー10分 ≒ 120 L を25℃温める ≒ 3.5 kWh、
+  // 湯船（約200 Lを世帯2.2人で分ける）＋短いシャワー ≒ 4.4 kWh。給湯器の効率で割ってエネルギー量にする
+  water: { shower: 3.5, bath: 4.4 }, waterEff: { gas: 0.85, electric: 0.9, heatpump: 3.0 },
+  gasKgPerKwh: 0.18,   // 都市ガス ≒ 0.05 kg CO₂/MJ
+  greenGrid: 0.03,     // 再エネ100%プランの電気（kg CO₂e/kWh、ライフサイクルの目安）
   applKwh: { low: 1.5, avg: 3, high: 5 },   // 冷暖房以外の電気（1人1日あたりの kWh、目安）
   flight: { short: 150, long: 1500 },       // 往復1回あたり
   shop: { bottle: 0.15, coffee: 0.3, parcel: 0.5, tshirt: 7, jeans: 25, shoes: 14, phone: 70, laptop: 300,
-          fridge: 250, aircon: 310, bed: 444, wardrobe: 907, car: 7000, house: 34000 },
+          fridge: 250, aircon: 310, bed: 444, car: 7000, house: 34000 },
   // 製造・建設時の排出（kg/個）。家電は ADEME「Impact CO2」の製造分、車は小〜中型ガソリン車、家具は ADEME「Impact CO2」、家は木造戸建て約126 m²（国交省資料）
 };
 const CATS = ['transport', 'food', 'home', 'flights', 'shopping'];
@@ -431,20 +442,19 @@ const FINAL = { household: 0.72, government: 0.10, investment: 0.18 };
 //   periodic … ときどき買うもの（想定の頻度 perYear で1日あたりに割り戻す）
 const SHOP = {
   daily: ['bottle', 'coffee'],
-  periodic: ['parcel', 'tshirt', 'jeans', 'shoes', 'phone', 'laptop', 'fridge', 'aircon', 'bed', 'wardrobe'],
+  periodic: ['parcel', 'tshirt', 'jeans', 'shoes', 'phone', 'laptop', 'fridge', 'aircon', 'bed'],
   big: ['car', 'house'],   // 大きな買い物：モノ（消費財）の平均とは別に加える（統計上は交通・住宅／投資に入るため）
   perYear: { parcel: 52, tshirt: 5, jeans: 1, shoes: 2, phone: 1 / 3, laptop: 1 / 5,
              fridge: 1 / (13 * 2.2),     // 13年使用・世帯で1台・2.2人
              aircon: 3 / (13.5 * 2.2),   // 13.5年使用・世帯に約3台
              bed: 1 / 15,                // 1人1台・15年使用（想定）
-             wardrobe: 1 / (20 * 2.2),   // 世帯で1つ・20年使用（想定）
              car: 1 / 26,        // 13年ごとに買い替え・2人で1台
              house: 1 / 77 },    // 35年使用・2.2人で1棟
   // 想定の頻度（1人1年あたり）
   // 上の品物以外のモノ（家電・家具・日用品など）の目安（kg CO₂e/日）。
   // 日本の平均的な人の消費財は年約1,030 kg ≒ 1日2.8 kg（1.5-Degree Lifestyles, 2019）。上の品物の初期値（約1 kg）＋「ふつう」でおおよそ一致する。
   other: { none: 0, low: 0.5, mid: 1, high: 2 },   // 買い物全体が「比べる平均」の何倍になるか
-  colors: { bottle: '#4fb38a', coffee: '#9ad17a', parcel: '#e0a43b', tshirt: '#5b9bd5', jeans: '#3f6fb0', shoes: '#a983e0', phone: '#e57a5a', laptop: '#d4c25a', fridge: '#7fb7c9', aircon: '#a9dde9', bed: '#c9a86a', wardrobe: '#8f6b3e', car: '#c0504d', house: '#b08a5a', other: '#6b7078' },
+  colors: { bottle: '#4fb38a', coffee: '#9ad17a', parcel: '#e0a43b', tshirt: '#5b9bd5', jeans: '#3f6fb0', shoes: '#a983e0', phone: '#e57a5a', laptop: '#d4c25a', fridge: '#7fb7c9', aircon: '#a9dde9', bed: '#c9a86a', car: '#c0504d', house: '#b08a5a', other: '#6b7078' },
 };
 // 平均的な人の消費財（モノ）由来の排出：t = 年あたり t CO₂e、total = 生活由来の排出全体（t/年）
 // Hot or Cool Institute (2021) 表3.1（2019年時点）。日本は IGES ほか (2019) の 1,030 kg と同じ値を使う。
@@ -527,7 +537,7 @@ const I18N = {
     title: 'Your Day, at Scale', ctlCountry: 'Region', ctlTip: 'Tipping effects',
     h1: 'Your day, multiplied.',
     lead: 'On its own, one person’s day emits only a few kilograms of CO₂. Multiply it by everyone in a country — or on Earth — and it becomes a count of lives. Tell us how your day went.',
-    cat: { transport: 'Getting around', food: 'Meals & drinks', home: 'Heating, cooling & power', flights: 'Flights', shopping: 'Shopping & stuff' },
+    cat: { transport: 'Getting around', food: 'Meals & drinks', home: 'Home energy', flights: 'Flights', shopping: 'Shopping & stuff' },
     mode: { walk: 'Walk / bike', train: 'Train', bus: 'Bus', ev: 'Electric car', hybrid: 'Hybrid car', car: 'Petrol car' },
     distance: 'Distance today (round trip)',
     mealSlot: ['Breakfast', 'Lunch', 'Dinner'],
@@ -535,12 +545,16 @@ const I18N = {
     hvac: { off: 'Off', cool: 'A/C cooling', heat: 'A/C heating', kero: 'Kerosene / gas heater' },
     hours: 'Hours used today', eco: 'Thermostat set 1 °C milder', appl: 'Other electricity (lights, fridge, TV…)',
     applOpt: { low: 'Low', avg: 'Average', high: 'High' },
+    bathLbl: 'Bath and hot water', bathOpt: { shower: 'Shower only', bath: 'A bath every day' },
+    heaterLbl: 'Water heater', heaterOpt: { gas: 'Gas', electric: 'Electric (resistance)', heatpump: 'Heat pump' },
+    powerLbl: 'Electricity plan', powerOpt: { grid: 'Standard (regional average)', green: '100% renewable plan' },
+    powerHint: 'A 100% renewable plan is counted as low-carbon electricity (0.03 kg CO₂e per kWh here). Some plans rely on certificates, so the real effect varies by plan.',
     flightHint: 'Round trips per year, spread across 365 days',
     fShort: 'Short-haul', fShortD: '~1–2 h each way (domestic, regional)', fLong: 'Long-haul', fLongD: '~12 h each way (e.g. Tokyo–London)',
     shopHint: 'Values cover making and shipping each item.',
     shopDailyH: 'Drinks (every day)', shopDailyD: 'Bought drinks — counted as if every day. Tap to add. (Meals above do not include drinks.)',
     shopPerH: 'Now and then', shopPerD: 'Things you buy occasionally — spread across days using the assumed frequency on each card. Tap to include or leave out.',
-    freq: { parcel: 'once a week', tshirt: '5 a year', jeans: '1 a year', shoes: '2 pairs a year', phone: 'one every 3 years', laptop: 'one every 5 years', fridge: 'used 13 years, one per household (≈ one per person every 29 years)', aircon: 'used 13.5 years, ~3 per household (≈ one per person every 10 years)', bed: 'one per person, used 15 years (our assumption)', wardrobe: 'one per household, used 20 years (≈ one per person every 44 years; our assumption)', car: 'replaced every 13 years, shared by 2 (≈ one per person every 26 years)', house: 'used 35 years, shared by 2.2 people (≈ one per person every 77 years)' },
+    freq: { parcel: 'once a week', tshirt: '5 a year', jeans: '1 a year', shoes: '2 pairs a year', phone: 'one every 3 years', laptop: 'one every 5 years', fridge: 'used 13 years, one per household (≈ one per person every 29 years)', aircon: 'used 13.5 years, ~3 per household (≈ one per person every 10 years)', bed: 'one per person, used 15 years (our assumption)', car: 'replaced every 13 years, shared by 2 (≈ one per person every 26 years)', house: 'used 35 years, shared by 2.2 people (≈ one per person every 77 years)' },
     assumed: 'Assumed: {f}', perDayV: '→ {kg} kg/day', perDayD: '{kg} kg/day',
     otherH: 'Everything else you buy', otherD: 'Appliances, furniture, toiletries, books, toys… things not listed above. How much do you buy compared with the average person you chose?',
     otherOpt: { low: 'Less (half the average)', mid: 'Average', high: 'More (twice the average)' },
@@ -560,9 +574,10 @@ const I18N = {
     refMark: 'avg',
     brkH: 'Your shopping per day', otherLbl: 'Everything else (small appliances, furniture, household goods…)', excluded: 'not included',
     shareLine: 'Shopping is <b>{p}%</b> of your day · average in {ref}: {r}',
-    shop: { bottle: 'Bottled drink', coffee: 'Takeaway coffee', parcel: 'Online delivery', tshirt: 'T-shirt', jeans: 'Jeans', shoes: 'Sneakers', phone: 'Smartphone', laptop: 'Laptop', fridge: 'Refrigerator (making it)', aircon: 'Air conditioner (making one)', bed: 'Bed', wardrobe: 'Wardrobe', car: 'Petrol car (making it)', house: 'House (building a wooden home)' },
+    shop: { bottle: 'Bottled drink', coffee: 'Takeaway coffee', parcel: 'Online delivery', tshirt: 'T-shirt', jeans: 'Jeans', shoes: 'Sneakers', phone: 'Smartphone', laptop: 'Laptop', fridge: 'Refrigerator (making it)', aircon: 'Air conditioner (making one)', bed: 'Bed', car: 'Petrol car (making it)', house: 'House (building a wooden home)' },
     bigH: '3. Big purchases', bigD: 'Making a car or building a home. Added on top of the average above (in statistics these count under transport, housing or investment). Tap to include or leave out — off by default for the house.',
     carEq: '≈ {km} km by car',
+    advFood: 'Advanced settings: how to count methane, land’s lost carbon',
     gwpLabel: 'How to count methane', gwp100: '100-year (standard, GWP100)', gwp20: '20-year (near-term, GWP20)',
     gwpHint: 'Methane traps far more heat than CO₂ but breaks down within decades: about 80× CO₂ over 20 years, about 27× over 100 years. The 20-year view shows its impact on the warming we will live through.',
     plateH: 'What’s behind your plate',
@@ -619,7 +634,7 @@ const I18N = {
     wiLead: 'Pick changes below. Lives saved assume everyone in {name} — or on Earth — makes the same change for a year.',
     sw: {
       toTrain: 'Take the train instead', toBike: 'Walk or cycle this short trip', beefToChicken: 'Swap beef for chicken',
-      onePlant: 'Make one more meal plant-based', eco: 'Set heating/cooling 1 °C milder', keroToAC: 'Switch the heater to an A/C heat pump',
+      onePlant: 'Make one more meal plant-based', eco: 'Set heating/cooling 1 °C milder', keroToAC: 'Switch the heater to an A/C heat pump', greenPower: 'Switch to a 100% renewable electricity plan', heatPump: 'Switch to a heat-pump water heater',
       lessLong: 'One fewer long-haul trip a year', lessShort: 'One fewer short-haul trip a year',
       lessStuff: 'Buy less of everything else (one level down)', fewerClothes: 'Buy half as many new clothes (or buy used)', keepDevices: 'Keep your phone and laptop 2 years longer', refill: 'Carry a refillable bottle',
     },
@@ -647,7 +662,7 @@ const I18N = {
     title: 'あなたの1日を、世界の規模で', ctlCountry: '国・地域', ctlTip: 'ティッピング効果',
     h1: 'あなたの1日を、<br>かけ算する。',
     lead: '1人の1日の排出は、数キログラムにすぎません。けれど、それを国の全員、世界の全員でかけ算すると、命の数になります。あなたの今日を選んでみてください。',
-    cat: { transport: '移動', food: '食事・飲み物', home: '冷暖房・電気', flights: '飛行機', shopping: '買い物・モノ' },
+    cat: { transport: '移動', food: '食事・飲み物', home: '住まい（冷暖房・給湯・電気）', flights: '飛行機', shopping: '買い物・モノ' },
     mode: { walk: '徒歩・自転車', train: '電車', bus: 'バス', ev: '電気自動車', hybrid: 'ハイブリッド車', car: 'ガソリン車' },
     distance: '今日の移動距離（往復）',
     mealSlot: ['朝食', '昼食', '夕食'],
@@ -655,12 +670,16 @@ const I18N = {
     hvac: { off: 'なし', cool: 'エアコン冷房', heat: 'エアコン暖房', kero: '石油・ガスストーブ' },
     hours: '今日の使用時間', eco: '設定温度を1℃ゆるめる', appl: 'その他の電気（照明・冷蔵庫・テレビなど）',
     applOpt: { low: '少なめ', avg: 'ふつう', high: '多め' },
+    bathLbl: 'お風呂・給湯', bathOpt: { shower: 'シャワーのみ', bath: '毎日湯船につかる' },
+    heaterLbl: '給湯器', heaterOpt: { gas: 'ガス', electric: '電気温水器', heatpump: 'ヒートポンプ（エコキュート）' },
+    powerLbl: '電気の契約', powerOpt: { grid: 'ふつう（地域の平均）', green: '再エネ100%プラン' },
+    powerHint: '再エネ100%のプランは、排出の小さい電気（ここでは1 kWhあたり0.03 kg CO₂e）として計算します。証書を使うプランもあり、実際の効果はプランによって違います。',
     flightHint: '1年間の往復回数を、365日で割って1日あたりに換算',
     fShort: '短距離', fShortD: '片道1〜2時間（国内線など）', fLong: '長距離', fLongD: '片道約12時間（例：東京–ロンドン）',
     shopHint: '値は製造から配送までの排出量です。',
     shopDailyH: '飲み物（毎日）', shopDailyD: '買った飲み物。この1日を毎日続けるとして数えます。タップで追加（上の食事には飲み物は含まれていません）。',
     shopPerH: 'ときどき買うもの', shopPerD: 'ときどき買うもの。各カードの想定頻度で、1日あたりに割り戻します。タップで入れる／外す。',
-    freq: { parcel: '週1回', tshirt: '年5枚', jeans: '年1本', shoes: '年2足', phone: '3年に1台', laptop: '5年に1台', fridge: '13年使用・世帯で1台（1人あたり約29年に1台）', aircon: '13.5年使用・世帯に約3台（1人あたり約10年に1台）', bed: '1人1台・15年使用（私たちの想定）', wardrobe: '世帯に1つ・20年使用（1人あたり約44年に1つ。私たちの想定）', car: '13年ごとに買い替え・2人で1台（1人あたり26年に1台）', house: '35年使用・2.2人で1棟（1人あたり77年に1棟）' },
+    freq: { parcel: '週1回', tshirt: '年5枚', jeans: '年1本', shoes: '年2足', phone: '3年に1台', laptop: '5年に1台', fridge: '13年使用・世帯で1台（1人あたり約29年に1台）', aircon: '13.5年使用・世帯に約3台（1人あたり約10年に1台）', bed: '1人1台・15年使用（私たちの想定）', car: '13年ごとに買い替え・2人で1台（1人あたり26年に1台）', house: '35年使用・2.2人で1棟（1人あたり77年に1棟）' },
     assumed: '想定：{f}', perDayV: '→ 1日 {kg} kg', perDayD: '1日 {kg} kg',
     otherH: 'その他のモノ', otherD: '家電・家具・日用品・本・おもちゃなど、上にない買い物。「比べる平均」の人と比べて、どのくらい買うかを選んでください。',
     otherOpt: { low: '少なめ（平均の半分）', mid: '平均並み', high: '多め（平均の2倍）' },
@@ -680,9 +699,10 @@ const I18N = {
     refMark: '平均',
     brkH: 'あなたの買い物（1日あたり）', otherLbl: 'その他のモノ（小型家電・家具・日用品など）', excluded: '計算に入れていない',
     shareLine: 'あなたの1日のうち買い物は <b>{p}%</b> ・ 参考：{ref}の平均は{r}',
-    shop: { bottle: 'ペットボトル飲料', coffee: 'テイクアウトのコーヒー', parcel: 'ネット通販の配送', tshirt: 'Tシャツ', jeans: 'ジーンズ', shoes: 'スニーカー', phone: 'スマートフォン', laptop: 'ノートPC', fridge: '冷蔵庫（製造）', aircon: 'エアコン（製造・1台）', bed: 'ベッド', wardrobe: '洋服ダンス（ワードローブ）', car: 'ガソリン車（製造）', house: '家（木造戸建てを建てる）' },
+    shop: { bottle: 'ペットボトル飲料', coffee: 'テイクアウトのコーヒー', parcel: 'ネット通販の配送', tshirt: 'Tシャツ', jeans: 'ジーンズ', shoes: 'スニーカー', phone: 'スマートフォン', laptop: 'ノートPC', fridge: '冷蔵庫（製造）', aircon: 'エアコン（製造・1台）', bed: 'ベッド', car: 'ガソリン車（製造）', house: '家（木造戸建てを建てる）' },
     bigH: '③ 大きな買い物', bigD: '車をつくる、家を建てる分です。上の平均とは別に加えます（統計では交通・住宅や「投資」に入るため）。タップで入れる／外す。家は初期設定では外しています。',
     carEq: '車で約{km} km分',
+    advFood: '詳細設定：メタンの評価期間・土地の機会費用',
     gwpLabel: 'メタンの評価期間', gwp100: '100年（標準・GWP100）', gwp20: '20年（短期・GWP20）',
     gwpHint: 'メタンはCO₂よりはるかに強く熱をため込みますが、数十年で分解されます。20年で見るとCO₂の約80倍、100年で見ると約27倍です。20年で見ると、私たちが生きているうちの温暖化への影響が分かります。',
     plateH: 'お皿の向こう側',
@@ -739,7 +759,7 @@ const I18N = {
     wiLead: '変えてみたいことを選んでください。救える命は、{name}の全員（または世界の全員）が同じことを1年続けた場合の数です。',
     sw: {
       toTrain: '車をやめて電車にする', toBike: 'この距離なら徒歩・自転車にする', beefToChicken: '牛肉を鶏肉にする',
-      onePlant: 'もう1食を植物性にする', eco: '冷暖房の設定を1℃ゆるめる', keroToAC: 'ストーブをエアコン暖房に替える',
+      onePlant: 'もう1食を植物性にする', eco: '冷暖房の設定を1℃ゆるめる', keroToAC: 'ストーブをエアコン暖房に替える', greenPower: '電気を再エネ100%のプランに替える', heatPump: '給湯器をヒートポンプ（エコキュート）に替える',
       lessLong: '長距離フライトを年1回減らす', lessShort: '短距離フライトを年1回減らす',
       lessStuff: 'その他のモノの買い物を1段階減らす', fewerClothes: '新しい服を半分にする（または古着を選ぶ）', keepDevices: 'スマホとPCを2年長く使う', refill: 'マイボトルを持ち歩く',
     },
@@ -771,8 +791,8 @@ const S = {
   lang: store.get('scw-lang') === 'ja' ? 'ja' : 'en', country: 'japan', tip: 1, scale: 'country', ref: null, gwp: 100, coc: false, cocRate: 0.5, basis: 'protein', sel: 'chicken',
   // 初期設定は平均的な日本人に近い1日（車15 km、国内線は年1往復、長距離は飛ばない）。
   // ただし夕食の牛肉は、影響の大きさを見てもらうために「あえて」入れている（画面にも明記）
-  day: { mode: 'car', km: 15, meals: ['veg', 'fish', 'beef'], hvac: 'cool', hours: 4, eco: false, appl: 'avg',
-         short: 1, long: 0, shop: { bottle: 1, coffee: 0 }, own: { parcel: true, tshirt: true, jeans: true, shoes: true, phone: true, laptop: true, fridge: true, aircon: true, bed: true, wardrobe: true, car: true, house: false },
+  day: { mode: 'car', km: 15, meals: ['veg', 'fish', 'beef'], hvac: 'cool', hours: 4, eco: false, appl: 'avg', bath: 'bath', heater: 'gas', green: false,
+         short: 1, long: 0, shop: { bottle: 1, coffee: 0 }, own: { parcel: true, tshirt: true, jeans: true, shoes: true, phone: true, laptop: true, fridge: true, aircon: true, bed: true, car: true, house: false },
          per: { ...SHOP.perYear }, other: 'mid' },
   swaps: new Set(),
 };
@@ -798,14 +818,16 @@ const kg = n => n >= 100 ? fmt(n) : n.toFixed(1);
 const span = days => days >= 365 ? tpl(L().years, { n: fmt(days / 365) }) : tpl(L().days, { n: fmt(days) });
 
 /* ===================== MODEL ===================== */
+const gridOf = d => d.green ? F.greenGrid : C().grid;
+const waterKg = d => d.heater === 'gas' ? F.water[d.bath] / F.waterEff.gas * F.gasKgPerKwh : F.water[d.bath] / F.waterEff[d.heater] * gridOf(d);
 function footprint(d) {
-  const grid = C().grid;
+  const grid = gridOf(d);
   const perKm = d.mode === 'ev' ? F.evKwhPerKm * grid : F.transport[d.mode];
   const hvac = d.hvac === 'off' ? 0 : d.hvac === 'kero' ? F.keroKgPerH * d.hours : F.hvacKwhPerH[d.hvac] * d.hours * grid;
   const r = {
     transport: perKm * d.km,
     food: d.meals.reduce((s, m) => s + mealKg(m), 0) + drinksDaily(d),
-    home: hvac * (d.eco ? F.eco : 1) + F.applKwh[d.appl] * grid,
+    home: hvac * (d.eco ? F.eco : 1) + F.applKwh[d.appl] * grid + waterKg(d),
     flights: (d.short * F.flight.short + d.long * F.flight.long) / 365,
     shopping: itemsDaily(d) + otherDaily(d) + SHOP.big.reduce((a, k) => a + shopPerDay(d, k), 0),
   };
@@ -821,6 +843,8 @@ const SWAPS = [
   { id: 'onePlant',      ok: d => d.meals.some(m => m !== 'vegan'),
     apply: d => { const i = d.meals.reduce((b, m, j) => mealKg(m) > mealKg(d.meals[b]) ? j : b, 0); if (d.meals[i] !== 'vegan') d.meals[i] = 'vegan'; } },
   { id: 'eco',           ok: d => d.hvac !== 'off' && d.hours > 0 && !d.eco,                    apply: d => { d.eco = true; } },
+  { id: 'greenPower',    ok: d => !d.green,                                                     apply: d => { d.green = true; } },
+  { id: 'heatPump',      ok: d => d.heater !== 'heatpump',                                      apply: d => { d.heater = 'heatpump'; } },
   { id: 'keroToAC',      ok: d => d.hvac === 'kero' && d.hours > 0,                             apply: d => { d.hvac = 'heat'; } },
   { id: 'lessLong',      ok: d => d.long > 0,                                                   apply: d => { d.long = Math.max(0, d.long - 1); } },
   { id: 'lessShort',     ok: d => d.short > 0,                                                  apply: d => { d.short = Math.max(0, d.short - 1); } },
@@ -857,8 +881,10 @@ function buildInputs() {
           ${d.shop[k] ? `<span class="cnt num">×${d.shop[k]}</span><button class="minus" data-minus="${k}" aria-label="−">−</button>` : ''}
         </div>`).join('')}</div>
       <div class="beef-note" id="beefNote"></div>
-      <div class="sub-label">${l.gwpLabel}</div><div class="chips">${gwpChips()}</div>
-      <div class="sub-label">${l.cocLabel}</div><div class="chips">${cocChips()}</div>
+      <details class="adv"><summary>${l.advFood}</summary>
+        <div class="sub-label">${l.gwpLabel}</div><div class="chips">${gwpChips()}</div>
+        <div class="sub-label">${l.cocLabel}</div><div class="chips">${cocChips()}</div>
+      </details>
     </div>
     <div class="block">${head('home')}
       <div class="chips" style="margin-top:12px">${Object.keys(l.hvac).map(h => chip('hvac', h, l.hvac[h], d.hvac === h)).join('')}</div>
@@ -869,6 +895,13 @@ function buildInputs() {
       </div>
       <div class="sub-label">${l.appl}</div>
       <div class="chips">${Object.keys(F.applKwh).map(a => chip('appl', a, l.applOpt[a], d.appl === a)).join('')}</div>
+      <div class="sub-label">${l.bathLbl}</div>
+      <div class="chips">${Object.keys(F.water).map(b => chip('bath', b, l.bathOpt[b], d.bath === b)).join('')}</div>
+      <div class="sub-label">${l.heaterLbl}</div>
+      <div class="chips">${Object.keys(F.waterEff).map(h => chip('heater', h, l.heaterOpt[h], d.heater === h)).join('')}</div>
+      <div class="sub-label">${l.powerLbl}</div>
+      <div class="chips">${['grid', 'green'].map(g => chip('power', g, l.powerOpt[g], d.green === (g === 'green'))).join('')}</div>
+      <p class="hint" style="margin-top:8px">${l.powerHint}</p>
     </div>
     <div class="block">${head('flights')}
       <p class="hint">${l.flightHint}</p>
@@ -1031,6 +1064,8 @@ function update() {
     ...Object.keys(F.transport).map(m => [l.mode[m], (m === 'ev' ? +(F.evKwhPerKm * c.grid).toFixed(3) : F.transport[m]) + ' kg ' + fr.perKm]),
     ...Object.keys(MEAL.portion).map(m => [l.meal[m], mealKg(m).toFixed(2) + ' kg ' + fr.perMeal + (S.gwp === 20 ? ' (GWP20)' : '') + (S.coc ? ' +COC' : '')]),
     [l.hvac.cool, F.hvacKwhPerH.cool + ' kWh ' + fr.perH], [l.hvac.heat, F.hvacKwhPerH.heat + ' kWh ' + fr.perH], [l.hvac.kero, F.keroKgPerH + ' kg ' + fr.perH],
+    ...Object.keys(F.water).map(b => [l.bathLbl + ' — ' + l.bathOpt[b], F.water[b] + ' kWh ' + fr.perDay]),
+    [l.powerOpt.green, F.greenGrid + ' kg / kWh'],
     ...Object.keys(F.applKwh).map(a => [l.appl + ' — ' + l.applOpt[a], F.applKwh[a] + ' kWh ' + fr.perDay]),
     [l.fShort, F.flight.short + ' kg ' + fr.perTrip], [l.fLong, F.flight.long + ' kg ' + fr.perTrip],
     ...Object.keys(F.shop).map(k => [l.shop[k], F.shop[k] + ' kg ' + fr.perItem]),
@@ -1147,6 +1182,9 @@ document.addEventListener('click', e => {
     if (g === 'mode') d.mode = v;
     else if (g === 'hvac') { d.hvac = v; $('hvacMore').hidden = v === 'off'; }
     else if (g === 'appl') d.appl = v;
+    else if (g === 'bath') d.bath = v;
+    else if (g === 'heater') d.heater = v;
+    else if (g === 'power') d.green = v === 'green';
     else if (g === 'other') d.other = v;
     else if (g.startsWith('meal')) d.meals[+g.slice(4)] = v;
     t.parentElement.querySelectorAll('.chip').forEach(b => b.setAttribute('aria-pressed', String(b === t)));
