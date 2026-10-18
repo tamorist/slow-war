@@ -155,6 +155,9 @@
   .beef-note b { color: var(--text); }
   .beef-note.on b { color: var(--red); }
   .whole-leg b { color: var(--red); }
+  .coc-line { font-size: 12.5px; color: #c9c8c3; margin: 2px 0 6px; padding: 6px 10px; border-radius: 8px; background: rgba(47,125,98,.14); border: 1px solid rgba(47,125,98,.45); }
+  .coc-line b { color: #6fd0a9; }
+  .coc-line a { color: #6fd0a9; margin-left: 4px; }
   .whole { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--faint); }
   .whole-h { font-size: 12px; color: #c9c8c3; line-height: 1.5; margin-bottom: 8px; }
   .whole-bar { position: relative; display: flex; height: 14px; border-radius: 5px; overflow: hidden; background: var(--bg); }
@@ -295,6 +298,7 @@
     <aside class="result" aria-live="polite">
       <div class="k" data-i18n="resTitle"></div>
       <div class="total num"><span id="total">0</span><small>kg CO₂e</small></div>
+      <div class="coc-line" id="cocLine"></div>
       <div class="vs" id="vs"></div>
       <div class="stack" id="stack"></div>
       <div class="legend" id="legend"></div>
@@ -313,7 +317,7 @@
     </aside>
   </div>
 
-  <section class="plate">
+  <section class="plate" id="plate">
     <p class="eyebrow">Your plate, unpacked</p>
     <h2 data-i18n="plateH"></h2>
     <p class="lead" data-i18n="plateLead"></p>
@@ -576,6 +580,10 @@ const I18N = {
     wholeH: 'Where this sits in the whole picture — per person in {where}, consumption-based (rough): ≈ {t} kg/day',
     whole: { mine: 'Your day (what this simulator counts)', rest: 'Rest of household life not counted here (eating out, services, hot water, home upkeep…)', gov: 'Government & public services (schools, hospitals, admin…)', inv: 'Investment (buildings, infrastructure, machinery…)' },
     wholeOver: 'Your day is {kg} kg above the estimated household average.',
+    cocLineOff: 'Including land’s lost carbon: <b>{w} kg</b> (+{diff} kg, {x}×). <a href="#plate" class="coc-link">What is this?</a>',
+    cocLineOn: 'Includes land’s lost carbon (+{diff} kg). Without it: {wo} kg.',
+    beefCocOff: ' Counting land’s lost carbon, today’s beef becomes ≈ <b>{kg} kg</b>.',
+    beefCocOn: ' (Without land’s lost carbon: ≈ {kg} kg.)',
     mineBeef: 'Your day (what this simulator counts) — <b>beef makes it jump</b> (beef ≈ {kg} kg)',
     beefNoteOn: '<b>Beef is included on purpose.</b> The average person doesn’t eat it every day, but its impact is so outsized that we want you to see it. Today’s beef ≈ <b>{kg} kg</b> — {p}% of your whole day. Switching it to chicken saves ≈ {save} kg.',
     beefNoteOff: 'Choosing beef adds ≈ <b>{kg} kg</b> per meal compared with chicken (about {x}× as much). Try it and watch your total.',
@@ -690,6 +698,10 @@ const I18N = {
     wholeH: '全体像のなかでの位置 — {where}の1人あたり（消費ベース・概算）：約{t} kg/日',
     whole: { mine: 'あなたの1日（このシミュレータで計算した分）', rest: '生活のうち計算していない分（外食・サービス・給湯・住まいの維持など）', gov: '政府・公共サービス（学校・病院・行政など）', inv: '投資（建物・インフラ・設備の建設など）' },
     wholeOver: 'あなたの1日は、生活由来の平均（推計）より{kg} kg多くなっています。',
+    cocLineOff: '土地の機会費用を含めると <b>{w} kg</b>（+{diff} kg、{x}倍）。<a href="#plate" class="coc-link">これは何？</a>',
+    cocLineOn: '土地の機会費用を含んでいます（+{diff} kg）。含めない場合は {wo} kg。',
+    beefCocOff: '土地の機会費用を含めると、今日の牛肉の分は約<b>{kg} kg</b>になります。',
+    beefCocOn: '（土地の機会費用を含めない場合は約{kg} kg）',
     mineBeef: 'あなたの1日（このシミュレータで計算した分）— <b>牛肉が入ると跳ね上がります</b>（牛肉の分 約{kg} kg）',
     beefNoteOn: '<b>牛肉は、あえて初期設定に入れています。</b>平均的な人が毎日食べるわけではありませんが、影響が飛び抜けて大きいことを見てもらうためです。今日の牛肉の分は約<b>{kg} kg</b>で、あなたの1日全体の{p}%にあたります。鶏肉に替えると約{save} kg減ります。',
     beefNoteOff: '牛肉を選ぶと、鶏肉より1食あたり約<b>{kg} kg</b>増えます（約{x}倍）。試して、合計の変化を見てみてください。',
@@ -909,6 +921,10 @@ function update() {
   // 合計と内訳
   $('total').textContent = kg(fp.total);
   $('mKg').textContent = kg(fp.total);
+  // 土地の機会費用のあり・なしで合計がどれだけ変わるか
+  const cocWas = S.coc; S.coc = !cocWas; const fpAlt = footprint(d); S.coc = cocWas;
+  const withC = cocWas ? fp.total : fpAlt.total, withoutC = cocWas ? fpAlt.total : fp.total;
+  $('cocLine').innerHTML = tpl(cocWas ? l.cocLineOn : l.cocLineOff, { w: kg(withC), wo: kg(withoutC), diff: kg(withC - withoutC), x: trim((withC / withoutC).toFixed(1)) });
   const cbDay = c.cb * 1000 / 365.25, avg = cbDay * FINAL.household;
   $('vs').textContent = tpl(l.vs, { where: cname(), avg: avg.toFixed(1) });
   $('stack').innerHTML = CATS.map(k => `<span style="width:${fp.total ? fp[k] / fp.total * 100 : 0}%;background:var(--c-${k})"></span>`).join('');
@@ -920,6 +936,7 @@ function update() {
   bn.classList.toggle('on', beefN > 0);
   bn.innerHTML = beefN > 0
     ? tpl(l.beefNoteOn, { kg: kg(beefKg), p: Math.round(beefKg / fp.total * 100), save: kg(beefSave) })
+      + tpl(S.coc ? l.beefCocOn : l.beefCocOff, { kg: kg(beefN * mealKg('beef', S.gwp, !S.coc)) })
     : tpl(l.beefNoteOff, { kg: kg(mealKg('beef') - mealKg('chicken')), x: trim((mealKg('beef') / mealKg('chicken')).toFixed(0)) });
 
   // 全体像：1人あたりの国全体（消費ベース）の中での位置
