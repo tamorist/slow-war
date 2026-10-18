@@ -95,6 +95,9 @@
   .shop-h b { font-size: 13.5px; }
   .shop-h span { font-size: 12px; color: var(--muted); }
   .item .big-kg { font-size: 18px; font-weight: 800; margin-top: 2px; }
+  .item.per .swatch { position: absolute; top: 12px; right: 34px; width: 12px; height: 12px; border-radius: 3px; background: var(--ic); }
+  .item.per.off .swatch { opacity: .35; }
+  .item.per b { padding-right: 46px; }
   .item.per .tick { position: absolute; top: 9px; right: 9px; width: 18px; height: 18px; border-radius: 5px; border: 1.5px solid #55595f; }
   .item.per.on .tick { background: var(--c-shopping); border-color: var(--c-shopping); }
   .item.per.on .tick::after { content: ""; position: absolute; left: 5px; top: 1px; width: 5px; height: 10px; border: solid #0b1a13; border-width: 0 2px 2px 0; transform: rotate(45deg); }
@@ -494,9 +497,11 @@ const I18N = {
     freq: { parcel: 'once a week', tshirt: '5 a year', jeans: '1 a year', shoes: '2 pairs a year', phone: 'one every 3 years', laptop: 'one every 5 years' },
     assumed: 'Assumed: {f}', perDayV: '→ {kg} kg/day', perDayD: '{kg} kg/day',
     otherH: 'Everything else you buy', otherD: 'Appliances, furniture, toiletries, books, toys… things not listed above. How much do you buy compared with the average person you chose?',
-    otherOpt: { none: 'None', low: 'Less (half the average)', mid: 'Average', high: 'More (twice the average)' },
+    otherOpt: { low: 'Less (half the average)', mid: 'Average', high: 'More (twice the average)' },
+    totH: '1. How much do you buy overall?', totD: 'Start from the average person in a country, then choose less, average or more.',
+    itemsH: '2. Take out what you don’t buy', itemsD: 'The total above already includes these typical items (at the assumed frequency on each card). Tap a card to take it out — its share is subtracted from the total and the bar.',
     refLbl: 'Compare with the average person in',
-    otherRef: 'Reference — {ref}: consumer goods ≈ {y} kg a year (≈ {d} kg/day), {p} of the lifestyle footprint (Hot or Cool Institute, 2021). Each option sets your whole shopping — with the items above at their defaults (≈ {i} kg/day) — to half, equal to, or twice this average; “everything else” fills the gap. Removing or adding items changes the total from there.',
+    otherRef: 'Reference — {ref}: consumer goods ≈ {y} kg a year (≈ {d} kg/day), {p} of the lifestyle footprint (Hot or Cool Institute, 2021).',
     refNoteH: 'About these reference values (please read)',
     refNote: [
       'They are for <b>2019</b>. Changes since then — for example, rising consumption in China — are not reflected.',
@@ -504,10 +509,10 @@ const I18N = {
       '“Goods” here means clothes and shoes, furniture, household goods and appliances, and miscellaneous products. It <b>excludes</b> food and drinks, cars and fuel, electricity and gas, eating out, and services.',
       'Use them as a <b>rough guide</b>, not as precise figures.',
     ],
-    otherOver: ' At this level the items above already exceed the target, so “everything else” is zero.',
+    otherOver: ' At this level, the typical items below already add up to more than the total, so the total shown is their sum.',
     otherTot: 'total ≈ {kg} kg',
     refMark: 'avg',
-    brkH: 'What your shopping is made of (per day)', otherLbl: 'Everything else', excluded: 'not included',
+    brkH: 'Your shopping per day', otherLbl: 'Everything else (appliances, furniture, household goods…)', excluded: 'not included',
     shareLine: 'Shopping is <b>{p}%</b> of your day · average in {ref}: {r}',
     shop: { bottle: 'Bottled drink', coffee: 'Takeaway coffee', parcel: 'Online delivery', tshirt: 'T-shirt', jeans: 'Jeans', shoes: 'Sneakers', phone: 'Smartphone', laptop: 'Laptop' },
     carEq: '≈ {km} km by car',
@@ -598,9 +603,11 @@ const I18N = {
     freq: { parcel: '週1回', tshirt: '年5枚', jeans: '年1本', shoes: '年2足', phone: '3年に1台', laptop: '5年に1台' },
     assumed: '想定：{f}', perDayV: '→ 1日 {kg} kg', perDayD: '1日 {kg} kg',
     otherH: 'その他のモノ', otherD: '家電・家具・日用品・本・おもちゃなど、上にない買い物。「比べる平均」の人と比べて、どのくらい買うかを選んでください。',
-    otherOpt: { none: 'なし', low: '少なめ（平均の半分）', mid: '平均並み', high: '多め（平均の2倍）' },
+    otherOpt: { low: '少なめ（平均の半分）', mid: '平均並み', high: '多め（平均の2倍）' },
+    totH: '① 買い物全体の量を選ぶ', totD: '国の平均的な人を基準に、少なめ・平均並み・多めから選びます。',
+    itemsH: '② 買わないものを差し引く', itemsD: '上の合計には、よくある品物（各カードの想定頻度で）が含まれています。ふだん買わないものはタップで外すと、その分を合計とバーから差し引きます。',
     refLbl: '比べる平均',
-    otherRef: '参考 — {ref}：平均的な人の消費財（モノ）由来の排出は年約{y} kg（1日約{d} kg）で、生活由来の排出全体の{p}です（Hot or Cool Institute、2021年）。選択肢は、上の品物を初期設定のまま（1日約{i} kg）にしたときの買い物全体を、この平均の半分・平均並み・2倍にするものです。その差を「その他のモノ」で補います。品物を外したり増やしたりすると、そこから合計が変わります。',
+    otherRef: '参考 — {ref}：平均的な人の消費財（モノ）由来の排出は年約{y} kg（1日約{d} kg）で、生活由来の排出全体の{p}です（Hot or Cool Institute、2021年）。',
     refNoteH: 'この参考値について（注意）',
     refNote: [
       '<b>2019年</b>時点のデータです。その後の変化（たとえば中国の消費の伸び）は反映されていません。',
@@ -608,10 +615,10 @@ const I18N = {
       'ここでの「モノ」には、衣類・履物、家具・家庭用品・家電、雑貨などが入ります。食料品・飲み物、車と燃料、電気・ガス、外食、サービスは<b>含みません</b>。',
       'あくまで<b>目安</b>として使ってください。',
     ],
-    otherOver: 'この水準では、上の品物だけで目安を超えるため、その他のモノは0です。',
+    otherOver: 'この水準では、下のよくある品物だけで合計を超えるため、それらの合計を表示しています。',
     otherTot: '合計 約{kg} kg',
     refMark: '平均',
-    brkH: '買い物の内訳（1日あたり）', otherLbl: 'その他のモノ', excluded: '計算に入れていない',
+    brkH: 'あなたの買い物（1日あたり）', otherLbl: 'その他のモノ（家電・家具・日用品など）', excluded: '計算に入れていない',
     shareLine: 'あなたの1日のうち買い物は <b>{p}%</b> ・ 参考：{ref}の平均は{r}',
     shop: { bottle: 'ペットボトル飲料', coffee: 'テイクアウトのコーヒー', parcel: 'ネット通販の配送', tshirt: 'Tシャツ', jeans: 'ジーンズ', shoes: 'スニーカー', phone: 'スマートフォン', laptop: 'ノートPC' },
     carEq: '車で約{km} km分',
@@ -794,16 +801,9 @@ function buildInputs() {
     </div>
     <div class="block">${head('shopping')}
       <p class="hint">${l.shopHint}</p>
-      <div class="shop-h"><b>${l.shopPerH}</b><span>${l.shopPerD}</span></div>
-      <div class="shop">${SHOP.periodic.map(k => `
-        <div class="item per${d.own[k] ? ' on' : ' off'}" data-own="${k}" role="button" tabindex="0" aria-pressed="${d.own[k]}">
-          <span class="tick"></span>
-          <b>${l.shop[k]}</b><div class="big-kg num">${F.shop[k]} kg</div><div class="eq">${tpl(l.carEq, { km: fmt(F.shop[k] / F.transport.car) })}</div>
-          <div class="assume">${tpl(l.assumed, { f: l.freq[k] })}<br><span class="num">${tpl(l.perDayV, { kg: shopKg(F.shop[k] * SHOP.perYear[k] / 365.25) })}</span></div>
-        </div>`).join('')}</div>
-      <div class="shop-h"><b>${l.otherH}</b><span>${l.otherD}</span></div>
+      <div class="shop-h"><b>${l.totH}</b><span>${l.totD}</span></div>
       <div class="ref-row"><span>${l.refLbl}</span><select id="goodsRef">${Object.entries(GOODS_REF).map(([k, r]) => `<option value="${k}"${k === goodsRefKey() ? ' selected' : ''}>${r[S.lang]}</option>`).join('')}</select></div>
-      <div class="chips">${Object.keys(SHOP.other).map(o => chip('other', o, l.otherOpt[o], d.other === o, o === 'none' ? '' : `<small>${tpl(l.otherTot, { kg: shopTarget(o).toFixed(1) })}</small>`)).join('')}</div>
+      <div class="chips">${['low', 'mid', 'high'].map(o => chip('other', o, l.otherOpt[o], d.other === o, `<small>${tpl(l.otherTot, { kg: Math.max(shopTarget(o), DEFAULT_ITEMS).toFixed(1) })}</small>`)).join('')}</div>
       <p class="hint" style="margin-top:8px" id="otherRef"></p>
       <details class="ref-note"><summary>${l.refNoteH}</summary><ul>${l.refNote.map(x => `<li>${x}</li>`).join('')}</ul></details>
       <div class="shop-brk">
@@ -812,6 +812,13 @@ function buildInputs() {
         <div class="brk-leg" id="brkLeg"></div>
         <div class="brk-share" id="brkShare"></div>
       </div>
+      <div class="shop-h"><b>${l.itemsH}</b><span>${l.itemsD}</span></div>
+      <div class="shop">${SHOP.periodic.map(k => `
+        <div class="item per${d.own[k] ? ' on' : ' off'}" data-own="${k}" role="button" tabindex="0" aria-pressed="${d.own[k]}" style="--ic:${SHOP.colors[k]}">
+          <span class="tick"></span><span class="swatch"></span>
+          <b>${l.shop[k]}</b><div class="big-kg num">${F.shop[k]} kg</div><div class="eq">${tpl(l.carEq, { km: fmt(F.shop[k] / F.transport.car) })}</div>
+          <div class="assume">${tpl(l.assumed, { f: l.freq[k] })}<br><span class="num">${tpl(l.perDayV, { kg: shopKg(F.shop[k] * SHOP.perYear[k] / 365.25) })}</span></div>
+        </div>`).join('')}</div>
     </div>`;
 }
 
@@ -846,7 +853,7 @@ function update() {
   const scale = Math.max(4, fp.shopping, refD * 1.1);
   $('refMark').style.left = (refD / scale * 100) + '%';
   $('otherRef').textContent = tpl(l.otherRef, { ref: ref[S.lang], y: fmt(ref.t * 1000), d: refD < 0.1 ? refD.toFixed(2) : refD.toFixed(1), p: pctTxt(ref.t / ref.total * 100), i: DEFAULT_ITEMS.toFixed(1) })
-    + (d.other !== 'none' && shopTarget(d.other) < DEFAULT_ITEMS ? l.otherOver : '');
+    + (shopTarget(d.other) < DEFAULT_ITEMS ? l.otherOver : '');
   $('brkTotal').textContent = kg(fp.shopping) + ' kg';
   $('brkBar').innerHTML = parts.filter(p => p.v > 0).map(p => `<span style="width:${p.v / scale * 100}%;background:${SHOP.colors[p.k]}" title="${p.name}: ${shopKg(p.v)} kg"></span>`).join('');
   $('brkLeg').innerHTML = parts.map(p => `<div class="${p.v > 0 ? '' : 'off'}"><i style="background:${SHOP.colors[p.k]}"></i>${p.name}<span class="num">${p.v > 0 ? shopKg(p.v) + ' kg · ' + Math.round(p.v / fp.shopping * 100) + '%' : l.excluded}</span></div>`).join('');
