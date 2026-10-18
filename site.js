@@ -191,6 +191,19 @@ function swNav(lang) {
   const cur = swCurrent(), ui = SW_UI[lang];
   nav.innerHTML = `<div class="sw-nav-in"><a class="sw-brand" href="index.html"><i></i>${ui.brand}</a><div class="sw-tabs">${SW_PAGES.map(p =>
     `<a href="${p.file}" class="sw-tab${p.file === cur ? ' on' : ''}"${p.file === cur ? ' aria-current="page"' : ''}>${p[lang].nav}</a>`).join('')}</div></div>`;
+  swFooterSource(lang);
+}
+
+/* フッターの末尾に GitHub のソースへのリンクを付ける（フッターの文言が描画された後に呼ぶ） */
+const SW_REPO = 'https://github.com/tamorist/slow-war';
+function swFooterSource(lang) {
+  document.querySelectorAll('footer').forEach(f => {
+    f.querySelector('.sw-src')?.remove();
+    const span = document.createElement('span');
+    span.className = 'sw-src';
+    span.innerHTML = `${lang === 'ja' ? ' ・ ' : ' · '}<a href="${SW_REPO}" target="_blank" rel="noopener">${lang === 'ja' ? 'ソースコードを見る（GitHub）' : 'View source on GitHub'}</a>`;
+    f.appendChild(span);
+  });
 }
 
 /* 他のページへの大きなカード（現在のページは除く） */
@@ -221,6 +234,7 @@ function swNext(container, lang) {
 .sw-ic { font-size: 18px; color: #e5483b; line-height: 1; }
 .sw-card b { font-size: 16px; }
 .sw-d { font-size: 13px; opacity: .75; line-height: 1.55; flex: 1; }
+.sw-src a { color: inherit; }
 .sw-btn { align-self: flex-start; margin-top: 6px; font-size: 13px; font-weight: 700; color: #fff; background: #e5483b; border-radius: 999px; padding: 6px 14px; }`;
   const st = document.createElement('style');
   st.textContent = css;

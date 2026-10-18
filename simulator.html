@@ -69,6 +69,8 @@
   button.reset { font: inherit; font-size: 12px; border: 1px solid var(--line); background: transparent;
     color: var(--text); border-radius: 6px; padding: 4px 10px; cursor: pointer; margin-top: 16px; }
   [hidden] { display: none !important; }
+  .sim-footer { text-align: center; color: var(--muted); font-size: 12px; padding: 8px 16px 40px; }
+  .sim-footer a { color: var(--muted); }
 </style>
 </head>
 <body>
@@ -155,8 +157,9 @@
   </section>
   <div id="author" style="margin-top:28px"></div>
 </main>
+<footer class="sim-footer" data-i18n="footer"></footer>
 
-<script src="site.js?v=20261018b"></script>
+<script src="site.js?v=20261018d"></script>
 <script>
 // 化石燃料CO₂（2023年頃の概算, Global Carbon Project）。世界合計は土地利用変化を含む 40 Gt。
 const COUNTRIES = {
@@ -196,6 +199,7 @@ const I18N = {
     ratio: '≈ {a}× WWII / ≈ {b}× WWI', linear: 'Linear (no tipping): {n}',
     warRef: 'Reference: deaths in past wars', warRefD: 'World War II ≈ 70–85 million (median 80 million) / World War I ≈ 20 million',
     chartH: 'CUMULATIVE DEATHS OVER TIME', lgCum: 'Cumulative locked-in deaths', lgLin: 'Linear (no tipping)', lgWar: 'Multiples of WWII (80M)',
+    footer: '<a href="index.html">The Slow War</a> · <a href="sources.html">Sources &amp; data</a>',
     srcH: 'Sources & further reading', srcAll: 'All sources and key assumptions →',
     note: '* Deaths = cumulative emissions ÷ CO₂ per death × tipping multiplier. With tipping effects set to “None” this is a conservative linear lower bound. Tipping multipliers are rough illustrative assumptions. For the general audience version, see the <a href="index.html">story page</a>; for your own day, the <a href="my-day.html">personal simulator</a>.',
   },
@@ -215,6 +219,7 @@ const I18N = {
     ratio: '第二次世界大戦の約 {a} 倍 / 第一次世界大戦の約 {b} 倍', linear: '線形（ティッピングなし）：{n}',
     warRef: '参考：過去の戦争による死者数', warRefD: '第二次世界大戦 ≒ 7,000万〜8,500万人（中央値 8,000万） / 第一次世界大戦 ≒ 2,000万人',
     chartH: '累積犠牲者の推移', lgCum: '累積確定犠牲者', lgLin: '線形（ティッピングなし）', lgWar: 'WWII（8,000万）の倍数',
+    footer: '<a href="index.html">静かな戦争</a> ・ <a href="sources.html">出典とデータ</a>',
     srcH: '出典と参考資料', srcAll: 'すべての出典と主な前提 →',
     note: '※ 死者数 ＝ 累積排出量 ÷ 1人あたり排出量 × ティッピング係数。ティッピング効果「なし」のときは控えめな線形の下限推計です。ティッピング係数は目安として示した概算です。一般向けの解説は <a href="index.html">ストーリーページ</a>、自分の1日に置き換えるなら <a href="my-day.html">個人シミュレータ</a> をどうぞ。',
   },
