@@ -21,7 +21,7 @@ const SW_GROUPS = {
   tipping:   { en: 'Tipping points', ja: 'ティッピング・ポイント' },
   food:      { en: 'Food: emissions, land, water, pollution', ja: '食べ物：排出・土地・水・汚染' },
   land:      { en: 'Land and the carbon opportunity cost', ja: '土地と炭素の機会費用' },
-  energy:    { en: 'Electricity, transport and products', ja: '電気・交通・製品' },
+  energy:    { en: 'Electricity, transport, products and shopping', ja: '電気・交通・製品・買い物' },
   war:       { en: 'War deaths (for comparison)', ja: '戦争の死者数（比較用）' },
   further:   { en: 'Further reading for everyone', ja: 'さらに知りたい人へ' },
 };

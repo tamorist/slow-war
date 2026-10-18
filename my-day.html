@@ -112,8 +112,6 @@
   .brk-wrap { margin-bottom: 14px; }
   .brk-bar { display: flex; height: 18px; border-radius: 6px; overflow: hidden; background: var(--bg); }
   .brk-bar span { transition: width .35s ease; border-right: 1px solid rgba(0,0,0,.35); overflow: hidden; }
-  .brk-bar.tall { height: 26px; }
-  .brk-bar em { display: block; font-style: normal; font-size: 11px; font-weight: 700; color: #111; padding: 5px 6px; white-space: nowrap; }
   .brk-leg { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 3px 14px; margin-top: 10px; font-size: 12px; color: #c9c8c3; }
   .brk-leg div { display: flex; align-items: center; gap: 6px; }
   .brk-leg div.off { opacity: .4; text-decoration: line-through; }
@@ -121,14 +119,6 @@
   .brk-leg .num { margin-left: auto; color: var(--muted); }
   .brk-share { font-size: 12.5px; color: #c9c8c3; margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--faint); }
   .brk-share b { color: var(--c-shopping); font-size: 15px; }
-  .shop-tot { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 14px; }
-  .shop-tot > div { border-radius: 12px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px; }
-  .shop-tot span { font-size: 12px; color: #c9c8c3; }
-  .shop-tot b { font-size: 22px; font-weight: 900; }
-  .shop-tot small { font-size: 11px; color: var(--muted); }
-  .shop-tot .t-day { background: rgba(79,179,138,.1); border: 1px solid rgba(79,179,138,.45); }
-  .shop-tot .t-day b { color: var(--c-shopping); }
-  .shop-tot .t-simple { background: var(--bg3); border: 1px dashed #55595f; }
   .shop { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
   .item { position: relative; text-align: left; font: inherit; color: var(--text); background: var(--bg3); border: 1px solid var(--faint);
     border-radius: 12px; padding: 10px 12px; cursor: pointer; line-height: 1.4; }
@@ -361,7 +351,7 @@
 
 <div class="mbar"><div><span data-i18n="mToday"></span><br><b class="num" id="mKg">0</b> kg CO₂</div><div class="r" style="text-align:right"><span id="mScale"></span><br><b class="num" id="mImp">—</b></div></div>
 
-<script src="site.js?v=20261019b"></script>
+<script src="site.js?v=20261019c"></script>
 <script>
 /* ===================== DATA ===================== */
 const COUNTRIES = {
@@ -424,8 +414,6 @@ const shopPerDay = (d, k) => SHOP.daily.includes(k)
   ? F.shop[k] * d.shop[k]
   : (d.own[k] ? F.shop[k] * d.per[k] / 365.25 : 0);
 const shopItems = () => [...SHOP.daily, ...SHOP.periodic];
-// 単純合計：割り戻さず、選んだ品物を今日まとめて買ったとした場合
-const shopSimple = d => SHOP.daily.reduce((a, k) => a + F.shop[k] * d.shop[k], 0) + SHOP.periodic.reduce((a, k) => a + (d.own[k] ? F.shop[k] : 0), 0);
 // 食事：Poore & Nemecek (2018, Science) のサプライチェーン段階別の値（Our World in Data 経由の概算）
 // stages = kg CO₂e / kg 食品 [森林破壊・土地利用変化, 農場(メタン・N₂O), 飼料, 加工・輸送・小売・包装]（中央値, GWP100）
 const STAGES = ['luc', 'farm', 'feed', 'post', 'coc'];
@@ -497,10 +485,8 @@ const I18N = {
     refLbl: 'Compare with the average person in', match: 'Match the average',
     otherRef: 'Reference — {ref}: consumer goods ≈ {y} kg a year (≈ {d} kg/day), about {p}% of the lifestyle footprint (Hot or Cool Institute, 2021). Choose “Match the average” to fill the rest of your shopping up to this level.',
     refMark: 'avg',
-    brk2H: 'Single-item impact (simple total, not spread out)', brk2D: 'The same items as if you bought them all today. A laptop is huge as a single purchase, but small once spread over years.',
     brkH: 'What your shopping is made of (per day)', otherLbl: 'Everything else', notIncl: 'not included',
     shareLine: 'Shopping is <b>{p}%</b> of your day · average in {ref}: about {r}%',
-    totDay: 'Per day (spread out)', totDayS: 'Used in your total', totSimple: 'Simple total (not spread out)', totSimpleS: 'If you bought all of these today',
     shop: { bottle: 'Bottled drink', coffee: 'Takeaway coffee', parcel: 'Online delivery', tshirt: 'T-shirt', jeans: 'Jeans', shoes: 'Sneakers', phone: 'Smartphone', laptop: 'Laptop' },
     carEq: '≈ {km} km by car',
     gwpLabel: 'How to count methane', gwp100: '100-year (standard, GWP100)', gwp20: '20-year (near-term, GWP20)',
@@ -594,10 +580,8 @@ const I18N = {
     refLbl: '比べる平均', match: '平均に合わせる',
     otherRef: '参考 — {ref}：平均的な人の消費財（モノ）由来の排出は年約{y} kg（1日約{d} kg）で、生活由来の排出全体の約{p}%です（Hot or Cool Institute、2021年）。「平均に合わせる」を選ぶと、上の品物との差をその他のモノとして補います。',
     refMark: '平均',
-    brk2H: '単品のインパクト（単純合計の内訳・割り戻しなし）', brk2D: '同じ品物を今日まとめて買ったとした場合。ノートPCは1回の買い物としては大きいものの、何年にも割り戻すと小さくなります。',
     brkH: '買い物の内訳（1日あたり）', otherLbl: 'その他のモノ', notIncl: '計算に入れていない',
     shareLine: 'あなたの1日のうち買い物は <b>{p}%</b> ・ 参考：{ref}の平均は約{r}%',
-    totDay: '1日あたり（割り戻し込み）', totDayS: '合計に使う値', totSimple: '単純合計（割り戻しなし）', totSimpleS: '今日まとめて買ったとした場合',
     shop: { bottle: 'ペットボトル飲料', coffee: 'テイクアウトのコーヒー', parcel: 'ネット通販の配送', tshirt: 'Tシャツ', jeans: 'ジーンズ', shoes: 'スニーカー', phone: 'スマートフォン', laptop: 'ノートPC' },
     carEq: '車で約{km} km分',
     gwpLabel: 'メタンの評価期間', gwp100: '100年（標準・GWP100）', gwp20: '20年（短期・GWP20）',
@@ -795,13 +779,6 @@ function buildInputs() {
         <div class="brk-wrap"><div class="brk-bar" id="brkBar"></div><i class="ref-mark" id="refMark"><span>${l.refMark}</span></i></div>
         <div class="brk-leg" id="brkLeg"></div>
         <div class="brk-share" id="brkShare"></div>
-        <div class="brk-h" style="margin-top:14px"><b>${l.brk2H}</b><span class="num" id="brk2Total" style="color:var(--text)"></span></div>
-        <div class="brk-bar tall" id="brk2Bar"></div>
-        <p class="hint" style="margin:6px 0 0">${l.brk2D}</p>
-      </div>
-      <div class="shop-tot">
-        <div class="t-day"><span>${l.totDay}</span><b class="num" id="shopDay"></b><small>${l.totDayS}</small></div>
-        <div class="t-simple"><span>${l.totSimple}</span><b class="num" id="shopSimple"></b><small>${l.totSimpleS}</small></div>
       </div>
     </div>`;
 }
@@ -831,7 +808,6 @@ function update() {
   $('kmV').textContent = d.km + ' km';
   if ($('hoursV')) $('hoursV').textContent = d.hours + (S.lang === 'ja' ? ' 時間' : ' h');
   CATS.forEach(k => { $('kg-' + k).textContent = kg(fp[k]) + ' kg'; });
-  $('shopDay').textContent = kg(fp.shopping) + ' kg';
   // 買い物の内訳：目盛りは固定（8 kg/日、超えたら合計に合わせる）なので、品物を外すと棒が目に見えて短くなる
   const ref = GOODS_REF[goodsRefKey()], refD = goodsRefDaily();
   const parts = [...shopItems().map(k => ({ k, v: shopPerDay(d, k), name: l.shop[k] })), { k: 'other', v: otherDaily(d), name: l.otherLbl }];
@@ -842,14 +818,7 @@ function update() {
   $('brkTotal').textContent = kg(fp.shopping) + ' kg';
   $('brkBar').innerHTML = parts.filter(p => p.v > 0).map(p => `<span style="width:${p.v / scale * 100}%;background:${SHOP.colors[p.k]}" title="${p.name}: ${shopKg(p.v)} kg"></span>`).join('');
   $('brkLeg').innerHTML = parts.map(p => `<div class="${p.v > 0 ? '' : 'off'}"><i style="background:${SHOP.colors[p.k]}"></i>${p.name}<span class="num">${p.v > 0 ? shopKg(p.v) + ' kg · ' + Math.round(p.v / fp.shopping * 100) + '%' : l.notIncl}</span></div>`).join('');
-  // 単純合計の内訳（割り戻しなし）：1個ごとの大きさを見比べる
-  const raw = shopItems().map(k => ({ k, v: SHOP.daily.includes(k) ? F.shop[k] * d.shop[k] : (d.own[k] ? F.shop[k] : 0), name: l.shop[k] })).filter(p => p.v > 0);
-  const rawSum = raw.reduce((a, p) => a + p.v, 0);
-  $('brk2Total').textContent = kg(rawSum) + ' kg';
-  $('brk2Bar').innerHTML = raw.map(p => { const w = p.v / Math.max(rawSum, 1) * 100;
-    return `<span style="width:${w}%;background:${SHOP.colors[p.k]}" title="${p.name}: ${p.v} kg">${w >= 9 ? `<em>${p.name} ${Math.round(w)}%</em>` : ''}</span>`; }).join('');
   $('brkShare').innerHTML = tpl(l.shareLine, { p: fp.total ? Math.round(fp.shopping / fp.total * 100) : 0, r: Math.round(ref.t / ref.total * 100), ref: S.lang === 'ja' ? ref.sja : ref.sen });
-  $('shopSimple').textContent = kg(shopSimple(d)) + ' kg';
 
   // 合計と内訳
   $('total').textContent = kg(fp.total);
