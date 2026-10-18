@@ -145,8 +145,14 @@
   </div>
 
   <p class="note" data-i18n="note"></p>
+  <section class="panel" style="margin-top:16px">
+    <h2 data-i18n="srcH"></h2>
+    <div id="sources"></div>
+    <p class="note"><a href="sources.html" data-i18n="srcAll"></a></p>
+  </section>
 </main>
 
+<script src="site.js"></script>
 <script>
 // 化石燃料CO₂（2023年頃の概算, Global Carbon Project）。世界合計は土地利用変化を含む 40 Gt。
 const COUNTRIES = {
@@ -177,7 +183,7 @@ const I18N = {
     emis: 'Annual CO₂ emissions (base year)', emisHint: '{name}: ≈ {gt} Gt / year',
     tpd: 'CO₂ per one future death', tpdHint: '1,000-ton rule = 1,000 t per person',
     tip: 'Tipping effects (rough multiplier)', tipHint: 'Illustrative, not peer-reviewed: permafrost, forest dieback, conflict, famine, migration…',
-    rate: 'Annual change in emissions', rateHint: '0% = flat / −7% ≈ 1.5 °C pathway',
+    rate: 'Annual change in emissions', rateHint: '0% = flat / −3% = gradual cuts / −7% ≈ 2 °C pathway',
     start: 'Base year', end: 'Count until', reset: 'Reset',
     todayH: 'FUTURE DEATHS LOCKED IN TODAY — {name} (since midnight)',
     rateLine: 'Current pace: {d} per day / {s} per second', session: 'Since you opened this page: {n}',
@@ -186,6 +192,7 @@ const I18N = {
     ratio: '≈ {a}× WWII / ≈ {b}× WWI', linear: 'Linear (no tipping): {n}',
     warRef: 'Reference: deaths in past wars', warRefD: 'World War II ≈ 70–85 million (median 80 million) / World War I ≈ 20 million',
     chartH: 'CUMULATIVE DEATHS OVER TIME', lgCum: 'Cumulative locked-in deaths', lgLin: 'Linear (no tipping)', lgWar: 'Multiples of WWII (80M)',
+    srcH: 'Sources & further reading', srcAll: 'All sources and key assumptions →',
     note: '* Deaths = cumulative emissions ÷ CO₂ per death × tipping multiplier. With tipping effects set to “None” this is a conservative linear lower bound. Tipping multipliers are rough illustrative assumptions. For the general audience version, see the <a href="index.html">story page</a>; for your own day, the <a href="my-day.html">personal simulator</a>.',
   },
   ja: {
@@ -195,7 +202,7 @@ const I18N = {
     emis: '年間CO₂排出量（基準年）', emisHint: '{name}：約 {gt} Gt/年',
     tpd: '1人の死を生む排出量', tpdHint: '1,000トン・ルール ＝ 1,000 t/人',
     tip: 'ティッピング効果（概算の係数）', tipHint: '査読済みの推計ではない目安：永久凍土・森林枯死・紛争・飢饉・移民など',
-    rate: '排出量の年変化率', rateHint: '0% ＝ 現状維持 / −7% ≒ 1.5℃経路',
+    rate: '排出量の年変化率', rateHint: '0% ＝ 現状維持 / −3% ＝ ゆるやかな削減 / −7% ≒ 2℃経路',
     start: '基準年', end: '集計終了年', reset: '初期値に戻す',
     todayH: '本日確定した未来の犠牲者 — {name}（今日0時から）',
     rateLine: '現在のペース：1日 {d} 人 ／ 1秒 {s} 人', session: 'このページを開いてから：{n} 人',
@@ -204,6 +211,7 @@ const I18N = {
     ratio: '第二次世界大戦の約 {a} 倍 / 第一次世界大戦の約 {b} 倍', linear: '線形（ティッピングなし）：{n}',
     warRef: '参考：過去の戦争による死者数', warRefD: '第二次世界大戦 ≒ 7,000万〜8,500万人（中央値 8,000万） / 第一次世界大戦 ≒ 2,000万人',
     chartH: '累積犠牲者の推移', lgCum: '累積確定犠牲者', lgLin: '線形（ティッピングなし）', lgWar: 'WWII（8,000万）の倍数',
+    srcH: '出典と参考資料', srcAll: 'すべての出典と主な前提 →',
     note: '※ 死者数 ＝ 累積排出量 ÷ 1人あたり排出量 × ティッピング係数。ティッピング効果「なし」のときは控えめな線形の下限推計です。ティッピング係数は目安として示した概算です。一般向けの解説は <a href="index.html">ストーリーページ</a>、自分の1日に置き換えるなら <a href="my-day.html">個人シミュレータ</a> をどうぞ。',
   },
 };
@@ -214,7 +222,7 @@ const store = { get(k) { try { return localStorage.getItem(k); } catch (e) { ret
 let lang = store.get('scw-lang') === 'ja' ? 'ja' : 'en';
 const t = (k, v = {}) => I18N[lang][k].replace(/\{(\w+)\}/g, (_, x) => v[x] ?? '');
 const sliders = ['emis', 'tpd', 'rate', 'start', 'end'];
-const defaults = { ...Object.fromEntries(sliders.map(i => [i, $(i).value])), country: 'world', tip: '0' };
+const defaults = { ...Object.fromEntries(sliders.map(i => [i, $(i).value])), country: 'world', tip: '1' };
 const fmt = n => Math.round(n).toLocaleString('en-US');
 const trim = s => s.replace(/\.0$/, '');
 const short = n => lang === 'ja'
@@ -248,10 +256,11 @@ function applyLang() {
   document.title = t('title');
   document.querySelectorAll('[data-i18n]').forEach(el => { el.innerHTML = t(el.dataset.i18n); });
   document.querySelectorAll('.lang button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
-  const c = $('country').value || 'world', tp = $('tip').value || '0';
+  const c = $('country').value || 'world', tp = $('tip').value || '1';
   $('country').innerHTML = Object.entries(COUNTRIES).map(([k, v]) => `<option value="${k}"${k === 'custom' ? ' disabled' : ''}>${v[lang]}</option>`).join('');
   $('tip').innerHTML = TIPS.map((x, i) => `<option value="${i}">${x[lang]}</option>`).join('');
   $('country').value = c; $('tip').value = tp;
+  if (typeof swRenderSources === 'function') swRenderSources($('sources'), lang, ['core', 'emissions', 'pathways', 'tipping', 'war']);
   update();
 }
 

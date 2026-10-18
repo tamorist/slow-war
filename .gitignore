@@ -5,3 +5,6 @@
 
 # macOS
 .DS_Store
+
+# ローカル開発用
+.claude/

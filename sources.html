@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sources &amp; Data — The Slow War</title>
+<meta name="description" content="Where every number on The Slow War comes from: data sources, key assumptions and further reading. このサイトの数値の出典・前提・参考資料。">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="The Slow War">
+<meta property="og:title" content="Sources &amp; Data — The Slow War">
+<meta property="og:description" content="Where every number on The Slow War comes from: data sources, key assumptions and further reading.">
+<meta property="og:url" content="https://tamorist.github.io/slow-war/sources.html">
+<meta property="og:image" content="https://tamorist.github.io/slow-war/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://tamorist.github.io/slow-war/sources.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root { --bg: #0e0f11; --bg2: #16181b; --text: #ecebe7; --muted: #8d8f94; --faint: #34373c; --red: #e5483b; --amber: #e0a43b; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); line-height: 1.75;
+    font-family: Inter, "Noto Sans JP", -apple-system, "Hiragino Sans", sans-serif; -webkit-font-smoothing: antialiased; }
+  html[lang="ja"] body { font-family: "Noto Sans JP", -apple-system, "Hiragino Sans", sans-serif; }
+  .wrap { max-width: 820px; margin: 0 auto; padding: 0 16px; }
+  .top { position: sticky; top: 0; background: rgba(14,15,17,.9); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--faint); z-index: 5; }
+  .top .wrap { display: flex; align-items: center; gap: 16px; padding-top: 10px; padding-bottom: 10px; font-size: 13px; flex-wrap: wrap; }
+  .top a { color: var(--muted); text-decoration: none; }
+  .top a:hover { color: var(--text); }
+  .lang { margin-left: auto; display: flex; border: 1px solid var(--faint); border-radius: 8px; overflow: hidden; }
+  .lang button { font: inherit; font-size: 12px; background: transparent; color: var(--muted); border: 0; padding: 6px 12px; cursor: pointer; }
+  .lang button[aria-pressed="true"] { background: var(--text); color: var(--bg); font-weight: 700; }
+  header { padding: 64px 0 24px; }
+  .eyebrow { font-size: 12px; letter-spacing: .2em; color: var(--muted); text-transform: uppercase; margin: 0 0 12px; }
+  h1 { font-size: clamp(28px, 5vw, 42px); line-height: 1.25; margin: 0 0 16px; font-weight: 900; }
+  h2 { font-size: 20px; margin: 48px 0 12px; }
+  .lead { color: #c9c8c3; font-size: 16px; margin: 0; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; margin-top: 8px; }
+  th, td { text-align: left; padding: 10px 8px; border-bottom: 1px solid var(--faint); vertical-align: top; }
+  th { color: var(--muted); font-weight: 500; font-size: 12px; }
+  td:first-child { font-weight: 700; white-space: nowrap; }
+  td .tag { display: inline-block; font-size: 11px; border-radius: 999px; padding: 0 8px; margin-top: 4px; border: 1px solid var(--faint); color: var(--muted); }
+  td .tag.est { color: var(--amber); border-color: rgba(224,164,59,.45); }
+  .note { background: var(--bg2); border-left: 3px solid var(--amber); border-radius: 0 10px 10px 0; padding: 14px 18px; font-size: 14px; color: #c9c8c3; }
+  .tbl { overflow-x: auto; }
+  footer { color: var(--muted); font-size: 12px; text-align: center; padding: 48px 16px; }
+  footer a { color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="top"><div class="wrap">
+  <a href="index.html" data-i18n="navStory"></a><a href="simulator.html" data-i18n="navSim"></a><a href="my-day.html" data-i18n="navDay"></a>
+  <div class="lang" role="group" aria-label="Language"><button data-lang="en">EN</button><button data-lang="ja">日本語</button></div>
+</div></div>
+
+<div class="wrap">
+  <header>
+    <p class="eyebrow">Sources &amp; Data</p>
+    <h1 data-i18n="h1"></h1>
+    <p class="lead" data-i18n="lead"></p>
+  </header>
+
+  <h2 data-i18n="keyH"></h2>
+  <div class="tbl"><table id="keyTable"></table></div>
+
+  <h2 data-i18n="pathH"></h2>
+  <p class="note" data-i18n="pathNote"></p>
+
+  <h2 data-i18n="allH"></h2>
+  <div id="sources"></div>
+</div>
+
+<footer data-i18n="footer"></footer>
+
+<script src="site.js"></script>
+<script>
+const I18N = {
+  en: {
+    title: 'Sources & Data — The Slow War',
+    navStory: '← Story', navSim: 'Simulator', navDay: 'Your day',
+    h1: 'Where the numbers come from',
+    lead: 'The simulators are a doorway, not the final word. Every figure on this site traces back to published data or to an assumption we state openly. Follow the links to go deeper.',
+    keyH: 'Key numbers and assumptions',
+    cols: ['Number', 'Value used', 'Source'],
+    rows: [
+      ['Deaths per tonne of CO₂', '1 future death per 1,000 t (the “1,000-ton rule”)', 'Pearce & Parncutt (2023)', 'data'],
+      ['World emissions', '~40 Gt CO₂ a year (incl. land-use change)', 'Global Carbon Budget 2024', 'data'],
+      ['Country emissions', 'Fossil CO₂, approx. 2023', 'Global Carbon Budget 2024 / Our World in Data', 'data'],
+      ['Tipping multipliers', '×1.5 (default) / ×2 / ×3', 'Our illustrative assumption, informed by Armstrong McKay et al. (2022)', 'est'],
+      ['Reduction pathways', '−3% / −7% a year', 'See the note below; UNEP Emissions Gap Report 2024, Forster et al. (2025)', 'est'],
+      ['War deaths', 'WWII 80 million, WWI 20 million', 'Commonly cited estimates (see Wikipedia summaries)', 'data'],
+      ['Food impacts', 'Emissions by stage, land, water, pollution', 'Poore & Nemecek (2018) via Our World in Data', 'data'],
+      ['Methane warming', '×2.9 when switching from a 100- to a 20-year view', 'IPCC AR6 WGI Ch. 7', 'data'],
+      ['Land’s lost carbon', 'Land used × 0.1–1.5 kg CO₂/m²/yr (default 0.5)', 'Our estimate, guided by Cook-Patton et al. (2020), Searchinger et al. (2018)', 'est'],
+      ['Transport, power, products', 'Typical factors; grid factor by region', 'UK DESNZ, MLIT, Ember / OWID; product values approximate', 'est'],
+    ],
+    tagData: 'published data', tagEst: 'our estimate',
+    pathH: 'Why we call −7% a year a “2 °C pathway”',
+    pathNote: 'UNEP estimates that cuts of about 7.5% a year to 2035 are needed for 1.5 °C, and about 4% a year for 2 °C. But the 1.5 °C figure assumes large-scale carbon removal later and/or a temporary overshoot. Judged against the remaining carbon budget instead, cutting 7% a year from 2025 would still release about 570 Gt CO₂ in total (40 ÷ 0.07) — more than four times the ~130 Gt left for 1.5 °C, but within the budget for staying below 2 °C. Given how late action already is, we think “2 °C” is the more honest label.',
+    allH: 'All sources',
+    footer: '<a href="index.html">The Slow War</a> · Model-based approximations. Found an error or a better source? Please let us know.',
+  },
+  ja: {
+    title: '出典とデータ — 静かな戦争',
+    navStory: '← ストーリー', navSim: 'シミュレータ', navDay: 'あなたの1日',
+    h1: '数字はどこから来ているか',
+    lead: 'シミュレータは入り口であって、結論ではありません。このサイトのすべての数値は、公表されたデータか、私たちがはっきり示した前提にさかのぼれます。リンクをたどって、さらに深く調べてみてください。',
+    keyH: '主な数値と前提',
+    cols: ['項目', '使っている値', '出典'],
+    rows: [
+      ['CO₂ 1トンあたりの死者', '1,000 tで将来の死者1人（1,000トン・ルール）', 'Pearce & Parncutt (2023)', 'data'],
+      ['世界の排出量', '年約40 Gt CO₂（土地利用変化を含む）', 'Global Carbon Budget 2024', 'data'],
+      ['国別の排出量', '化石燃料由来CO₂、2023年ごろの概算', 'Global Carbon Budget 2024 / Our World in Data', 'data'],
+      ['ティッピング係数', '×1.5（初期値）／×2／×3', '私たちが置いた目安（Armstrong McKay ら 2022 を参考）', 'est'],
+      ['削減の道筋', '年 −3%／−7%', '下の注記を参照。UNEP Emissions Gap Report 2024、Forster ら 2025', 'est'],
+      ['戦争の死者数', '第二次世界大戦 8,000万人、第一次世界大戦 2,000万人', 'よく引用される推計（Wikipedia のまとめを参照）', 'data'],
+      ['食べ物の環境負荷', '段階別の排出・土地・水・汚染', 'Poore & Nemecek (2018)、Our World in Data 経由', 'data'],
+      ['メタンの温暖化効果', '100年基準から20年基準に切り替えると ×2.9', 'IPCC AR6 WGI 第7章', 'data'],
+      ['土地の機会費用', '使っている農地 × 年0.1〜1.5 kg CO₂/m²（初期値0.5）', '私たちの概算（Cook-Patton ら 2020、Searchinger ら 2018 を参考）', 'est'],
+      ['交通・電気・製品', '代表的な係数。電気は地域別の係数', '英国 DESNZ、国土交通省、Ember / OWID。製品の値は概算', 'est'],
+    ],
+    tagData: '公表データ', tagEst: '私たちの概算',
+    pathH: '年 −7% を「2℃目標の道」と呼ぶ理由',
+    pathNote: 'UNEP は、1.5℃には2035年まで年約7.5%、2℃には年約4%の削減が必要と推計しています。ただし1.5℃の数字は、将来の大規模なCO₂除去や、一時的に1.5℃を超えること（オーバーシュート）を前提にしています。残りのカーボンバジェットで判断すると、2025年から毎年7%ずつ減らしても合計で約570 Gt CO₂（40 ÷ 0.07）を排出します。これは1.5℃のために残された約130 Gtの4倍以上ですが、2℃未満にとどめるバジェットには収まります。対策がすでにこれだけ遅れていることを踏まえ、「2℃」と呼ぶほうが誠実だと考えています。',
+    allH: 'すべての出典',
+    footer: '<a href="index.html">静かな戦争</a> ・ 推計モデルによる概算です。誤りやより良い出典があれば、ぜひお知らせください。',
+  },
+};
+const store = { get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+                set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} } };
+let lang = store.get('scw-lang') === 'ja' ? 'ja' : 'en';
+function render() {
+  const l = I18N[lang];
+  document.documentElement.lang = lang;
+  document.title = l.title;
+  document.querySelectorAll('[data-i18n]').forEach(el => { el.innerHTML = l[el.dataset.i18n]; });
+  document.querySelectorAll('.lang button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
+  document.getElementById('keyTable').innerHTML = `<tr>${l.cols.map(c => `<th>${c}</th>`).join('')}</tr>` +
+    l.rows.map(([a, b, c, t]) => `<tr><td>${a}<br><span class="tag ${t === 'est' ? 'est' : ''}">${t === 'est' ? l.tagEst : l.tagData}</span></td><td>${b}</td><td>${c}</td></tr>`).join('');
+  swRenderSources(document.getElementById('sources'), lang);
+}
+document.querySelectorAll('.lang button').forEach(b => b.addEventListener('click', () => {
+  lang = b.dataset.lang; store.set('scw-lang', lang); render();
+}));
+render();
+</script>
+</body>
+</html>

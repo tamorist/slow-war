@@ -157,6 +157,7 @@
   .method li { margin-bottom: 8px; }
   .method a { color: var(--text); }
   footer { text-align: center; color: var(--muted); font-size: 12px; padding: 32px 16px 48px; }
+  footer a { color: var(--muted); }
 
   @media (prefers-reduced-motion: reduce) {
     .reveal { opacity: 1; transform: none; transition: none; }
@@ -293,12 +294,16 @@
     <p class="lead" data-i18n="mLead"></p>
     <div class="formula" id="formula"></div>
     <ul id="mList"></ul>
+    <h3 style="font-size:16px;margin:36px 0 0" data-i18n="srcH"></h3>
+    <div id="sources"></div>
+    <p style="margin-top:20px;font-size:14px"><a href="sources.html" data-i18n="srcAll"></a></p>
     <p style="font-size:13px;color:var(--muted);margin-top:24px" data-i18n="simLink"></p>
   </div>
 </section>
 
 <footer data-i18n="footer"></footer>
 
+<script src="site.js"></script>
 <script>
 /* ===================== DATA ===================== */
 // 化石燃料CO₂（2023年頃の概算, Global Carbon Project）。世界合計は土地利用変化を含む 40 Gt。
@@ -350,7 +355,7 @@ const I18N = {
     eqLife: 'Future deaths from an average person in {where} over 80 years (≈ {pc} t CO₂ a year)',
     scnH: 'But this number<br>can still change.',
     scnLead: 'Deaths scale with the CO₂ we have yet to emit. The faster emissions fall, the more lives are saved. Choose a pathway for {where}.',
-    s0: 'Business as usual', s0d: 'Emissions stay flat', s1: 'Gradual cuts', s1d: '−3% a year', s2: '1.5 °C pathway', s2d: '−7% a year',
+    s0: 'Business as usual', s0d: 'Emissions stay flat', s1: 'Gradual cuts', s1d: '−3% a year', s2: '2 °C pathway', s2d: '−7% a year',
     lostK: 'Deaths locked in by 2050', savedK: 'Lives saved vs. business as usual',
     lostS: '≈ {x}× World War II', savedS: '≈ {x}', savedNone: 'Changing nothing saves no one.',
     lostL: 'Lives lost', savedL: 'Lives saved',
@@ -360,13 +365,15 @@ const I18N = {
     formula: 'Annual emissions of {where} <span class="num">≈ {gt}</span> ÷ <span class="num">1,000 t</span>{mult} = <span class="num">≈ {perYear}</span> deaths a year',
     mList: [
       'Calculated from {start}, holding annual emissions of {where} at about {gt} (unless a pathway is chosen).',
-      'This is a <b>conservative lower bound</b> when tipping effects are set to “None”. Tipping multipliers (×1.5 / ×2 / ×3) are <b>rough illustrative assumptions, not peer-reviewed estimates</b>. They show how the linear estimate could grow if feedbacks such as permafrost thaw and forest dieback, and societal cascades (conflict, famine, mass migration), are included.',
+      'By default we show <b>moderate feedbacks (×1.5)</b>. With tipping effects set to “None” it is a <b>conservative lower bound</b>. Tipping multipliers (×1.5 / ×2 / ×3) are <b>rough illustrative assumptions, not peer-reviewed estimates</b>. They show how the linear estimate could grow if feedbacks such as permafrost thaw and forest dieback, and societal cascades (conflict, famine, mass migration), are included.',
       '“Locked in” means the harm becomes unavoidable once the CO₂ is emitted; the deaths themselves may occur decades later.',
       'Country figures: fossil CO₂, approx. 2023 (Global Carbon Project). The world total (40 Gt) also includes land-use change, so countries do not add up exactly.',
       'War deaths: World War II ≈ 70–85 million (median 80 million shown); World War I ≈ 20 million.',
+      'Pathways: “gradual cuts” = −3% a year; “2 °C pathway” = −7% a year. UNEP frames ~7.5% a year as a 1.5 °C pathway, but judged by the remaining carbon budget, cutting 7% a year from 2025 is closer to 2 °C (<a href="sources.html">why</a>).',
     ],
     simLink: 'Want to tweak the numbers yourself? Try the <a href="simulator.html">detailed simulator</a>, or see <a href="my-day.html">what your own day adds up to</a>.',
-    footer: 'Deterministic Climate Casualty Counter — model-based approximations',
+    srcH: 'Sources & further reading', srcAll: 'All sources and key assumptions →',
+    footer: 'Deterministic Climate Casualty Counter — model-based approximations · <a href="sources.html">Sources &amp; data</a>',
   },
   ja: {
     title: '静かな戦争',
@@ -395,7 +402,7 @@ const I18N = {
     eqLife: '{where}の平均的な1人が80年間に出すCO₂（年約{pc}トン）による将来の死者',
     scnH: 'でも、この数字は<br>まだ変えられる。',
     scnLead: '犠牲者の数は、これから出すCO₂の量に比例します。排出を早く減らすほど、救える命は増えます。{where}の道筋を選んでみてください。',
-    s0: 'このまま', s0d: '排出量が横ばい', s1: 'ゆるやかに削減', s1d: '毎年 −3%', s2: '1.5℃目標の道', s2d: '毎年 −7%',
+    s0: 'このまま', s0d: '排出量が横ばい', s1: 'ゆるやかに削減', s1d: '毎年 −3%', s2: '2℃目標の道', s2d: '毎年 −7%',
     lostK: '2050年までに確定する犠牲者', savedK: '「このまま」と比べて救える命',
     lostS: '第二次世界大戦の約{x}倍', savedS: '{x}', savedNone: '何も変えなければ、救える命はありません',
     lostL: '失われる命', savedL: '救える命',
@@ -405,20 +412,22 @@ const I18N = {
     formula: '{where}の年間排出量 <span class="num">約{gt}</span> ÷ <span class="num">1,000トン</span>{mult} ＝ 年間 <span class="num">約{perYear}</span>',
     mList: [
       '{start}年を起点に、{where}の年間排出量を約{gt}として計算しています（シナリオを選んだ場合を除く）。',
-      'ティッピング効果「なし」のときは<b>控えめな下限</b>の推計です。×1.5／×2／×3 の係数は<b>査読済みの推計ではなく、目安として示した概算</b>です。永久凍土の融解や森林の枯死などのフィードバック、紛争・飢饉・大規模移民といった社会の連鎖的危機を含めた場合に、線形推計がどこまで膨らみうるかを示しています。',
+      '初期表示は<b>中程度のフィードバック（×1.5）</b>です。ティッピング効果を「なし」にすると<b>控えめな下限</b>の推計になります。×1.5／×2／×3 の係数は<b>査読済みの推計ではなく、目安として示した概算</b>です。永久凍土の融解や森林の枯死などのフィードバック、紛争・飢饉・大規模移民といった社会の連鎖的危機を含めた場合に、線形推計がどこまで膨らみうるかを示しています。',
       '「確定」とは、排出された時点でその被害が避けられなくなるという意味です。実際に亡くなるのは数十年先になることがあります。',
       '国別の数値：化石燃料由来のCO₂、2023年ごろの概算（Global Carbon Project）。世界合計（40 Gt）は土地利用変化を含むため、各国の合計とは一致しません。',
       '戦争の死者数：第二次世界大戦 約7,000万〜8,500万人（中央値8,000万人で表示）、第一次世界大戦 約2,000万人。',
+      '削減の道筋：「ゆるやかに削減」は年 −3%、「2℃目標の道」は年 −7%。UNEP は年約7.5%を1.5℃の道筋としていますが、残りのカーボンバジェットで判断すると、2025年から年7%の削減は2℃に近い道筋です（<a href="sources.html">理由</a>）。',
     ],
     simLink: '数値を細かく変えて試したい方は <a href="simulator.html">詳細シミュレータ</a> をどうぞ。自分の1日に置き換えるなら <a href="my-day.html">個人シミュレータ</a> へ。',
-    footer: 'Deterministic Climate Casualty Counter — 推計モデルによる概算です',
+    srcH: '出典と参考資料', srcAll: 'すべての出典と主な前提 →',
+    footer: 'Deterministic Climate Casualty Counter — 推計モデルによる概算です ・ <a href="sources.html">出典とデータ</a>',
   },
 };
 
 /* ===================== STATE ===================== */
 const store = { get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
                 set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} } };
-const state = { lang: store.get('scw-lang') === 'ja' ? 'ja' : 'en', country: 'world', tip: 0, r: 0 };
+const state = { lang: store.get('scw-lang') === 'ja' ? 'ja' : 'en', country: 'world', tip: 1, r: 0 };
 const $ = id => document.getElementById(id);
 const L = () => I18N[state.lang];
 const t = (k, v = {}) => L()[k].replace(/\{(\w+)\}/g, (_, x) => v[x] ?? '');
@@ -532,6 +541,7 @@ function render() {
   // Method
   const m = mult() === 1 ? '' : ` × <span class="num">${mult()}</span>`;
   $('formula').innerHTML = t('formula', { where: where(), gt: gtText(C().gt), mult: m, perYear: people(perYear(), state.lang === 'ja') });
+  if (typeof swRenderSources === 'function') swRenderSources($('sources'), lang, ['core', 'emissions', 'pathways', 'tipping', 'war', 'further']);
   $('mList').innerHTML = L().mList.map(s => `<li>${s.replace(/\{(\w+)\}/g, (_, k) => ({ start: START, where: where(), gt: gtText(C().gt) })[k])}</li>`).join('');
 }
 
