@@ -4,6 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Your Day, at Scale</title>
+<meta name="author" content="Tatsuya Mori (@ttmori)">
+<meta name="twitter:creator" content="@ttmori">
 <meta name="description" content="Estimate one day’s emissions from travel, food, heating and shopping, and see what it means in lives if everyone lived the same day. 個人の1日の排出を、国・世界の規模で命の数に換算。">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="The Slow War">
@@ -302,7 +304,7 @@
     </div>
   </section>
 
-  <section style="padding:40px 0 8px"><div id="next"></div></section>
+  <section style="padding:40px 0 8px"><div id="next"></div><div id="author" style="margin-top:20px"></div></section>
 
   <section class="about">
     <p class="eyebrow">About the numbers</p>
@@ -319,7 +321,7 @@
 
 <div class="mbar"><div><span data-i18n="mToday"></span><br><b class="num" id="mKg">0</b> kg CO₂</div><div class="r" style="text-align:right"><span id="mScale"></span><br><b class="num" id="mImp">—</b></div></div>
 
-<script src="site.js?v=20261018"></script>
+<script src="site.js?v=20261018b"></script>
 <script>
 /* ===================== DATA ===================== */
 const COUNTRIES = {
@@ -685,7 +687,7 @@ function renderStatic() {
   $('country').value = S.country;
   $('tip').innerHTML = TIPS.map((x, i) => `<option value="${i}">${x[S.lang]}</option>`).join('');
   $('tip').value = S.tip;
-  if (typeof swNav === 'function') { swNav(S.lang); swNext($('next'), S.lang); }
+  if (typeof swNav === 'function') { swNav(S.lang); swNext($('next'), S.lang); swAuthor($('author'), S.lang); }
   if (typeof swRenderSources === 'function') swRenderSources($('sources'), S.lang, ['core', 'food', 'land', 'energy', 'emissions', 'further']);
   buildInputs();
   update();

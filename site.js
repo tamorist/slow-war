@@ -226,3 +226,65 @@ function swNext(container, lang) {
   st.textContent = css;
   document.head.appendChild(st);
 })();
+
+/* ===================== 作者紹介 ===================== */
+const SW_AUTHOR = {
+  name: 'Tatsuya Mori / ClimateWatchMan',
+  x: 'https://x.com/ttmori',
+  en: {
+    head: 'About the author',
+    intro: 'The Slow War was created by Tatsuya Mori. Follow along, and read the proposals for what we can do about it.',
+    links: [['X', '@ttmori', 'https://x.com/ttmori'], ['Substack', 'ttmori.substack.com', 'https://substack.com/@ttmori']],
+    propH: 'Proposals for a way out',
+    props: [
+      ['Summary', 'A Call for Global Cooperation Toward “Civilization System Redesign” Based on Planetary Boundaries and the Rights of Future Generations', 'https://ttmori.substack.com/p/a-call-for-global-cooperation-toward-67b'],
+      ['Full proposal', 'Survival Redesign: A Blueprint for Capitalism 2.0 and Global Democracy', 'https://ttmori.substack.com/p/survival-redesign-a-blueprint-for'],
+    ],
+    other: ['日本語の記事は note で', 'https://note.com/ttmori'],
+  },
+  ja: {
+    head: '作者について',
+    intro: 'このサイトは ClimateWatchMan（Tatsuya Mori）が制作しました。発信のフォローと、解決に向けた提案記事もぜひご覧ください。',
+    links: [['X', '@ttmori', 'https://x.com/ttmori'], ['note', 'note.com/ttmori', 'https://note.com/ttmori']],
+    propH: '解決に向けた提案',
+    props: [
+      ['概要', '地球の物理的限界と未来世代の権利に基づく「文明システム再設計」に向けたグローバル協力の呼びかけ', 'https://note.com/ttmori/n/n7d35de117943'],
+      ['詳細', '生存のための再設計：資本主義2.0とグローバル・デモクラシーへの青写真', 'https://note.com/ttmori/n/ne11e0dcd5e8a'],
+    ],
+    other: ['English articles on Substack', 'https://substack.com/@ttmori'],
+  },
+};
+function swAuthor(container, lang) {
+  if (!container) return;
+  const a = SW_AUTHOR[lang], esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+  const ext = 'target="_blank" rel="noopener"';
+  container.innerHTML = `<div class="sw-author">
+    <div class="sw-a-me"><h3>${a.head}</h3><b class="sw-a-name">${SW_AUTHOR.name}</b><p>${a.intro}</p>
+      <div class="sw-a-links">${a.links.map(([k, v, u]) => `<a class="sw-a-btn" href="${u}" ${ext}><span>${k}</span>${v}</a>`).join('')}</div></div>
+    <div class="sw-a-props"><h4>${a.propH}</h4>${a.props.map(([tag, t, u]) => `<a class="sw-a-prop" href="${u}" ${ext}><span class="sw-a-tag">${tag}</span>${esc(t)}<i>→</i></a>`).join('')}
+      <a class="sw-a-other" href="${a.other[1]}" ${ext}>${a.other[0]} →</a></div>
+  </div>`;
+}
+(function () {
+  const css = `.sw-author { display: grid; grid-template-columns: 1fr; gap: 20px 32px; padding: 22px; border-radius: 16px;
+  border: 1px solid rgba(128,128,128,.35); background: rgba(128,128,128,.06); font-family: Inter, "Noto Sans JP", -apple-system, "Hiragino Sans", sans-serif; }
+@media (min-width: 760px) { .sw-author { grid-template-columns: 1fr 1.3fr; } }
+.sw-author h3 { font-size: 13px; letter-spacing: .14em; text-transform: uppercase; opacity: .7; margin: 0 0 10px; font-weight: 600; }
+.sw-a-name { display: block; font-size: 18px; }
+.sw-author p { font-size: 13.5px; opacity: .8; line-height: 1.65; margin: 8px 0 14px; }
+.sw-a-links { display: flex; flex-wrap: wrap; gap: 8px; }
+.sw-a-btn { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: inherit; text-decoration: none; padding: 7px 14px;
+  border-radius: 999px; border: 1px solid rgba(128,128,128,.45); transition: border-color .15s; }
+.sw-a-btn span { font-weight: 800; }
+.sw-a-btn:hover { border-color: #e5483b; }
+.sw-a-props h4 { font-size: 14px; margin: 0 0 10px; }
+.sw-a-prop { position: relative; display: block; color: inherit; text-decoration: none; font-size: 13.5px; line-height: 1.55; font-weight: 600;
+  padding: 12px 36px 12px 14px; border-radius: 12px; border: 1px solid rgba(128,128,128,.3); margin-bottom: 8px; transition: border-color .15s, background .15s; }
+.sw-a-prop:hover { border-color: #e5483b; background: rgba(229,72,59,.06); }
+.sw-a-prop i { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); font-style: normal; color: #e5483b; font-weight: 800; }
+.sw-a-tag { display: block; font-size: 11px; font-weight: 700; letter-spacing: .06em; color: #e5483b; margin-bottom: 2px; }
+.sw-a-other { display: inline-block; font-size: 12.5px; color: inherit; opacity: .75; margin-top: 2px; }`;
+  const st = document.createElement('style');
+  st.textContent = css;
+  document.head.appendChild(st);
+})();
