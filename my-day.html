@@ -158,7 +158,10 @@
   .coc-line { font-size: 12.5px; color: #c9c8c3; margin: 2px 0 6px; padding: 6px 10px; border-radius: 8px; background: rgba(47,125,98,.14); border: 1px solid rgba(47,125,98,.45); }
   .coc-line b { color: #6fd0a9; }
   .coc-line a { color: #6fd0a9; margin-left: 4px; }
-  .whole { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--faint); }
+  .whole { margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--faint); }
+  .whole > summary { cursor: pointer; font-size: 12.5px; color: #c9c8c3; list-style: revert; }
+  .whole > summary:hover { color: var(--text); }
+  .whole[open] > summary { margin-bottom: 8px; color: var(--text); }
   .whole-h { font-size: 12px; color: #c9c8c3; line-height: 1.5; margin-bottom: 8px; }
   .whole-bar { position: relative; display: flex; height: 14px; border-radius: 5px; overflow: hidden; background: var(--bg); }
   .whole-bar span { border-right: 1px solid rgba(0,0,0,.35); transition: width .35s ease; }
@@ -302,12 +305,13 @@
       <div class="vs" id="vs"></div>
       <div class="stack" id="stack"></div>
       <div class="legend" id="legend"></div>
-      <div class="whole">
+      <details class="whole">
+        <summary data-i18n="wholeSum"></summary>
         <div class="whole-h" id="wholeH"></div>
         <div class="whole-bar" id="wholeBar"></div>
         <div class="whole-leg" id="wholeLeg"></div>
         <details class="whole-note"><summary data-i18n="wholeNoteH"></summary><p data-i18n="wholeNote"></p></details>
-      </div>
+      </details>
       <div class="scale-tabs" role="group" id="scaleTabs"></div>
       <div class="impact">
         <div class="big num" id="impBig"></div>
@@ -577,6 +581,7 @@ const I18N = {
     toChicken: 'Beef → chicken', toPlant: 'Beef → plant-based (tofu, beans)',
     swapNote: 'Lives saved assume everyone in {name} replaces one beef meal a day for a year, using the methane setting above.',
     notIncl: '<b>Still not included:</b> indirect land-use change (e.g. soy for feed pushing cattle ranching deeper into the Amazon), conversion of savannas such as the Cerrado and of peatlands, soil-carbon loss, and land cleared more than 20 years ago are only partly captured or missed. The “land’s lost carbon” option above is a rough way to see how large land-related effects could be. Water use, biodiversity loss and fertiliser run-off are also left out. And the 1,000-ton rule was derived for CO₂; applying it to CO₂-equivalent (especially on a 20-year basis) is an approximation.',
+    wholeSum: 'See where this sits in the whole picture (consumption-based, rough)',
     wholeH: 'Where this sits in the whole picture — per person in {where}, consumption-based (rough): ≈ {t} kg/day',
     whole: { mine: 'Your day (what this simulator counts)', rest: 'Rest of household life not counted here (eating out, services, hot water, home upkeep…)', gov: 'Government & public services (schools, hospitals, admin…)', inv: 'Investment (buildings, infrastructure, machinery…)' },
     wholeOver: 'Your day is {kg} kg above the estimated household average.',
@@ -695,6 +700,7 @@ const I18N = {
     toChicken: '牛肉 → 鶏肉', toPlant: '牛肉 → 植物性（豆腐・豆）',
     swapNote: '救える命は、{name}の全員が1日1食の牛肉を1年間置き換えた場合の数です（上で選んだメタンの評価期間で計算）。',
     notIncl: '<b>まだ含めていないもの：</b>間接的な土地利用変化（飼料用の大豆畑が広がり、押し出された放牧がアマゾンの奥へ移るなど）、セラードのようなサバンナや泥炭地の転換、土壌炭素の損失、20年以上前に開墾された土地の分は、一部しかとらえていないか、含まれていません。上の「土地の機会費用」は、土地を通じた影響がどれほど大きくなりうるかを見るための概算です。水の使用、生物多様性の損失、肥料の流出も含めていません。また、1,000トン・ルールはCO₂について導かれたもので、CO₂換算（特に20年基準）に当てはめるのは近似です。',
+    wholeSum: '全体像のなかでの位置を見る（消費ベース・概算）',
     wholeH: '全体像のなかでの位置 — {where}の1人あたり（消費ベース・概算）：約{t} kg/日',
     whole: { mine: 'あなたの1日（このシミュレータで計算した分）', rest: '生活のうち計算していない分（外食・サービス・給湯・住まいの維持など）', gov: '政府・公共サービス（学校・病院・行政など）', inv: '投資（建物・インフラ・設備の建設など）' },
     wholeOver: 'あなたの1日は、生活由来の平均（推計）より{kg} kg多くなっています。',
