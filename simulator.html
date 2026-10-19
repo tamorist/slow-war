@@ -59,6 +59,7 @@
   .stat .v { font-size: 24px; font-weight: 700; font-variant-numeric: tabular-nums; }
   .stat .x { font-size: 12.5px; color: var(--muted); }
   .stat .lin { font-size: 12px; color: var(--muted); }
+  .stat .rng { color: var(--tip); }
   .ref { padding-top: 12px; margin-top: 12px; border-top: 1px solid var(--line); }
   .two { display: grid; gap: 12px 24px; grid-template-columns: 1fr; }
   @media (min-width: 560px) { .two { grid-template-columns: 1fr 1fr; } }
@@ -100,6 +101,10 @@
       <div class="row"><input id="tpd" type="range" min="500" max="10000" step="4" value="3664"><span class="val" id="tpdV"></span></div>
       <div class="hint" data-i18n="tpdHint"></div>
 
+      <label for="unc" data-i18n="unc"></label>
+      <select id="unc"></select>
+      <div class="hint" data-i18n="uncHint"></div>
+
       <label for="tip" data-i18n="tip"></label>
       <select id="tip"></select>
       <div class="hint" data-i18n="tipHint"></div>
@@ -128,8 +133,8 @@
       <section class="panel">
         <h2 data-i18n="cmpH"></h2>
         <div class="two">
-          <div class="stat"><div class="k" id="k10"></div><div class="v" id="v10"></div><div class="x" id="x10"></div><div class="lin" id="l10"></div></div>
-          <div class="stat"><div class="k" id="kEnd"></div><div class="v" id="vEnd"></div><div class="x" id="xEnd"></div><div class="lin" id="lEnd"></div></div>
+          <div class="stat"><div class="k" id="k10"></div><div class="v" id="v10"></div><div class="x" id="x10"></div><div class="lin" id="l10"></div><div class="lin rng" id="r10"></div></div>
+          <div class="stat"><div class="k" id="kEnd"></div><div class="v" id="vEnd"></div><div class="x" id="xEnd"></div><div class="lin" id="lEnd"></div><div class="lin rng" id="rEnd"></div></div>
         </div>
         <div class="stat ref">
           <div class="k" data-i18n="warRef"></div>
@@ -189,6 +194,8 @@ const I18N = {
     sub: 'Future deaths “locked in” by CO₂ emissions — based on the 1,000-ton rule (≈ 1 future death per 1,000 t of carbon burned ≈ 3,664 t of CO₂)',
     params: 'PARAMETERS', country: 'Country / region', countryHint: 'Sets the emissions below (fossil CO₂ in 2024, Global Carbon Budget 2025)',
     emis: 'Annual CO₂ emissions (base year)', emisHint: '{name}: ≈ {gt} Gt / year',
+    unc: 'Uncertainty of the 1,000-ton rule', uncHint: 'An order-of-magnitude estimate: try the low (×0.1) and high (×10) ends of the authors’ range. Comparisons between choices do not depend on this.',
+    range: 'Range (0.1–10× the central value): {lo} – {hi}',
     tpd: 'CO₂ per one future death', tpdHint: '1,000-ton rule = 1,000 t of carbon ≈ 3,664 t CO₂ per person (likely range: 10× either way)',
     tip: 'Tipping effects (rough multiplier)', tipHint: 'Illustrative, not peer-reviewed: permafrost, forest dieback, conflict, famine, migration…',
     rate: 'Annual change in emissions', rateHint: '0% = flat / −3% = gradual cuts / −7% ≈ 2 °C pathway',
@@ -209,6 +216,8 @@ const I18N = {
     sub: '気候崩壊による「確定した未来の犠牲者」シミュレータ — 1,000トン・ルール（炭素1,000 t ≒ CO₂ 3,664 t の排出で将来の死者 1 人）に基づく推計',
     params: 'パラメータ', country: '国・地域', countryHint: '選ぶと下の排出量が設定されます（2024年の化石燃料由来CO₂、Global Carbon Budget 2025）',
     emis: '年間CO₂排出量（基準年）', emisHint: '{name}：約 {gt} Gt/年',
+    unc: '1,000トン・ルールの不確かさ', uncHint: '桁の目安となる推計です。著者が示す幅の下限（×0.1）と上限（×10）を試せます。選択どうしの比べ方は、この設定によりません。',
+    range: '幅（中央値の0.1〜10倍）：{lo} 〜 {hi}',
     tpd: '1人の死を生む排出量（CO₂）', tpdHint: '1,000トン・ルール ＝ 炭素1,000 t ≒ CO₂ 3,664 t/人（幅は上下に約10倍）',
     tip: 'ティッピング効果（概算の係数）', tipHint: '査読済みの推計ではない目安：永久凍土・森林枯死・紛争・飢饉・移民など',
     rate: '排出量の年変化率', rateHint: '0% ＝ 現状維持 / −3% ＝ ゆるやかな削減 / −7% ≒ 2℃経路',
@@ -234,22 +243,31 @@ const t = (k, v = {}) => I18N[lang][k].replace(/\{(\w+)\}/g, (_, x) => v[x] ?? '
 const sliders = ['emis', 'tpd', 'rate', 'start', 'end'];
 const defaults = { ...Object.fromEntries(sliders.map(i => [i, $(i).value])), country: 'world', tip: '1' };
 const fmt = n => Math.round(n).toLocaleString('en-US');
+// 桁の目安の推計なので、小さな数は有効数字2桁に丸めて見せる
+const sig = (n, d = 2) => { if (n <= 0) return 0; const p = Math.pow(10, Math.floor(Math.log10(n)) - d + 1); return Math.round(n / p) * p; };
+
 const trim = s => s.replace(/\.0$/, '');
 const short = n => lang === 'ja'
   ? (n >= 1e8 ? trim((n / 1e8).toFixed(n >= 1e10 ? 0 : 1)) + '億人' : n >= 1e4 ? Math.round(n / 1e4).toLocaleString() + '万人' : fmt(n) + '人')
   : (n >= 1e9 ? trim((n / 1e9).toFixed(1)) + ' billion' : n >= 1e6 ? trim((n / 1e6).toFixed(n >= 1e7 ? 0 : 1)) + ' million' : fmt(n));
 const ratioTxt = x => x >= 10 ? Math.round(x) : trim(x.toFixed(1));
 
+// 1,000トン・ルールの不確かさ：著者は炭素1,000 tあたり0.1〜10人の幅を示している
+const UNC = [
+  { f: 0.1, en: 'Low end (×0.1)', ja: '控えめな端（×0.1）' },
+  { f: 1,   en: 'Central estimate', ja: '中央値' },
+  { f: 10,  en: 'High end (×10)', ja: '高めの端（×10）' },
+];
 function params() {
   return { E0: +$('emis').value, tpd: +$('tpd').value, r: +$('rate').value / 100,
-           start: +$('start').value, end: +$('end').value, m: TIPS[+$('tip').value].m };
+           start: +$('start').value, end: +$('end').value, m: TIPS[+$('tip').value].m, u: UNC[+$('unc').value].f };
 }
 // 年ごとの累積犠牲者（線形 lin と ティッピング込み cum）
 function series(p) {
   const out = [{ year: p.start, lin: 0, cum: 0 }];
   let lin = 0;
   for (let y = p.start; y < Math.max(p.end, p.start + 10); y++) {
-    lin += p.E0 * Math.pow(1 + p.r, y - p.start) * 1e9 / p.tpd;
+    lin += p.E0 * Math.pow(1 + p.r, y - p.start) * 1e9 / p.tpd * p.u;
     out.push({ year: y + 1, lin, cum: lin * p.m });
   }
   return out;
@@ -257,7 +275,7 @@ function series(p) {
 const at = (s, year) => s.find(d => d.year === year) || s[s.length - 1];
 function deathsPerSec(p) {
   const yrs = Math.max(0, new Date().getFullYear() - p.start);
-  return p.E0 * Math.pow(1 + p.r, yrs) * 1e9 / p.tpd * p.m / (365.25 * 86400);
+  return p.E0 * Math.pow(1 + p.r, yrs) * 1e9 / p.tpd * p.m * p.u / (365.25 * 86400);
 }
 const countryName = () => COUNTRIES[$('country').value][lang];
 
@@ -266,10 +284,11 @@ function applyLang() {
   document.title = t('title');
   document.querySelectorAll('[data-i18n]').forEach(el => { el.innerHTML = t(el.dataset.i18n); });
   document.querySelectorAll('.lang button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
-  const c = $('country').value || 'world', tp = $('tip').value || '1';
+  const c = $('country').value || 'world', tp = $('tip').value || '1', un = $('unc').value || '1';
   $('country').innerHTML = Object.entries(COUNTRIES).map(([k, v]) => `<option value="${k}"${k === 'custom' ? ' disabled' : ''}>${v[lang]}</option>`).join('');
   $('tip').innerHTML = TIPS.map((x, i) => `<option value="${i}">${x[lang]}</option>`).join('');
-  $('country').value = c; $('tip').value = tp;
+  $('unc').innerHTML = UNC.map((x, i) => `<option value="${i}">${x[lang]}</option>`).join('');
+  $('country').value = c; $('tip').value = tp; $('unc').value = un;
   if (typeof swNav === 'function') { swNav(lang); swNext($('next'), lang); swAuthor($('author'), lang); }
   if (typeof swRenderSources === 'function') swRenderSources($('sources'), lang, ['core', 'emissions', 'pathways', 'tipping', 'war'], 4);
   update();
@@ -296,11 +315,14 @@ function update() {
   $('vEnd').textContent = fmt(aEnd.cum);
   $('xEnd').textContent = short(aEnd.cum) + '　' + t('ratio', { a: ratioTxt(aEnd.cum / WW2), b: ratioTxt(aEnd.cum / WW1) });
   $('lEnd').textContent = showLin ? t('linear', { n: short(aEnd.lin) }) : '';
+  // 幅：中央値の0.1〜10倍
+  $('r10').textContent = t('range', { lo: short(a10.cum / p.u * 0.1), hi: short(a10.cum / p.u * 10) });
+  $('rEnd').textContent = t('range', { lo: short(aEnd.cum / p.u * 0.1), hi: short(aEnd.cum / p.u * 10) });
   $('lgTipWrap').hidden = !showLin;
 
   const dps = deathsPerSec(p);
   $('todayH').textContent = t('todayH', { name: countryName() });
-  $('rateLine').textContent = t('rateLine', { d: fmt(dps * 86400), s: dps < 0.1 ? dps.toFixed(3) : dps.toFixed(2) });
+  $('rateLine').textContent = t('rateLine', { d: '≈' + fmt(sig(dps * 86400)), s: dps < 0.1 ? dps.toFixed(3) : dps.toFixed(1) });
   draw(s.filter(d => d.year <= p.end), showLin);
 }
 
@@ -372,12 +394,13 @@ sliders.forEach(i => $(i).addEventListener('input', () => {
 }));
 $('country').addEventListener('change', e => { $('emis').value = COUNTRIES[e.target.value].gt; update(); });
 $('tip').addEventListener('change', update);
+$('unc').addEventListener('change', update);
 document.querySelectorAll('.lang button').forEach(b => b.addEventListener('click', () => {
   lang = b.dataset.lang; store.set('scw-lang', lang); applyLang();
 }));
 $('reset').addEventListener('click', () => {
   sliders.forEach(i => $(i).value = defaults[i]);
-  $('country').value = defaults.country; $('tip').value = defaults.tip; update();
+  $('country').value = defaults.country; $('tip').value = defaults.tip; $('unc').value = '1'; update();
 });
 window.addEventListener('resize', update);
 matchMedia('(prefers-color-scheme: dark)').addEventListener('change', update);

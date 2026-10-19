@@ -65,6 +65,8 @@
   .big { font-size: clamp(56px, 15vw, 150px); font-weight: 800; color: var(--red); line-height: 1; margin: 8px 0 12px; }
   .unit { font-size: clamp(16px, 2.6vw, 20px); color: var(--text); font-weight: 700; }
   .since0 { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .range-line { font-size: 12.5px; color: #c9c8c3; margin: 10px auto 0; max-width: 560px; line-height: 1.6; }
+  .range-line b { color: var(--amber); font-weight: 700; }
   .hero .since { margin-top: 36px; color: var(--muted); font-size: 14px; }
   .hero .since b { color: var(--text); font-size: 18px; }
   .chip { display: inline-block; margin-top: 14px; font-size: 12px; color: var(--amber); border: 1px solid rgba(224,164,59,.4);
@@ -190,6 +192,7 @@
     <div class="big num" id="today">0</div>
     <div class="unit" data-i18n="people"></div>
     <div class="since0" data-i18n="since0"></div>
+    <div class="range-line" id="rangeLine"></div>
     <div><span class="chip" id="chip" hidden></span></div>
     <p class="since"><span data-i18n="since"></span>　<b class="num" id="since">0</b> <span data-i18n="peopleShort"></span></p>
   </div>
@@ -342,6 +345,7 @@ const I18N = {
     heroTitle: 'Future deaths locked in today<br>by CO₂ emissions from {where}',
     people: 'people', peopleShort: 'people', since: 'Since you opened this page',
     since0: 'counted from midnight, your local time',
+    rangeLine: '<b>Central estimate — an order of magnitude.</b> Range: ≈ {lo} to {hi} people a year (0.1–10 deaths per 1,000 t of carbon)',
     chip: 'Includes tipping effects: {tip}',
     pulseH: 'About one person every <em class="num">{s}</em> {unit}.',
     sec: 'seconds', min: 'minutes',
@@ -377,6 +381,8 @@ const I18N = {
       'By default we show <b>moderate feedbacks (×1.5)</b>. With tipping effects set to “None” it is a <b>conservative lower bound</b>. Tipping multipliers (×1.5 / ×2 / ×3) are <b>rough illustrative assumptions, not peer-reviewed estimates</b>. They show how the linear estimate could grow if feedbacks such as permafrost thaw and forest dieback, and societal cascades (conflict, famine, mass migration), are included. The Global Tipping Points Report 2025 finds that warm-water coral reefs have already passed their tipping point.',
       '“Locked in” means the harm becomes unavoidable once the CO₂ is emitted; the deaths themselves may occur decades later.',
       'Country figures: fossil CO₂ in 2024 (Global Carbon Budget 2025, via Our World in Data). The world total (42 Gt) also includes land-use change, so countries do not add up exactly.',
+      '<b>How uncertain is this?</b> The 1,000-ton rule is an order-of-magnitude estimate: the true number could be roughly ten times lower or higher. An independent method (Bressler 2021, built up from temperature–mortality relationships) gives about 4,400 t of CO₂ per death — close to the central value used here, and itself considered conservative. You can try the low and high ends in the <a href="simulator.html">detailed simulator</a>.',
+      'Even with that uncertainty, <b>comparisons between choices do not change</b>: how beef compares with plant protein, or how much a renewable electricity plan saves, depends on kilograms of CO₂e, not on the death factor. The death counts translate those kilograms into a unit whose weight we can feel.',
       'War deaths: World War II ≈ 70–85 million (median 80 million shown); World War I ≈ 20 million.',
       'Pathways: “gradual cuts” = −3% a year; “2 °C pathway” = −7% a year. UNEP treats cuts this steep as 1.5 °C pathways (with overshoot), but judged by the remaining carbon budget (Global Carbon Budget 2025), cutting 7% a year from 2025 lands between 1.7 °C and 2 °C (<a href="sources.html">why</a>).',
     ],
@@ -390,6 +396,7 @@ const I18N = {
     heroTitle: '今日、{where}のCO₂排出によって<br>将来失われることが確定した命',
     people: '人', peopleShort: '人', since: 'あなたがこのページを開いてから',
     since0: '（あなたの地域の今日0時から）',
+    rangeLine: '<b>推計の中央値（桁の目安）。</b>幅：年 約{lo}〜{hi}（炭素1,000トンあたり0.1〜10人）',
     chip: 'ティッピング効果を含む：{tip}',
     pulseH: 'およそ<em class="num">{s}</em>{unit}に1人。',
     sec: '秒', min: '分',
@@ -425,6 +432,8 @@ const I18N = {
       '初期表示は<b>中程度のフィードバック（×1.5）</b>です。ティッピング効果を「なし」にすると<b>控えめな下限</b>の推計になります。×1.5／×2／×3 の係数は<b>査読済みの推計ではなく、目安として示した概算</b>です。永久凍土の融解や森林の枯死などのフィードバック、紛争・飢饉・大規模移民といった社会の連鎖的危機を含めた場合に、線形推計がどこまで膨らみうるかを示しています。Global Tipping Points Report 2025 は、暖かい海のサンゴ礁がすでにティッピング・ポイントを超えたと報告しています。',
       '「確定」とは、排出された時点でその被害が避けられなくなるという意味です。実際に亡くなるのは数十年先になることがあります。',
       '国別の数値：2024年の化石燃料由来のCO₂（Global Carbon Budget 2025、Our World in Data 経由）。世界合計（42 Gt）は土地利用変化を含むため、各国の合計とは一致しません。',
+      '<b>どのくらい不確かなのか。</b>1,000トン・ルールは桁の目安となる推計で、実際の数は10分の1から10倍くらいまでの幅がありえます。気温と死亡率の関係から積み上げる別の方法（Bressler 2021）でも、CO₂ 約4,400トンで1人と、ここで使う中央値に近い値が出ています（しかもこれは控えめな推計とされます）。幅の下限・上限は<a href="simulator.html">詳細シミュレータ</a>で試せます。',
+      'それでも、<b>選択どうしの比べ方は変わりません。</b>牛肉と植物性の差や、再エネの電気プランで減る量は、CO₂換算のキログラムで決まり、死者数の係数にはよりません。死者数は、そのキログラムを「重さが伝わる単位」に置き換えたものです。',
       '戦争の死者数：第二次世界大戦 約7,000万〜8,500万人（中央値8,000万人で表示）、第一次世界大戦 約2,000万人。',
       '削減の道筋：「ゆるやかに削減」は年 −3%、「2℃目標の道」は年 −7%。UNEP はこれほど急な削減を（オーバーシュートを伴う）1.5℃の道筋としていますが、残りのカーボンバジェット（Global Carbon Budget 2025）で判断すると、2025年から年7%の削減は1.7℃〜2℃の間に着地します（<a href="sources.html">理由</a>）。',
     ],
@@ -450,6 +459,8 @@ const cumulative = (r, years) => { let s = 0; for (let k = 0; k < years; k++) s 
 const refCountry = () => state.country !== 'world' ? C() : COUNTRIES[state.lang === 'ja' ? 'japan' : 'us'];
 
 const fmt = n => Math.round(n).toLocaleString('en-US');
+// 桁の目安の推計なので、小さな数は有効数字2桁に丸めて見せる
+const sig = (n, d = 2) => { if (n <= 0) return 0; const p = Math.pow(10, Math.floor(Math.log10(n)) - d + 1); return Math.round(n / p) * p; };
 const trim = s => s.replace(/\.0$/, '');
 function people(n, withUnit = true) {
   if (state.lang === 'ja') {
@@ -457,12 +468,12 @@ function people(n, withUnit = true) {
     if (n >= 1e8) return trim((Math.round(n / 1e7) / 10).toFixed(1)) + '億' + u;
     if (n >= 1e5) return Math.round(n / 1e4).toLocaleString() + '万' + u;
     if (n >= 1e4) return trim((n / 1e4).toFixed(1)) + '万' + u;
-    return fmt(n) + u;
+    return fmt(sig(n)) + u;
   }
   const u = withUnit ? ' people' : '';
   if (n >= 1e9) return trim((n / 1e9).toFixed(1)) + ' billion' + u;
   if (n >= 1e6) return (n >= 1e7 ? Math.round(n / 1e6) : trim((n / 1e6).toFixed(1))) + ' million' + u;
-  return fmt(n) + u;
+  return fmt(sig(n)) + u;
 }
 const gtText = gt => state.lang === 'ja'
   ? trim((gt * 10).toFixed(1)) + '億トン'
@@ -500,8 +511,10 @@ function render() {
   $('pulseH').innerHTML = iv < 120
     ? t('pulseH', { s: iv < 10 ? iv.toFixed(1) : Math.round(iv), unit: t('sec') })
     : t('pulseH', { s: trim((iv / 60).toFixed(1)), unit: t('min') });
-  $('perHour').textContent = fmt(perSec() * 3600);
-  $('perDay').textContent = fmt(perSec() * 86400);
+  const approx = state.lang === 'ja' ? '約' : '≈ ';
+  $('perHour').textContent = approx + fmt(sig(perSec() * 3600));
+  $('perDay').textContent = approx + (state.lang === 'ja' ? people(perSec() * 86400, false) : fmt(sig(perSec() * 86400)));
+  $('rangeLine').innerHTML = t('rangeLine', { lo: people(perYear() / 10, state.lang === 'ja'), hi: people(perYear() * 10, state.lang === 'ja') });
   $('perYear').textContent = people(perYear(), false);
   startHeart(iv);
 
