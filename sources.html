@@ -18,6 +18,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="canonical" href="https://tamorist.github.io/slow-war/sources.html">
+<link rel="license" href="https://creativecommons.org/licenses/by/4.0/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
@@ -48,6 +49,11 @@
   td .tag.est { color: var(--amber); border-color: rgba(224,164,59,.45); }
   .note { background: var(--bg2); border-left: 3px solid var(--amber); border-radius: 0 10px 10px 0; padding: 14px 18px; font-size: 14px; color: #c9c8c3; }
   .tbl { overflow-x: auto; }
+  .lic { font-size: 14px; color: #c9c8c3; }
+  .lic ul { padding-left: 20px; }
+  .lic li { margin-bottom: 6px; }
+  .lic a { color: var(--text); }
+  .lic code { font-size: 12.5px; background: var(--bg2); border: 1px solid var(--faint); border-radius: 6px; padding: 2px 6px; word-break: break-all; }
   footer { color: var(--muted); font-size: 12px; text-align: center; padding: 48px 16px; }
   footer a { color: var(--muted); }
 </style>
@@ -72,13 +78,16 @@
 
   <h2 data-i18n="allH"></h2>
   <div id="sources"></div>
+
+  <h2 id="license" data-i18n="licH"></h2>
+  <div class="lic" data-i18n="licBody"></div>
   <div id="next" style="margin-top:56px"></div>
   <div id="author" style="margin-top:20px"></div>
 </div>
 
 <footer data-i18n="footer"></footer>
 
-<script src="site.js?v=20261019l"></script>
+<script src="site.js?v=20261019m"></script>
 <script>
 const I18N = {
   en: {
@@ -110,6 +119,17 @@ const I18N = {
     pathH: 'Why we call −7% a year a “2 °C pathway”',
     pathNote: 'UNEP’s Emissions Gap Report 2025 finds that greenhouse-gas emissions must fall about 55% below 2019 levels by 2035 for 1.5 °C, and about 35% for 2 °C (its 2024 edition put this at roughly 7.5% and 4% a year). Those 1.5 °C pathways assume a temporary overshoot and later carbon removal. Judged against the remaining carbon budget instead (Global Carbon Budget 2025, from the start of 2026, 50% chance): about 170 Gt CO₂ for 1.5 °C, 525 Gt for 1.7 °C and 1,055 Gt for 2 °C. Cutting CO₂ by 7% a year from 2025 would still release about 560 Gt from 2026 onward (42 × 0.93 ÷ 0.07) — more than three times the 1.5 °C budget, about the 1.7 °C budget, and well within 2 °C. Given how late action already is, we think “2 °C pathway” is the more honest label.',
     allH: 'All sources',
+    licH: 'License, reuse and disclaimer',
+    licBody: `<p><b>You are welcome to share and reuse this work.</b></p>
+      <ul>
+        <li><b>Content</b> (text, figures, share images, explanations and simulation results): <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener license">CC BY 4.0</a>. You may share and adapt it, including commercially, as long as you give credit, link to the source and say if you made changes.</li>
+        <li><b>Code</b> (HTML, CSS, JavaScript): <a href="https://github.com/tamorist/slow-war/blob/main/LICENSE" target="_blank" rel="noopener license">MIT License</a>.</li>
+        <li><b>Suggested credit:</b> <code>The Slow War / Tatsuya Mori, https://tamorist.github.io/slow-war/ (CC BY 4.0)</code></li>
+        <li><b>Third-party data</b> (Our World in Data, Global Carbon Budget, ADEME, studies listed above, etc.) remains under the license of each source.</li>
+        <li>Adapted versions must not suggest that the author endorses them.</li>
+      </ul>
+      <p><b>Disclaimer.</b> All figures are model-based approximations, not forecasts. They depend on stated assumptions and estimates that carry wide uncertainty. Please check the original sources before citing specific numbers.</p>
+      <p><b>Privacy.</b> We count page views with <a href="https://www.goatcounter.com/" target="_blank" rel="noopener">GoatCounter</a>, which uses no cookies and does not identify individual visitors. Nothing you enter in the simulators is sent anywhere.</p>`,
     footer: '<a href="index.html">The Slow War</a> · Model-based approximations. Found an error or a better source? Please let us know.',
   },
   ja: {
@@ -141,6 +161,17 @@ const I18N = {
     pathH: '年 −7% を「2℃目標の道」と呼ぶ理由',
     pathNote: 'UNEP の Emissions Gap Report 2025 は、温室効果ガスの排出を2035年までに2019年比で、1.5℃なら約55%、2℃なら約35%減らす必要があるとしています（2024年版では年約7.5%と年約4%）。ただし、その1.5℃の道筋は、一時的に1.5℃を超えること（オーバーシュート）と、将来のCO₂除去を前提にしています。残りのカーボンバジェット（Global Carbon Budget 2025、2026年初めから、確率50%）で判断すると、1.5℃は約170 Gt CO₂、1.7℃は525 Gt、2℃は1,055 Gtです。2025年から毎年7%ずつ減らしても、2026年以降に約560 Gt（42 × 0.93 ÷ 0.07）を排出します。これは1.5℃のバジェットの3倍以上で、1.7℃のバジェットとほぼ同じ、2℃には十分収まる量です。対策がすでにこれだけ遅れていることを踏まえ、「2℃目標の道」と呼ぶほうが誠実だと考えています。',
     allH: 'すべての出典',
+    licH: 'ライセンス・使い方・免責',
+    licBody: `<p><b>このサイトの内容は、自由に共有・再利用していただけます。</b></p>
+      <ul>
+        <li><b>コンテンツ</b>（文章・図・シェア画像・解説・シミュレーションの結果）：<a href="https://creativecommons.org/licenses/by/4.0/deed.ja" target="_blank" rel="noopener license">CC BY 4.0</a>。出典（作者名とリンク）を示し、変更した場合はその旨を示せば、商用も含めて共有・改変できます。</li>
+        <li><b>コード</b>（HTML・CSS・JavaScript）：<a href="https://github.com/tamorist/slow-war/blob/main/LICENSE" target="_blank" rel="noopener license">MIT ライセンス</a>。</li>
+        <li><b>クレジットの例：</b><code>静かな戦争 / Tatsuya Mori, https://tamorist.github.io/slow-war/ (CC BY 4.0)</code></li>
+        <li><b>引用しているデータ</b>（Our World in Data、Global Carbon Budget、ADEME、上に挙げた研究など）は、それぞれの出典のライセンスに従います。</li>
+        <li>改変した版を、作者が推薦しているかのように示すことはできません。</li>
+      </ul>
+      <p><b>免責。</b>このサイトの数値はすべて推計モデルによる概算で、将来の予測ではありません。示した前提と、不確かさの大きい推計にもとづいています。特定の数値を引用する際は、元の出典もあわせてご確認ください。</p>
+      <p><b>プライバシー。</b>閲覧数の計測に <a href="https://www.goatcounter.com/" target="_blank" rel="noopener">GoatCounter</a> を使っています。Cookie を使わず、個人を特定しません。シミュレータに入力した内容は、どこにも送信されません。</p>`,
     footer: '<a href="index.html">静かな戦争</a> ・ 推計モデルによる概算です。誤りやより良い出典があれば、ぜひお知らせください。',
   },
 };

@@ -254,7 +254,11 @@ function swFooterSource(lang) {
     f.querySelector('.sw-src')?.remove();
     const span = document.createElement('span');
     span.className = 'sw-src';
-    span.innerHTML = `${lang === 'ja' ? ' ・ ' : ' · '}<a href="${SW_REPO}" target="_blank" rel="noopener">${lang === 'ja' ? 'ソースコードを見る（GitHub）' : 'View source on GitHub'}</a>`;
+    const sep = lang === 'ja' ? ' ・ ' : ' · ';
+    span.innerHTML = `${sep}<a href="${SW_REPO}" target="_blank" rel="noopener">${lang === 'ja' ? 'ソースコードを見る（GitHub）' : 'View source on GitHub'}</a>`
+      + `<br><span class="sw-lic">${lang === 'ja' ? 'コード' : 'Code'}: <a href="${SW_REPO}/blob/main/LICENSE" target="_blank" rel="noopener license">MIT</a>${sep}`
+      + `${lang === 'ja' ? 'コンテンツ' : 'Content'}: <a href="https://creativecommons.org/licenses/by/4.0/${lang === 'ja' ? 'deed.ja' : ''}" target="_blank" rel="noopener license">CC BY 4.0</a>${sep}`
+      + `<a href="sources.html#license">${lang === 'ja' ? '使い方とクレジット' : 'How to reuse'}</a></span>`;
     f.appendChild(span);
   });
 }
@@ -330,6 +334,8 @@ function swFloat(lang) {
 .sw-card.feat .sw-btn { font-size: 15px; padding: 11px 22px; }
 .sw-rec { position: absolute; top: 16px; right: 16px; font-size: 11.5px; font-weight: 800; letter-spacing: .06em; color: #111; background: var(--c); border-radius: 999px; padding: 3px 10px; }
 .sw-src a { color: inherit; }
+.sw-lic { display: inline-block; margin-top: 6px; opacity: .85; }
+.sw-lic a { color: inherit; }
 
 .sw-float { position: fixed; right: 16px; bottom: 16px; z-index: 30; display: flex; align-items: center; gap: 6px; opacity: 0; transform: translateY(16px);
   pointer-events: none; transition: opacity .3s, transform .3s; font-family: Inter, "Noto Sans JP", -apple-system, "Hiragino Sans", sans-serif; }
