@@ -108,6 +108,15 @@
   .grid.on i { opacity: 1; transform: none; }
   .grid i.tip { background: var(--amber); }
   .war { color: var(--war); } .clim { color: var(--red); }
+  .other-est { margin-top: 48px; padding: 20px; border-radius: 14px; background: var(--bg); border: 1px solid var(--faint); }
+  .other-est h3 { font-size: 16px; margin: 0 0 8px; }
+  .other-est p { font-size: 13.5px; color: #c9c8c3; margin: 0 0 12px; line-height: 1.7; }
+  .other-est table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .other-est td { padding: 8px 6px; border-bottom: 1px solid var(--faint); }
+  .other-est td.num { text-align: right; font-weight: 800; color: var(--war); white-space: nowrap; }
+  .other-est tr.site td { color: var(--text); font-weight: 700; }
+  .other-est tr.site td.num { color: var(--red); }
+  .other-est .oe-note { font-size: 12.5px; color: var(--muted); margin: 12px 0 0; }
   .legend-dot { display: inline-flex; align-items: center; gap: 16px; color: var(--muted); font-size: 13px; margin-top: 8px; flex-wrap: wrap; }
   .legend-dot span { display: inline-flex; align-items: center; gap: 6px; }
   .legend-dot i { width: 9px; height: 9px; border-radius: 50%; background: var(--text); }
@@ -231,6 +240,7 @@
       </div>
     </div>
     <div class="cmp" id="cmp"></div>
+    <div class="other-est" id="otherEst"></div>
   </div>
 </section>
 
@@ -313,7 +323,7 @@
 
 <footer data-i18n="footer"></footer>
 
-<script src="site.js?v=20261020a"></script>
+<script src="site.js?v=20261020b"></script>
 <script>
 /* ===================== DATA ===================== */
 // 化石燃料CO₂（2023年頃の概算, Global Carbon Project）。世界合計は土地利用変化を含む 40 Gt。
@@ -345,6 +355,11 @@ const I18N = {
     heroTitle: 'Future deaths locked in today<br>by CO₂ emissions from {where}',
     people: 'people', peopleShort: 'people', since: 'Since you opened this page',
     since0: 'counted from midnight, your local time',
+    oeH: 'Compared with other estimates: an actuarial risk assessment',
+    oeLead: 'The UK Institute and Faculty of Actuaries and the University of Exeter, in <i>Planetary Solvency</i> (2025), set out the scale of deaths that could come with each level of warming, as a risk-management tool.',
+    oeSite: 'This site, to 2050 (world, central estimate)',
+    oeRows: [['1.5 °C, after a temporary overshoot', 'over 400 million'], ['Warming held to 2 °C by 2050', 'over 800 million'], ['2 °C or more by 2050', 'over 2 billion'], ['3 °C or more by 2050', 'over 4 billion']],
+    oeNote: 'That table is not a forecast: it describes how large the damage could be, for managing risk. Its timeframe is not precisely defined, and it includes deaths from societal breakdown — conflict, famine and mass migration. Compared with it, the numbers on this site, based on the 1,000-ton rule, are conservative.',
     rangeLine: '<b>Central estimate — an order of magnitude.</b> Range: ≈ {lo} to {hi} people a year (0.1–10 deaths per 1,000 t of carbon)',
     chip: 'Includes tipping effects: {tip}',
     pulseH: 'About one person every <em class="num">{s}</em> {unit}.',
@@ -396,6 +411,11 @@ const I18N = {
     heroTitle: '今日、{where}のCO₂排出によって<br>将来失われることが確定した命',
     people: '人', peopleShort: '人', since: 'あなたがこのページを開いてから',
     since0: '（あなたの地域の今日0時から）',
+    oeH: 'ほかの推計と比べると：保険数理の専門家によるリスク評価',
+    oeLead: '英国アクチュアリー会（保険数理の専門家団体）とエクセター大学の報告書『Planetary Solvency』（2025年）は、リスク管理のための評価表で、温暖化の水準ごとに起こりうる死者の規模を示しています。',
+    oeSite: 'このサイトの推計（2050年まで・世界・中央値）',
+    oeRows: [['1.5℃（一時的に超えた後に戻る）', '4億人超'], ['2050年までに2℃にとどまる', '8億人超'], ['2050年までに2℃以上', '20億人超'], ['2050年までに3℃以上', '40億人超']],
+    oeNote: 'この表は予測ではなく、リスク管理のための「起こりうる被害の大きさ」の区分です。期間ははっきり定められておらず、紛争・飢饉・大規模な移住など、社会の崩壊による死者も含みます。それと比べると、1,000トン・ルールにもとづくこのサイトの数字は控えめな推計です。',
     rangeLine: '<b>推計の中央値（桁の目安）。</b>幅：年 約{lo}〜{hi}（炭素1,000トンあたり0.1〜10人）',
     chip: 'ティッピング効果を含む：{tip}',
     pulseH: 'およそ<em class="num">{s}</em>{unit}に1人。',
@@ -524,6 +544,12 @@ function render() {
     t: yrs >= 1 ? t('years', { n: yrs >= 10 ? Math.round(yrs) : trim(yrs.toFixed(1)) }) : t('months', { n: Math.max(1, Math.round(yrs * 12)) }) });
   $('tipLegend').hidden = mult() === 1;
   const c35 = cumulative(0, 10), c50 = cumulative(0, 25);
+  // ほかの推計との比較：英国アクチュアリー会とエクセター大学のリスク評価表（予測ではなく、被害の大きさの区分）
+  const world50 = COUNTRIES.world.gt * 1e9 * 25 / TPD * mult();
+  $('otherEst').innerHTML = `<h3>${t('oeH')}</h3><p>${t('oeLead')}</p><table>
+    <tr class="site"><td>${t('oeSite')}</td><td class="num">${people(world50)}</td></tr>
+    ${L().oeRows.map(([a, b]) => `<tr><td>${a}</td><td class="num">${b}</td></tr>`).join('')}</table>
+    <p class="oe-note">${t('oeNote')}</p>`;
   const rows = [
     { name: t('ww1'), sub: '1914–1918', n: WW1, cls: 'war' },
     { name: t('ww2'), sub: '1939–1945', n: WW2, cls: 'war' },
