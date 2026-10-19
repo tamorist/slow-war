@@ -455,7 +455,8 @@ function people(n, withUnit = true) {
   if (state.lang === 'ja') {
     const u = withUnit ? '人' : '';
     if (n >= 1e8) return trim((Math.round(n / 1e7) / 10).toFixed(1)) + '億' + u;
-    if (n >= 1e4) return Math.round(n / 1e4).toLocaleString() + '万' + u;
+    if (n >= 1e5) return Math.round(n / 1e4).toLocaleString() + '万' + u;
+    if (n >= 1e4) return trim((n / 1e4).toFixed(1)) + '万' + u;
     return fmt(n) + u;
   }
   const u = withUnit ? ' people' : '';
@@ -466,7 +467,7 @@ function people(n, withUnit = true) {
 const gtText = gt => state.lang === 'ja'
   ? trim((gt * 10).toFixed(1)) + '億トン'
   :(gt >= 1 ? trim(gt.toFixed(1)) + ' billion t' : Math.round(gt * 1000) + ' million t');
-const ratio = x => x >= 10 ? Math.round(x).toString() : trim(x.toFixed(1));
+const ratio = x => x >= 10 ? Math.round(x).toString() : x >= 0.1 ? trim(x.toFixed(1)) : trim(x.toFixed(2));
 const blocks = x => Array.from({ length: Math.min(40, Math.ceil(x)) }, (_, i) =>
   `<div class="blk"><span style="width:${Math.min(1, x - i) * 100}%"></span></div>`).join('');
 function popPhrase(n) {
