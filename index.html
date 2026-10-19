@@ -15,7 +15,7 @@
 <meta property="og:image" content="https://tamorist.github.io/slow-war/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="A counter showing 63,000,000 future deaths locked in every year by the world’s CO₂ emissions, including moderate feedbacks">
+<meta property="og:image:alt" content="A counter showing 17,200,000 future deaths locked in every year by the world’s CO₂ emissions, including moderate feedbacks">
 <meta property="og:locale" content="en_US">
 <meta property="og:locale:alternate" content="ja_JP">
 <meta name="twitter:card" content="summary_large_image">
@@ -310,7 +310,7 @@
 
 <footer data-i18n="footer"></footer>
 
-<script src="site.js?v=20261019m"></script>
+<script src="site.js?v=20261020a"></script>
 <script>
 /* ===================== DATA ===================== */
 // 化石燃料CO₂（2023年頃の概算, Global Carbon Project）。世界合計は土地利用変化を含む 40 Gt。
@@ -331,7 +331,8 @@ const TIPS = [
   { m: 2,   en: 'Tipping-point cascade ×2',              ja: 'ティッピング連鎖 ×2' },
   { m: 3,   en: 'Cascade + societal collapse ×3',        ja: '連鎖＋社会的崩壊 ×3' },
 ];
-const TPD = 1000, START = 2025, WW1 = 20e6, WW2 = 80e6, STADIUM = 55000;
+// 1,000トン・ルールの「1,000トン」は炭素（C）の重さ。CO₂に換算すると 1,000 × 44/12 ≒ 3,664 トンで将来の死者1人
+const TPD = 3664, START = 2025, WW1 = 20e6, WW2 = 80e6, STADIUM = 55000;
 
 /* ===================== I18N ===================== */
 const I18N = {
@@ -369,8 +370,8 @@ const I18N = {
     lostL: 'Lives lost', savedL: 'Lives saved',
     ctaK: 'Personal simulator', ctaV: 'What does your own day add up to?',
     mH: 'How these numbers are calculated',
-    mLead: 'We use the “1,000-ton rule”: for every 1,000 tonnes of CO₂ humanity emits, roughly one premature death occurs in the future through about a century of warming.',
-    formula: 'Annual emissions of {where} <span class="num">≈ {gt}</span> ÷ <span class="num">1,000 t</span>{mult} = <span class="num">≈ {perYear}</span> deaths a year',
+    mLead: 'We use the “1,000-ton rule”: for every 1,000 tonnes of fossil <b>carbon</b> burned — about 3,664 tonnes of CO₂ — roughly one premature death occurs in the future through about a century of warming. It is an order-of-magnitude estimate: the authors put the likely range at 0.1 to 10 deaths per 1,000 tonnes of carbon.',
+    formula: 'Annual emissions of {where} <span class="num">≈ {gt}</span> ÷ <span class="num">3,664 t CO₂</span> (= 1,000 t of carbon){mult} = <span class="num">≈ {perYear}</span> deaths a year',
     mList: [
       'Calculated from {start}, holding annual emissions of {where} at about {gt} (unless a pathway is chosen).',
       'By default we show <b>moderate feedbacks (×1.5)</b>. With tipping effects set to “None” it is a <b>conservative lower bound</b>. Tipping multipliers (×1.5 / ×2 / ×3) are <b>rough illustrative assumptions, not peer-reviewed estimates</b>. They show how the linear estimate could grow if feedbacks such as permafrost thaw and forest dieback, and societal cascades (conflict, famine, mass migration), are included. The Global Tipping Points Report 2025 finds that warm-water coral reefs have already passed their tipping point.',
@@ -417,8 +418,8 @@ const I18N = {
     lostL: '失われる命', savedL: '救える命',
     ctaK: '個人シミュレータ', ctaV: 'あなたの1日は、何人分？',
     mH: 'この数字の求め方',
-    mLead: '研究にもとづく「1,000トン・ルール」を使っています。人類がCO₂を1,000トン排出するごとに、今後およそ1世紀の温暖化を通じて、将来1人の早すぎる死が生じるという推計です。',
-    formula: '{where}の年間排出量 <span class="num">約{gt}</span> ÷ <span class="num">1,000トン</span>{mult} ＝ 年間 <span class="num">約{perYear}</span>',
+    mLead: '研究にもとづく「1,000トン・ルール」を使っています。化石燃料の<b>炭素</b>を1,000トン（CO₂に換算すると約3,664トン）燃やすごとに、今後およそ1世紀の温暖化を通じて、将来1人の早すぎる死が生じるという推計です。桁の目安となる推計で、著者は炭素1,000トンあたり0.1〜10人の幅があるとしています。',
+    formula: '{where}の年間排出量 <span class="num">約{gt}</span> ÷ <span class="num">CO₂ 3,664トン</span>（＝炭素1,000トン）{mult} ＝ 年間 <span class="num">約{perYear}</span>',
     mList: [
       '{start}年を起点に、{where}の年間排出量を約{gt}として計算しています（シナリオを選んだ場合を除く）。',
       '初期表示は<b>中程度のフィードバック（×1.5）</b>です。ティッピング効果を「なし」にすると<b>控えめな下限</b>の推計になります。×1.5／×2／×3 の係数は<b>査読済みの推計ではなく、目安として示した概算</b>です。永久凍土の融解や森林の枯死などのフィードバック、紛争・飢饉・大規模移民といった社会の連鎖的危機を含めた場合に、線形推計がどこまで膨らみうるかを示しています。Global Tipping Points Report 2025 は、暖かい海のサンゴ礁がすでにティッピング・ポイントを超えたと報告しています。',

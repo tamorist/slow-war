@@ -28,11 +28,11 @@ const SW_GROUPS = {
 const SW_SOURCES = [
   // 基本の推計
   { g: 'core', cite: 'Pearce, J.M. & Parncutt, R. (2023)', title: 'Quantifying Global Greenhouse Gas Emissions in Human Deaths to Guide Energy Policy', venue: 'Energies 16(16): 6074', url: 'https://doi.org/10.3390/en16166074',
-    en: 'The “1,000-ton rule” (≈ 1 future premature death per 1,000 t of CO₂). The basis of every death estimate on this site.',
-    ja: '「1,000トン・ルール」（CO₂ 1,000 t ≒ 将来の早すぎる死 1人）。このサイトのすべての死者数の推計の土台です。' },
+    en: 'The “1,000-ton rule”: about 1 future premature death per 1,000 t of fossil carbon burned (≈ 3,664 t of CO₂). An order-of-magnitude estimate (likely 0.1–10 deaths per 1,000 tC). The basis of every death estimate on this site.',
+    ja: '「1,000トン・ルール」：化石燃料の炭素1,000 t（CO₂に換算して約3,664 t）を燃やすごとに、将来の早すぎる死が約1人。桁の目安となる推計です（炭素1,000 tあたり0.1〜10人の幅）。このサイトのすべての死者数の推計の土台です。' },
   { g: 'core', cite: 'Bressler, R.D. (2021)', title: 'The mortality cost of carbon', venue: 'Nature Communications 12: 4467', url: 'https://doi.org/10.1038/s41467-021-24487-w',
-    en: 'An independent estimate of excess deaths per tonne of CO₂. Useful for seeing how widely such estimates range.',
-    ja: 'CO₂ 1トンあたりの超過死亡を独自に推計した研究。推計の幅を知るのに役立ちます。' },
+    en: 'An independent estimate: about 4,434 t of CO₂ (2020 emissions) per excess death by 2100 — close to the carbon-based 1,000-ton rule. Useful for seeing how widely such estimates range.',
+    ja: '独自の推計で、CO₂ 約4,434 t（2020年の排出）あたり2100年までに超過死亡1人。炭素ベースの1,000トン・ルールに近い値です。推計の幅を知るのに役立ちます。' },
 
   // 排出量と人口
   { g: 'emissions', cite: 'Friedlingstein, P. et al. (2026)', title: 'Global Carbon Budget 2025', venue: 'Earth System Science Data 18: 3211–3288', url: 'https://doi.org/10.5194/essd-18-3211-2026',
