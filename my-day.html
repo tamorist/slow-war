@@ -172,6 +172,14 @@
   .swap-call { font-size: 13px; line-height: 1.7; color: #c9c8c3; background: rgba(79,179,138,.07); border-left: 3px solid var(--green); border-radius: 0 10px 10px 0; padding: 12px 14px; margin-top: 12px; max-width: 760px; }
   .swap-call b { color: var(--text); }
   .swap-call a { color: var(--green); margin-left: 4px; }
+  details.explain { margin: 16px 0 4px; background: var(--bg2); border: 1px solid var(--faint); border-left: 3px solid var(--s-coc); border-radius: 0 12px 12px 0; padding: 12px 16px; max-width: 820px; }
+  details.explain > summary { cursor: pointer; font-weight: 700; font-size: 14px; color: var(--text); }
+  details.explain p, details.explain li { font-size: 13.5px; line-height: 1.75; color: #c9c8c3; }
+  details.explain b { color: var(--text); }
+  details.explain ol, details.explain ul { padding-left: 20px; }
+  details.explain li { margin-bottom: 8px; }
+  details.explain .ex-note { font-size: 12.5px; color: var(--muted); }
+  .swapt td.strong { font-weight: 800; }
   .whole { margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--faint); }
   .whole > summary { cursor: pointer; font-size: 12.5px; color: #c9c8c3; list-style: revert; }
   .whole > summary:hover { color: var(--text); }
@@ -349,6 +357,7 @@
     </div>
     <p class="hint" data-i18n="cocHint"></p>
     </details>
+    <details class="explain" id="landExplain"><summary data-i18n="exH"></summary><div id="landExBody"></div></details>
     <div class="pstats">
       <div><div class="k" data-i18n="pFoodK"></div><div class="v num" id="pFoodV"></div><div class="s" id="pFoodS"></div></div>
       <div><div class="k" data-i18n="pLandK"></div><div class="v num" id="pLandV"></div><div class="s" id="pLandS"></div></div>
@@ -622,11 +631,25 @@ const I18N = {
     animalK: 'Animals slaughtered: {food}', animalV: '≈ {n} {u}', animalU: { beef: 'cattle', pork: 'pigs', chicken: 'chickens' }, animalS: 'per 100 kg of protein · {x}× as many as beef', animalSB: 'per 100 kg of protein · plants: none',
     times: '×{x}', brk: '⫽ = bar cut short; actual value shown at right',
     cfNote: '<b>About these figures:</b> global averages from Poore &amp; Nemecek (2018, <i>Science</i>) via Our World in Data. Greenhouse gases here are <b>means including land-use change</b>, so they differ from the median-based meal calculation above. Water = freshwater withdrawals; water pollution = nutrient run-off (eutrophication). Animal counts use approximate edible meat per animal (cattle ~220 kg, pigs ~80 kg, broilers ~1.3 kg). Impacts vary hugely between farms: the best producers can be far below average, the worst far above.',
-    swapH: 'Swapping one beef meal', swapCols: ['', 'CO₂e saved (100-yr)', 'CO₂e saved (20-yr)', 'Land freed', 'Animals / yr ({name})', 'Lives saved / yr ({name})'],
+    exH: 'Deforestation vs. land’s lost carbon — what’s the difference? (why results change so much)',
+    exBody: `<p>Food affects forests in two different ways. <b>Both add to the CO₂ in the air, and so to warming and deaths.</b> The difference is what each is measured against.</p>
+      <ol>
+        <li><b>Deforestation and land-use change (included by default)</b><br>CO₂ actually released from trees and soil when forest is cleared for pasture or feed crops — including soy and maize grown for animal feed. It is a real addition to the atmosphere, so the 1,000-ton rule converts it straight into deaths. One beef meal: ≈ {luc} kg (the brown part) of ≈ {tot} kg in total.</li>
+        <li><b>Land’s lost carbon / carbon opportunity cost (not included by default)</b><br>The CO₂ that the land would absorb if it grew back into forest, but doesn’t because it stays farmed. The air holds more CO₂ than in a world where the land had recovered, so the warming effect is real. But it is not an emission that happened — it is the <i>difference from another choice</i>. One beef meal: ≈ {coc} kg (at {rate} kg CO₂/m²/yr), far larger than (1).</li>
+      </ol>
+      <p><b>Why (2) is off by default</b></p>
+      <ul>
+        <li>The counter, national averages and the whole-picture bar all count actual emissions. Adding (2) would mix two different baselines.</li>
+        <li>(2) depends on whether land really returns to forest, and how fast — which varies several-fold with place, climate and policy.</li>
+        <li>The same logic applies to all farmland and even cities, not just beef. Adding it only to food would make other comparisons unfair.</li>
+      </ul>
+      <p><b>So which is closer to reality?</b> It depends on the question. “How much did I emit today?” — count (1). “How many lives could changing what we eat save?” — including (2) is closer to reality, because giving up beef is what lets land recover. Studies argue it should be counted when comparing foods (Searchinger et al. 2018; Hayek et al. 2021). That is why the beef-swap table below shows lives saved both ways.</p>
+      <p class="ex-note">Note that (1) spreads the average deforestation of the past 20 years over today’s food. It does not fully capture new clearing driven by rising demand (indirect land-use change), so even (1) may be an underestimate — see “Still not included” below.</p>`,
+    swapH: 'Swapping one beef meal', swapCols: ['', 'CO₂e saved (100-yr)', 'CO₂e saved (20-yr)', 'Land freed', 'Animals / yr ({name})', 'Lives saved / yr ({name}): emissions only', 'incl. land returning to forest'],
     toChicken: 'Beef → chicken', toPlant: 'Beef → plant-based (tofu, beans)', best: 'best',
     cattle: '{n} fewer cattle', chickens: '{n} more chickens',
     swapCall: '<b>Chicken is not the answer.</b> Swapping beef for chicken cuts greenhouse gases a lot — but per gram of protein, chicken still causes about <b>{g}×</b> the greenhouse gases, <b>{l}×</b> the land use and <b>{e}×</b> the water pollution of plant protein, and takes <b>~{a}×</b> as many animals as beef. The swap that works best on every count is <b>plant-based</b>. <a href="#cmpfood">Compare foods →</a>',
-    swapNote: 'Lives saved assume everyone in {name} replaces one beef meal a day for a year, using the methane setting above.',
+    swapNote: 'Lives saved assume everyone in {name} replaces one beef meal a day for a year (methane setting above). “Incl. land returning to forest” also counts the CO₂ the freed farmland would absorb (land’s lost carbon) — see the explanation above.',
     notIncl: '<b>Still not included:</b> indirect land-use change (e.g. soy for feed pushing cattle ranching deeper into the Amazon), conversion of savannas such as the Cerrado and of peatlands, soil-carbon loss, and land cleared more than 20 years ago are only partly captured or missed. The “land’s lost carbon” option above is a rough way to see how large land-related effects could be. Water use, biodiversity loss and fertiliser run-off are also left out. And the 1,000-ton rule was derived for CO₂; applying it to CO₂-equivalent (especially on a 20-year basis) is an approximation.',
     wholeSum: 'See where this sits in the whole picture (consumption-based, rough)',
     wholeH: 'Where this sits in the whole picture — per person in {where}, consumption-based (rough): ≈ {t} kg/day',
@@ -752,11 +775,25 @@ const I18N = {
     animalK: '犠牲になる動物：{food}', animalV: '約{n}{u}', animalU: { beef: '頭', pork: '頭', chicken: '羽' }, animalS: 'たんぱく質100 kgあたりの頭・羽数 ・ 牛肉の約{x}倍', animalSB: 'たんぱく質100 kgあたりの頭・羽数 ・ 植物性は0',
     times: '{x}倍', brk: '⫽ ＝ 棒を途中で省略（実際の値は右端）',
     cfNote: '<b>数値について：</b>Poore &amp; Nemecek（2018年、<i>Science</i>）の世界平均値（Our World in Data 経由）です。ここでの温室効果ガスは<b>土地利用変化を含む平均値</b>のため、上の食事の計算（中央値）とは異なります。水は淡水の取水量、水質汚染は栄養塩の流出（富栄養化）です。動物の数は、1頭・1羽あたりの可食部の概算（牛 約220 kg、豚 約80 kg、ブロイラー 約1.3 kg）で求めています。環境負荷は生産者によって大きく異なり、最良の生産者は平均よりはるかに低く、最悪の生産者ははるかに高くなります。',
-    swapH: '牛肉1食を置き換えると', swapCols: ['', 'CO₂e削減（100年）', 'CO₂e削減（20年）', '空く農地', '犠牲になる動物（{name}・1年）', '1年で救える命（{name}）'],
+    exH: '考え方：「森林破壊」と「土地の機会費用」はどう違う？（結果が大きく変わる理由）',
+    exBody: `<p>食べ物と森林のかかわりには、性質の違う2つの効果があります。<b>どちらも大気中のCO₂を増やし、温暖化と死者数につながります。</b>違うのは「何と比べた量か」です。</p>
+      <ol>
+        <li><b>森林破壊・土地利用の変化（初期設定で含めています）</b><br>森林を切り開いて牧草地や飼料畑（大豆・トウモロコシなど）にしたときに、木や土から実際に出たCO₂です。大気に実際に加わった排出なので、1,000トン・ルールでそのまま死者数に換算できます。牛肉1食では、全体約{tot} kgのうち約{luc} kg（茶色の部分）です。</li>
+        <li><b>土地の機会費用（初期設定では含めていません）</b><br>その土地を農地として使い続けることで、森林に戻っていれば吸収できたはずのCO₂が吸収されない分です。大気中のCO₂は「土地が森林に戻った世界」より多いままになるので、温暖化への影響は現実のものです。ただしこれは実際に出た排出ではなく、<i>別の選択をした場合との差</i>です。牛肉1食では約{coc} kg（吸収量 年{rate} kg/m²の場合）と、1よりずっと大きくなります。</li>
+      </ol>
+      <p><b>なぜ初期設定では2を含めないのか</b></p>
+      <ul>
+        <li>カウンター、国の平均、全体像の帯は、すべて「実際の排出」で数えています。2を足すと、比べる基準がずれます。</li>
+        <li>2は「農地が本当に森林に戻るか」「どの速さで戻るか」に左右され、場所・気候・政策によって数倍の幅があります。</li>
+        <li>同じ考え方は、牛肉だけでなく、すべての農地や都市の土地にも当てはまります。食べ物だけに足すと、ほかとの比較が不公平になります。</li>
+      </ul>
+      <p><b>では、どちらが実態に近いのか。</b>問いによって違います。「今日、どれだけ排出したか」なら1までです。「食べ方を変えたら、何人の命を救えるか」なら、2を含めたほうが実態に近いと考えられます。牛肉をやめることで、はじめて土地が森林に戻る可能性が生まれるからです。食べ物の比較では2を含めるべきだとする研究もあります（Searchinger ら 2018、Hayek ら 2021）。そのため、下の「牛肉1食を置き換えると」の表では、救える命を両方の見方で並べています。</p>
+      <p class="ex-note">なお1の「森林破壊」は、過去20年の平均的な森林減少を今日の食べ物に割り振る方法で数えています。需要の増加が新たな森林破壊を引き起こす「間接的な」影響は十分にとらえていないため、1自体も控えめな値である可能性があります（下の「まだ含めていないもの」を参照）。</p>`,
+    swapH: '牛肉1食を置き換えると', swapCols: ['', 'CO₂e削減（100年）', 'CO₂e削減（20年）', '空く農地', '犠牲になる動物（{name}・1年）', '1年で救える命（{name}）：排出のみ', '土地の回復も含む'],
     toChicken: '牛肉 → 鶏肉', toPlant: '牛肉 → 植物性（豆腐・豆）', best: 'いちばん効く',
     cattle: '牛 −約{n}頭', chickens: '鶏 +約{n}羽',
     swapCall: '<b>鶏肉では解決になりません。</b>牛肉を鶏肉に替えると温室効果ガスは大きく減ります。それでも、たんぱく質あたりで比べると、鶏肉は植物性たんぱくの温室効果ガスで約<b>{g}倍</b>、土地で約<b>{l}倍</b>、水質汚染で約<b>{e}倍</b>。同じたんぱく質のために犠牲になる動物は、牛肉の約<b>{a}倍</b>です。どの指標でも最も効くのは<b>植物性への置き換え</b>です。<a href="#cmpfood">食材を比べる →</a>',
-    swapNote: '救える命は、{name}の全員が1日1食の牛肉を1年間置き換えた場合の数です（上で選んだメタンの評価期間で計算）。',
+    swapNote: '救える命は、{name}の全員が1日1食の牛肉を1年間置き換えた場合の数です（メタンの評価期間は上の設定）。「土地の回復も含む」は、空いた農地が森林に戻って吸収する分（土地の機会費用）も含めた値です（上の解説を参照）。',
     notIncl: '<b>まだ含めていないもの：</b>間接的な土地利用変化（飼料用の大豆畑が広がり、押し出された放牧がアマゾンの奥へ移るなど）、セラードのようなサバンナや泥炭地の転換、土壌炭素の損失、20年以上前に開墾された土地の分は、一部しかとらえていないか、含まれていません。上の「土地の機会費用」は、土地を通じた影響がどれほど大きくなりうるかを見るための概算です。水の使用、生物多様性の損失、肥料の流出も含めていません。また、1,000トン・ルールはCO₂について導かれたもので、CO₂換算（特に20年基準）に当てはめるのは近似です。',
     wholeSum: '全体像のなかでの位置を見る（消費ベース・概算）',
     wholeH: '全体像のなかでの位置 — {where}の1人あたり（消費ベース・概算）：約{t} kg/日',
@@ -1147,17 +1184,22 @@ function renderPlate() {
   }).join('');
   $('slegend').innerHTML = STAGES.filter(s => s !== 'coc' || S.coc).map(s => `<span><i style="background:var(--s-${s})"></i>${l.stage[s]}</span>`).join('');
 
+  // 解説：森林破壊（実際の排出）と土地の機会費用（森林に戻った場合との差）
+  const bst = mealStages('beef', S.gwp, false);
+  $('landExBody').innerHTML = tpl(l.exBody, { luc: bst[0].toFixed(1), tot: kg(bst.reduce((a, b) => a + b, 0)), coc: kg(mealLand('beef') * S.cocRate), rate: S.cocRate.toFixed(1) });
+
   // 牛肉1食を置き換えた場合
   $('swapT').innerHTML = `<tr>${l.swapCols.map((h, i) => `<th>${tpl(h, { name: cname() })}${S.coc && (i === 1 || i === 2) ? '<br>' + l.cocCol : ''}</th>`).join('')}</tr>` +
     [['vegan', l.toPlant], ['chicken', l.toChicken]].map(([to, label]) => {
       const d100 = mealKg('beef', 100) - mealKg(to, 100), d20 = mealKg('beef', 20) - mealKg(to, 20);
-      const lives = livesPerYear(mealKg('beef') - mealKg(to), c.pop);
+      const lives = livesPerYear(mealKg('beef', S.gwp, false) - mealKg(to, S.gwp, false), c.pop);
+      const livesL = livesPerYear(mealKg('beef', S.gwp, true) - mealKg(to, S.gwp, true), c.pop);
       // 1食（主菜120 g）あたりの動物：牛 0.12/220 頭、鶏 0.12/1.3 羽 → 国全体・1年
       const yearMeals = c.pop * 365, cattle = 0.12 / 220 * yearMeals, chickens = 0.12 / 1.3 * yearMeals;
       const animals = to === 'vegan' ? tpl(l.cattle, { n: count(cattle) }) : `<span class="bad">${tpl(l.chickens, { n: count(chickens) })}</span>`;
       return `<tr class="${to === 'vegan' ? 'best' : 'meh'}"><td>${label}${to === 'vegan' ? ` <span class="best-tag">${l.best}</span>` : ''}</td>
         <td class="num">−${d100.toFixed(1)} kg</td><td class="num">−${d20.toFixed(1)} kg</td>
-        <td class="num">−${fmt(mealLand('beef') - mealLand(to))} m²</td><td class="num">${animals}</td><td class="num g">${people(lives)}</td></tr>`;
+        <td class="num">−${fmt(mealLand('beef') - mealLand(to))} m²</td><td class="num">${animals}</td><td class="num g">${people(lives)}</td><td class="num g strong">${people(livesL)}</td></tr>`;
     }).join('');
   // 鶏肉と植物性の差（たんぱく質あたり、食材の比較データから）
   const perP = (f, ind) => FOODS[f][ind] / (FOODS[f].protein * 10);
@@ -1216,7 +1258,7 @@ function renderCompare() {
 /* ===================== EVENTS ===================== */
 document.addEventListener('click', e => {
   const link = e.target.closest('.coc-link');
-  if (link) { e.preventDefault(); const a = $('plateAdv'); a.open = true; a.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
+  if (link) { e.preventDefault(); const a = $('landExplain'); a.open = true; $('plateAdv').open = true; a.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
   const t = e.target.closest('button, .item');
   if (!t) return;
   const d = S.day;
