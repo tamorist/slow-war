@@ -19,6 +19,7 @@ const SW_GROUPS = {
   emissions: { en: 'Emissions and population data', ja: '排出量と人口のデータ' },
   pathways:  { en: 'Carbon budgets and pathways', ja: 'カーボンバジェットと削減の道筋' },
   tipping:   { en: 'Tipping points', ja: 'ティッピング・ポイント' },
+  nature:    { en: 'Nature: sinks, the Amazon and planetary boundaries', ja: '自然：吸収源・アマゾン・地球の限界' },
   food:      { en: 'Food: emissions, land, water, pollution', ja: '食べ物：排出・土地・水・汚染' },
   land:      { en: 'Land and the carbon opportunity cost', ja: '土地と炭素の機会費用' },
   energy:    { en: 'Electricity, transport, products and shopping', ja: '電気・交通・製品・買い物' },
@@ -93,10 +94,16 @@ const SW_SOURCES = [
     en: 'Warm-water coral reefs have passed their tipping point at ~1.4 °C — the first Earth-system tipping point reached. Amazon dieback and collapse of the Atlantic overturning circulation are at risk below 2 °C. Also covers positive tipping points in clean technology.',
     ja: '暖かい海のサンゴ礁が約1.4℃で臨界点を超えた（地球システムで最初に到達したティッピング・ポイント）。アマゾンの森林枯死や大西洋の海洋循環の崩壊も2℃未満で起こりうる。クリーン技術の「良いティッピング」も扱っています。' },
 
-  { g: 'tipping', cite: 'Lovejoy, T.E. & Nobre, C. (2018)', title: 'Amazon Tipping Point', venue: 'Science Advances 4: eaat2340', url: 'https://doi.org/10.1126/sciadv.aat2340',
+  { g: 'nature', cite: 'Potsdam Institute for Climate Impact Research (2025)', title: 'Planetary Health Check 2025', venue: 'planetaryhealthcheck.org / Stockholm Resilience Centre', url: 'https://www.stockholmresilience.org/news--events/general-news/2025-09-24-seven-of-nine-planetary-boundaries-now-breached.html',
+    en: 'Seven of nine planetary boundaries are now breached — climate change, biosphere integrity, land-system change, freshwater use, biogeochemical flows, novel entities and (new in 2025) ocean acidification — all with worsening trends.',
+    ja: '地球の限界9項目のうち7つがすでに越えられている：気候変動、生物圏の健全性、土地利用の変化、淡水利用、生物地球化学的循環（窒素・リン）、新規化学物質、海洋酸性化（2025年に新たに超過）。7つすべてが悪化傾向。' },
+  { g: 'nature', cite: 'Global Carbon Project (2025)', title: 'Fossil fuel CO₂ emissions hit record high in 2025 (Global Carbon Budget 2025 press release)', venue: 'globalcarbonbudget.org', url: 'https://globalcarbonbudget.org/fossil-fuel-co2-emissions-hit-record-high-in-2025/',
+    en: 'Climate change weakening the land and ocean sinks accounts for about 8% of the rise in atmospheric CO₂ since 1960; the land sink was unusually weak during the 2023–24 El Niño.',
+    ja: '気候変動による陸と海の吸収源の弱まりが、1960年以降の大気中CO₂の増加の約8%を占める。陸の吸収源は2023〜24年のエルニーニョ期に大きく弱まった。' },
+  { g: 'nature', cite: 'Lovejoy, T.E. & Nobre, C. (2018)', title: 'Amazon Tipping Point', venue: 'Science Advances 4: eaat2340', url: 'https://doi.org/10.1126/sciadv.aat2340',
     en: 'Deforestation, warming and fire together point to a tipping point at 20–25% deforestation, beyond which eastern, southern and central Amazonia could flip to non-forest. Basis of the danger zone in the Amazon gauge.',
     ja: '森林破壊・温暖化・火災が重なると、森林減少20〜25%でアマゾン東部・南部・中部が森林でなくなる転換点に達しうる、とする論説。アマゾンのティッピング計の危険域の根拠です。' },
-  { g: 'tipping', cite: 'Lovejoy, T.E. & Nobre, C. (2019)', title: 'Amazon tipping point: Last chance for action', venue: 'Science Advances 5: eaba2949', url: 'https://doi.org/10.1126/sciadv.aba2949',
+  { g: 'nature', cite: 'Lovejoy, T.E. & Nobre, C. (2019)', title: 'Amazon tipping point: Last chance for action', venue: 'Science Advances 5: eaba2949', url: 'https://doi.org/10.1126/sciadv.aba2949',
     en: 'Deforestation at 17% across the Amazon basin and approaching 20% in the Brazilian Amazon; about 23% of the destroyed area is abandoned pasture and cropland that could be reforested.',
     ja: 'アマゾン流域全体で森林の17%、ブラジル側で20%近くが失われている。失われた面積の約23%は放棄された牧草地や畑で、森林の回復が可能。' },
 
@@ -137,7 +144,7 @@ const SW_SOURCES = [
   { g: 'land', cite: 'Cook-Patton, S.C. et al. (2020)', title: 'Mapping carbon accumulation potential from global natural forest regrowth', venue: 'Nature 585: 545–550', url: 'https://doi.org/10.1038/s41586-020-2686-x',
     en: 'How fast regrowing forests absorb carbon. A guide for the absorption-rate slider.', ja: '自然に回復する森林が炭素を吸収する速さ。吸収量スライダーの目安です。' },
 
-  { g: 'land', cite: 'INPE & Embrapa (2016)', title: 'TerraClass Amazônia 2014: land use and cover in deforested areas of the Brazilian Legal Amazon', venue: 'gov.br/inpe', url: 'https://www.gov.br/inpe/pt-br/area-conhecimento/unidade-amazonia/repositorio-de-arquivos/terraclass_2014_v3.pdf',
+  { g: 'nature', cite: 'INPE & Embrapa (2016)', title: 'TerraClass Amazônia 2014: land use and cover in deforested areas of the Brazilian Legal Amazon', venue: 'gov.br/inpe', url: 'https://www.gov.br/inpe/pt-br/area-conhecimento/unidade-amazonia/repositorio-de-arquivos/terraclass_2014_v3.pdf',
     en: 'Of 762,464 km² deforested by 2014, pasture covered 479,760 km² (≈ 63%), a share stable since 2004.',
     ja: '2014年までに森林が失われた762,464 km²のうち、牧草地が479,760 km²（約63%）。2004年以降ほぼ横ばい。' },
 
@@ -245,11 +252,14 @@ const SW_PAGES = [
   { file: 'simulator.html', icon: '◐', color: '#4f9be8',
     en: { nav: 'Simulator', title: 'Detailed simulator', desc: 'Change emissions, region, tipping effects and pathways yourself, and watch the numbers move.', cta: 'Open simulator' },
     ja: { nav: 'シミュレータ', title: '詳細シミュレータ', desc: '排出量・国・ティッピング効果・削減の道筋を自分で動かして、数字の変化を見る。', cta: 'シミュレータへ' } },
+  { file: 'nature.html', icon: '❦', color: '#4fb38a',
+    en: { nav: 'Beyond carbon', title: 'Beyond carbon: food and nature', desc: 'The fight is also about keeping nature healthy: what food takes from land and water, the Amazon tipping gauge, and foods compared beyond carbon.', cta: 'Explore' },
+    ja: { nav: '炭素だけではない', title: '炭素だけではない：食べ物と自然', desc: 'これは自然を守る戦いでもある。食べ物が使う土地と水、アマゾンのティッピング計、炭素以外の指標での食材の比較。', cta: '見てみる' } },
   { file: 'sources.html', icon: '≡', color: '#9aa9ba',
     en: { nav: 'Sources & data', title: 'Sources & data', desc: 'Every number traced to its source, the key assumptions, and further reading.', cta: 'See sources' },
     ja: { nav: '出典とデータ', title: '出典とデータ', desc: 'すべての数値の出典と主な前提、さらに知りたい人への資料。', cta: '出典へ' } },
 ];
-const SW_NAV_ORDER = ['index.html', 'simulator.html', 'my-day.html', 'sources.html'];
+const SW_NAV_ORDER = ['index.html', 'simulator.html', 'my-day.html', 'nature.html', 'sources.html'];
 const SW_UI = {
   en: { brand: 'The Slow War', next: 'Next: try it yourself', nextSub: 'Big numbers can feel distant. See what your own day adds up to.', next2: 'Keep exploring', nextSub2: 'See the bigger picture, or trace every number to its source.', rec: 'Recommended', close: 'Close' },
   ja: { brand: '静かな戦争', next: '次は、自分で試してみる', nextSub: '大きな数字は遠く感じがちです。次は、あなた自身の1日に引き寄せてみましょう。', next2: 'さらに探る', nextSub2: '全体像を見る、またはすべての数値の出典をたどる。', rec: 'おすすめ', close: '閉じる' },
@@ -264,6 +274,9 @@ function swNav(lang) {
   const cur = swCurrent(), ui = SW_UI[lang];
   nav.innerHTML = `<div class="sw-nav-in"><a class="sw-brand" href="index.html"><i></i>${ui.brand}</a><div class="sw-tabs">${SW_NAV_ORDER.map(swPage).map(p =>
     `<a href="${p.file}" class="sw-tab${p.file === cur ? ' on' : ''}${p.featured ? ' feat' : ''}" style="--c:${p.color}"${p.file === cur ? ' aria-current="page"' : ''}><i></i>${p[lang].nav}</a>`).join('')}</div></div>`;
+  // 狭い画面ではタブが横にスクロールするので、現在のページのタブを見える位置に寄せる
+  const tabs = nav.querySelector('.sw-tabs'), on = nav.querySelector('.sw-tab.on');
+  if (tabs && on && tabs.scrollWidth > tabs.clientWidth) tabs.scrollLeft = on.offsetLeft - (tabs.clientWidth - on.offsetWidth) / 2;
   swFooterSource(lang);
   swFloat(lang);
 }
@@ -289,7 +302,7 @@ function swNext(container, lang) {
   if (!container) return;
   const cur = swCurrent(), ui = SW_UI[lang];
   const pages = SW_PAGES.filter(p => p.file !== cur), feat = pages.some(p => p.featured);
-  container.innerHTML = `<div class="sw-next"><h3>${feat ? ui.next : ui.next2}</h3><p class="sw-next-sub">${feat ? ui.nextSub : ui.nextSub2}</p><div class="sw-cards${feat ? '' : ' n3'}">${pages.map(p =>
+  container.innerHTML = `<div class="sw-next"><h3>${feat ? ui.next : ui.next2}</h3><p class="sw-next-sub">${feat ? ui.nextSub : ui.nextSub2}</p><div class="sw-cards ${feat ? 'f' : 'n'}${pages.length}">${pages.map(p =>
     `<a class="sw-card${p.featured ? ' feat' : ''}" href="${p.file}" style="--c:${p.color}">
       ${p.featured ? `<span class="sw-rec">${ui.rec}</span>` : ''}
       <span class="sw-ic">${p.icon}</span><b>${p[lang].title}</b><span class="sw-d">${p[lang].desc}</span>
@@ -338,7 +351,7 @@ function swFloat(lang) {
 .sw-next h3 { font-size: clamp(22px, 3.6vw, 28px); font-weight: 900; margin: 0 0 6px; line-height: 1.3; }
 .sw-next-sub { font-size: 14px; opacity: .75; margin: 0 0 18px; }
 .sw-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
-@media (min-width: 760px) { .sw-cards { grid-template-columns: repeat(4, 1fr); } .sw-cards.n3 { grid-template-columns: repeat(3, 1fr); } .sw-card.feat { grid-column: span 2; } }
+@media (min-width: 760px) { .sw-cards { grid-template-columns: repeat(4, 1fr); } .sw-cards.n3, .sw-cards.f4 { grid-template-columns: repeat(3, 1fr); } .sw-card.feat { grid-column: span 2; } .sw-cards.f4 .sw-card.feat { grid-column: 1 / -1; } }
 .sw-card { position: relative; display: flex; flex-direction: column; gap: 8px; padding: 22px; border-radius: 18px; text-decoration: none; color: inherit;
   border: 2px solid color-mix(in srgb, var(--c) 60%, transparent);
   background: linear-gradient(145deg, color-mix(in srgb, var(--c) 26%, transparent), color-mix(in srgb, var(--c) 6%, transparent));

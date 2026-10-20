@@ -241,60 +241,14 @@
   .mrow .mb span.coc { background-image: repeating-linear-gradient(135deg, rgba(255,255,255,.18) 0 3px, transparent 3px 7px); }
   .note-box { font-size: 13px; color: #c9c8c3; background: var(--bg2); border-left: 3px solid var(--s-farm); border-radius: 0 10px 10px 0; padding: 14px 16px; margin-top: 20px; max-width: 760px; }
 
-  /* Compare foods */
-  .cmpfood { padding: 56px 0 24px; border-top: 1px solid var(--faint); }
-  .vs-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; margin-top: 24px; }
-  .vs-cards > div { background: var(--bg2); border: 1px solid var(--faint); border-radius: 14px; padding: 16px; }
-  .vs-cards .k { font-size: 12.5px; color: #c9c8c3; }
-  .vs-cards .v { font-size: 30px; font-weight: 900; color: var(--amber); line-height: 1.2; margin-top: 2px; }
-  .vs-cards .s { font-size: 11.5px; color: var(--muted); margin-top: 4px; line-height: 1.5; }
-  .vs-cards .animal { border-color: rgba(229,72,59,.45); background: rgba(229,72,59,.06); }
-  .vs-cards .animal .v { color: var(--red); }
-  .fpanels { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px; margin-top: 20px; }
-  .fpanel { background: var(--bg2); border: 1px solid var(--faint); border-radius: 14px; padding: 16px; }
-  .fpanel h4 { margin: 0; font-size: 14px; }
-  .fpanel .u { font-size: 11.5px; color: var(--muted); margin-bottom: 10px; }
-  .frow { display: grid; grid-template-columns: 78px 1fr 64px; gap: 8px; align-items: center; margin: 5px 0; font-size: 12.5px; }
-  .frow .fb { height: 12px; background: var(--bg3); border-radius: 3px; position: relative; overflow: hidden; }
-  .frow .fb span { position: absolute; inset: 0 auto 0 0; border-radius: 3px; transition: width .4s ease; }
-  .frow .fb.broken span { -webkit-mask: linear-gradient(90deg, #000 calc(100% - 14px), transparent calc(100% - 14px), transparent calc(100% - 9px), #000 calc(100% - 9px));
-    mask: linear-gradient(90deg, #000 calc(100% - 14px), transparent calc(100% - 14px), transparent calc(100% - 9px), #000 calc(100% - 9px)); }
-  .frow .fv { text-align: right; color: var(--muted); font-variant-numeric: tabular-nums; }
-  .frow.hl-plant .fn { color: var(--green); font-weight: 700; }
-  .frow.hl-sel .fn { color: var(--amber); font-weight: 700; }
-  .fpanel .brk { font-size: 10.5px; color: var(--muted); margin-top: 6px; }
-
-
-  /* Food and the planet */
-  .planet { padding: 56px 0 24px; border-top: 1px solid var(--faint); }
-  .planet h3.ph3 { margin-top: 36px; }
-  .share-row { display: grid; grid-template-columns: 210px 1fr 52px; gap: 10px; align-items: center; margin: 10px 0; font-size: 13.5px; }
-  .share-row .sb { height: 16px; background: var(--bg3); border-radius: 4px; overflow: hidden; }
-  .share-row .sb span { display: block; height: 100%; border-radius: 4px; transition: width .4s ease; }
-  .share-row .sv { text-align: right; font-weight: 800; font-variant-numeric: tabular-nums; }
-  .share-row .ss { grid-column: 1 / -1; font-size: 11.5px; color: var(--muted); margin-top: -6px; }
-  @media (max-width: 560px) { .share-row { grid-template-columns: 1fr 52px; } .share-row .sb { grid-column: 1 / -1; grid-row: 2; } .share-row .ss { grid-row: 3; } }
-  .live-box { background: var(--bg2); border: 1px solid var(--faint); border-radius: 14px; padding: 16px; margin-top: 18px; max-width: 760px; }
-  .live-box h4 { margin: 0 0 8px; font-size: 14px; }
-  .death-line { font-size: 14px; color: #c9c8c3; max-width: 760px; margin-top: 18px; line-height: 1.7; }
-  .death-line b { color: var(--red); }
-  .own { display: inline-block; font-size: 11px; color: var(--amber); border: 1px solid rgba(232,163,61,.5); border-radius: 999px; padding: 0 8px; margin-left: 4px; }
-  .gauge { position: relative; margin: 54px 0 40px; max-width: 760px; }
-  .gauge .track { position: relative; height: 22px; border-radius: 11px; background: linear-gradient(90deg, #2e6b4f, #4fb38a 30%, #c9a43d 50%, #e5483b 62.5%, #8c1f17); overflow: visible; }
-  .gauge .danger { position: absolute; top: -6px; bottom: -6px; border: 2px dashed #fff; border-radius: 6px; background: repeating-linear-gradient(135deg, rgba(255,255,255,.22) 0 4px, transparent 4px 9px); }
-  .gauge .dlab { position: absolute; top: -40px; transform: translateX(-50%); font-size: 12px; font-weight: 700; color: var(--red); white-space: nowrap; }
-  .gauge .mk { position: absolute; top: -8px; width: 3px; height: 38px; background: #fff; transform: translateX(-50%); border-radius: 2px; }
-  .gauge .mlab { position: absolute; top: 34px; transform: translateX(-50%); font-size: 12px; color: var(--text); white-space: nowrap; text-align: center; line-height: 1.35; }
-  .gauge .mlab.up { top: -40px; }
-  .gauge .ticks { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-top: 44px; }
-  .diet-bars { margin-top: 18px; max-width: 820px; }
-  .diet-row { display: grid; grid-template-columns: 190px 1fr; gap: 10px; align-items: center; margin: 8px 0; font-size: 13px; cursor: pointer; opacity: .55; transition: opacity .2s; }
-  .diet-row.on { opacity: 1; }
-  .diet-row.on .dn { color: var(--green); font-weight: 700; }
-  .diet-row .db { display: flex; height: 22px; border-radius: 4px; overflow: hidden; background: var(--bg3); }
-  .diet-row .db span { height: 100%; display: grid; place-items: center; font-size: 11px; color: #fff; white-space: nowrap; overflow: hidden; transition: width .4s ease; }
-  .diet-row .dt { font-size: 11.5px; color: var(--muted); grid-column: 2; margin-top: -4px; }
-  @media (max-width: 560px) { .diet-row { grid-template-columns: 1fr; } .diet-row .dt { grid-column: 1; } }
+  /* Beyond carbon (link to nature.html) */
+  .beyond { padding: 40px 0 8px; border-top: 1px solid var(--faint); }
+  .beyond-card { display: flex; flex-direction: column; gap: 8px; padding: 24px; border-radius: 18px; text-decoration: none; color: var(--text); max-width: 760px;
+    border: 2px solid rgba(79,179,138,.55); background: linear-gradient(145deg, rgba(79,179,138,.22), rgba(79,179,138,.05)); transition: transform .15s; }
+  .beyond-card:hover { transform: translateY(-3px); }
+  .beyond-card b { font-size: clamp(19px, 2.6vw, 24px); line-height: 1.35; }
+  .beyond-card > span:not(.eyebrow):not(.beyond-btn) { font-size: 14px; color: #c9c8c3; }
+  .beyond-btn { align-self: flex-start; margin-top: 6px; background: var(--green); color: #0b1a13; font-weight: 700; font-size: 14px; border-radius: 999px; padding: 9px 18px; }
 
   /* What-if */
   .whatif { padding: 56px 0 24px; border-top: 1px solid var(--faint); }
@@ -414,40 +368,13 @@
     <p class="note-box" data-i18n="notIncl"></p>
   </section>
 
-  <section class="cmpfood" id="cmpfood">
-    <p class="eyebrow">Beyond carbon</p>
-    <h2 data-i18n="cfH"></h2>
-    <p class="lead" data-i18n="cfLead"></p>
-    <div class="gwp-row"><span data-i18n="cfSel"></span><div class="chips" id="selChips"></div></div>
-    <div class="gwp-row" style="margin-top:12px"><span data-i18n="cfBasis"></span><div class="chips" id="basisChips"></div></div>
-    <div class="vs-cards" id="vsCards"></div>
-    <div class="fpanels" id="fpanels"></div>
-    <p class="note-box" data-i18n="cfNote"></p>
-  </section>
-
-  <section class="planet" id="planet">
-    <p class="eyebrow">Food and the planet</p>
-    <h2 data-i18n="pfH"></h2>
-    <p class="lead" data-i18n="pfLead"></p>
-
-    <h3 class="ph3" data-i18n="pfAH"></h3>
-    <div id="shareBars" style="max-width:760px"></div>
-    <div class="live-box"><h4 data-i18n="pfLiveH"></h4><div id="liveBars"></div></div>
-    <p class="death-line" id="foodDeath"></p>
-
-    <h3 class="ph3" data-i18n="pfBH"></h3>
-    <p class="lead" data-i18n="pfBLead"></p>
-    <div class="gauge" id="gauge"></div>
-    <div class="pstats" id="amzStats"></div>
-    <p class="note-box" data-i18n="pfBNote"></p>
-
-    <h3 class="ph3" data-i18n="pfCH"></h3>
-    <p class="lead" data-i18n="pfCLead"></p>
-    <div class="gwp-row"><span data-i18n="pfCSel"></span><div class="chips" id="dietChips"></div></div>
-    <div class="pstats" id="dietStats"></div>
-    <div class="diet-bars" id="dietBars"></div>
-    <div class="slegend" id="dietLegend"></div>
-    <p class="note-box" data-i18n="pfCNote"></p>
+  <section class="beyond" id="beyond">
+    <a class="beyond-card" href="nature.html">
+      <span class="eyebrow" style="margin:0">Beyond carbon</span>
+      <b data-i18n="byH"></b>
+      <span data-i18n="byS"></span>
+      <span class="beyond-btn" data-i18n="byBtn"></span>
+    </a>
   </section>
 
   <section class="whatif">
@@ -482,7 +409,7 @@
 
 <div class="mbar"><div><span data-i18n="mToday"></span><br><b class="num" id="mKg">0</b> kg CO₂</div><div class="r" style="text-align:right"><span id="mScale"></span><br><b class="num" id="mImp">—</b></div></div>
 
-<script src="site.js?v=20261020d"></script>
+<script src="site.js?v=20261020e"></script>
 <script>
 /* ===================== DATA ===================== */
 const COUNTRIES = {
@@ -608,7 +535,6 @@ const FOODS = {
   tofu:    { ghg: 3.16,  land: 3.52,   water: 148.6,  eutro: 6.2,    protein: 0.16,  animals: null },
   peas:    { ghg: 0.98,  land: 7.46,   water: 396.8,  eutro: 7.52,   protein: 0.22,  animals: null },
 };
-const INDICATORS = ['ghg', 'land', 'water', 'eutro'];
 const PLANTS = ['tofu', 'peas'];
 const GWP20K = 2.9;   // メタンの GWP20 / GWP100（約80 / 約27）
 // 土地の機会費用：農地として使い続けることで失われる、森林回復による吸収 ＝ 農地(m²·年) × 吸収量(kg CO₂/m²/年)
@@ -685,51 +611,9 @@ const I18N = {
     cocRate: 'CO₂ the land could absorb if it grew back into forest', cocUnit: ' kg CO₂/m²/yr',
     cocHint: 'Farmland that is no longer needed can grow back into forest and pull CO₂ out of the air. Keeping it farmed gives that up. Estimated as farmland used (m²) × absorption rate. Rough guide for regrowing forest: about 0.3 kg CO₂ per m² per year in temperate zones, 1 kg or more in the tropics. An illustrative estimate.',
     pFoodSc: ' · {c}% land’s lost carbon', cocCol: '+ opportunity cost',
-    cfH: 'Beyond carbon: comparing foods',
-    cfLead: 'Greenhouse gases are only part of the story. Land, water and water pollution point the same way: chicken is far better than beef, but on <b>every</b> measure it is still several times worse than plant proteins such as tofu and beans. And swapping beef for chicken means many more animals.',
-    cfBasis: 'Compare per', basis: { protein: '100 g of protein (fair comparison)', kg: '1 kg of food' },
-    ind: { ghg: 'Greenhouse gases', land: 'Land use', water: 'Freshwater use', eutro: 'Water pollution (nutrient run-off)', animals: 'Animals slaughtered' },
-    unit: { ghg: 'kg CO₂e', land: 'm²', water: 'L', eutro: 'g PO₄³⁻eq', animals: '' },
-    unitAnimals: { protein: 'animals per 100 kg of protein', kg: 'animals per 1,000 kg of meat' },
-    food: { beef: 'Beef', cheese: 'Cheese', pork: 'Pork', fish: 'Farmed fish', chicken: 'Chicken', eggs: 'Eggs', tofu: 'Tofu', peas: 'Peas / beans' },
-    cfSel: 'Compare with plants', 
-    vsK: '{ind}: {food} vs plants', vsS: '{food} {c} · tofu {t} · beans {p}',
-    animalK: 'Animals slaughtered: {food}', animalV: '≈ {n} {u}', animalU: { beef: 'cattle', pork: 'pigs', chicken: 'chickens' }, animalS: 'per 100 kg of protein · {x}× as many as beef', animalSB: 'per 100 kg of protein · plants: none',
-    times: '×{x}', brk: '⫽ = bar cut short; actual value shown at right',
-    cfNote: '<b>About these figures:</b> global averages from Poore &amp; Nemecek (2018, <i>Science</i>) via Our World in Data. Greenhouse gases here are <b>means including land-use change</b>, so they differ from the median-based meal calculation above. Water = freshwater withdrawals; water pollution = nutrient run-off (eutrophication). Animal counts use approximate edible meat per animal (cattle ~220 kg, pigs ~80 kg, broilers ~1.3 kg). Impacts vary hugely between farms: the best producers can be far below average, the worst far above.',
-    pfH: 'Not only carbon: what food takes from the planet',
-    pfLead: 'Feeding the world uses half of all habitable land and most of the fresh water we draw — and the clearing that comes with it is pushing the Amazon toward a point of no return.',
-    pfAH: 'Food’s share of the planet',
-    share: {
-      ghg: ['Greenhouse-gas emissions', '13.7 billion t CO₂e a year, from farm to shop'],
-      land: ['Habitable land', 'Land free of ice and desert — about half of it is farmland'],
-      water: ['Freshwater withdrawals', 'Water taken from rivers, lakes and aquifers'],
-      eutro: ['Water pollution (eutrophication)', 'Ocean and freshwater pollution from fertiliser and manure run-off'],
-    },
-    pfLiveH: 'Livestock: most of the land, little of the food',
-    live: { land: 'Share of farmland used for livestock (pasture + feed crops)', kcal: 'Share of the world’s calories it provides', prot: 'Share of the world’s protein it provides' },
-    liveLand: '~3/4',
-    pfDeath: 'Only the greenhouse-gas part can be turned into lives. Applying the 1,000-ton rule to food’s 13.7 billion t CO₂e gives about <b>{n} future deaths a year</b> (central estimate, {tip}; the true figure could be ~10× lower or higher). <span class="own">our estimate</span><br><span class="hint">Land, water and pollution have no comparable death factor, so they are shown as shares, not lives. The counter on the story page counts CO₂ only, so this is not a slice of it.</span>',
-    pfBH: 'The Amazon’s tipping gauge',
-    pfBLead: 'The Amazon makes much of its own rain. Scientists warn that once <b>20–25%</b> of the forest is lost — together with warming and fire — the east, south and centre could flip from rainforest to savanna.',
-    gBasin: 'Whole basin<br><b>~17% lost</b>', gBrazil: 'Brazilian part<br><b>~20%</b>', gDanger: 'Danger zone 20–25%',
-    amz: [
-      ['~63%', 'of cleared land in the Brazilian Legal Amazon is <b>cattle pasture</b> (479,760 of 762,464 km², 2014; stable since 2004)'],
-      ['×2 Japan', '762,000 km² of forest cleared in the Brazilian Legal Amazon by 2014 — about <b>twice the area of Japan</b>'],
-      ['~23%', 'of the destroyed area is <b>abandoned</b> pasture and cropland — where regrowth could rebuild a safety margin'],
-      ['7%', 'of the world’s soy is eaten by people (tofu, soy milk…). <b>Most goes to animal feed</b>'],
-    ],
-    pfBNote: '<b>About these figures:</b> 17% / ~20% and the 20–25% threshold are from Lovejoy &amp; Nobre (<i>Science Advances</i>, 2018 and Dec 2019); newer estimates may differ. Their advice: don’t find the exact threshold by crossing it — bring deforestation back below 20% through reforestation. Pasture share: INPE &amp; Embrapa, TerraClass 2014. The <i>Global Tipping Points Report 2025</i> warns that, combined with deforestation, Amazon dieback is a risk even below 2 °C of warming.',
-    pfCH: 'If the whole world ate differently',
-    pfCLead: 'How much farmland would the world need if everyone ate a given diet? These are published scenarios that still meet everyone’s calorie and protein needs.',
-    pfCSel: 'If everyone ate',
-    diet: { now: 'Today’s diet', nobeef: 'No beef or mutton', nodairy: 'No beef, mutton or dairy', eggfish: 'Eggs and fish only', vegan: 'Plant-based (vegan)' },
-    dietSub: { nobeef: 'beef from dairy cows still included', eggfish: 'no red meat, dairy or poultry' },
-    dTotK: 'Farmland needed', dFreeK: 'Farmland freed', dJpK: 'Freed land, compared with Japan',
-    dTotS: '{p} of today', dFreeS: 'billion hectares', dJpS: 'times the area of Japan{x}', dNA: ' — about North America plus Brazil',
-    dNone: 'the starting point',
-    bha: '{n} billion ha', lgCrop: 'Cropland for food', lgFeed: 'Cropland for animal feed', lgPast: 'Pasture for grazing', lgCropAll: 'Cropland (all uses)',
-    pfCNote: '<b>Reading this chart:</b> cutting out beef and mutton alone almost halves farmland, because huge areas of pasture are freed. But swapping in chicken has its own costs — more animals and more water pollution than plant protein (see the comparison above). The deepest cut comes from plant-based diets. Freed land could regrow forest and draw CO₂ back down (<a href="#landExplain" class="coc-link">the carbon opportunity cost</a>). This chart shows land only. Source: Poore &amp; Nemecek (2018) via Our World in Data.',
+    byH: 'Not only carbon: food, land, water and the Amazon',
+    byS: 'The fight against climate change is also a fight to keep nature healthy. See how much of the planet food takes, how close the Amazon is to tipping, and how foods compare beyond carbon.',
+    byBtn: 'Go to “Beyond carbon” →',
     exH: 'Deforestation vs. land’s lost carbon — what’s the difference? (why results change so much)',
     exBody: `<p>Food affects forests in two different ways. <b>Both add to the CO₂ in the air, and so to warming and deaths.</b> The difference is what each is measured against.</p>
       <ol>
@@ -747,7 +631,7 @@ const I18N = {
     swapH: 'Swapping one beef meal', swapCols: ['', 'CO₂e saved (100-yr)', 'CO₂e saved (20-yr)', 'Land freed', 'Animals / yr ({name})', 'Lives saved / yr ({name}): emissions only', 'incl. land returning to forest'],
     toChicken: 'Beef → chicken', toPlant: 'Beef → plant-based (tofu, beans)', best: 'best',
     cattle: '{n} fewer cattle', chickens: '{n} more chickens',
-    swapCall: '<b>Chicken is not the answer.</b> Swapping beef for chicken cuts greenhouse gases a lot — but per gram of protein, chicken still causes about <b>{g}×</b> the greenhouse gases, <b>{l}×</b> the land use and <b>{e}×</b> the water pollution of plant protein, and takes <b>~{a}×</b> as many animals as beef. The swap that works best on every count is <b>plant-based</b>. <a href="#cmpfood">Compare foods →</a>',
+    swapCall: '<b>Chicken is not the answer.</b> Swapping beef for chicken cuts greenhouse gases a lot — but per gram of protein, chicken still causes about <b>{g}×</b> the greenhouse gases, <b>{l}×</b> the land use and <b>{e}×</b> the water pollution of plant protein, and takes <b>~{a}×</b> as many animals as beef. The swap that works best on every count is <b>plant-based</b>. <a href="nature.html#cmpfood">Compare foods →</a>',
     swapNote: 'Lives saved assume everyone in {name} replaces one beef meal a day for a year (methane setting above). “Incl. land returning to forest” also counts the CO₂ the freed farmland would absorb (land’s lost carbon) — see the explanation above.',
     notIncl: '<b>Still not included:</b> indirect land-use change (e.g. soy for feed pushing cattle ranching deeper into the Amazon), conversion of savannas such as the Cerrado and of peatlands, soil-carbon loss, and land cleared more than 20 years ago are only partly captured or missed. The “land’s lost carbon” option above is a rough way to see how large land-related effects could be. Water use, biodiversity loss and fertiliser run-off are also left out. And the 1,000-ton rule was derived for CO₂; applying it to CO₂-equivalent (especially on a 20-year basis) is an approximation.',
     wholeSum: 'See where this sits in the whole picture (consumption-based, rough)',
@@ -864,51 +748,9 @@ const I18N = {
     cocRate: '森林に戻った場合のCO₂吸収量', cocUnit: ' kg CO₂/m²・年',
     cocHint: '使われなくなった農地は、森林に戻れば空気中のCO₂を吸収します。農地として使い続けると、その吸収は失われます。これを「使っている農地（m²）× 吸収量」で概算します。森林回復による吸収量の目安は、温帯で1 m²あたり年約0.3 kg、熱帯で1 kg以上です。あくまで目安の概算です。',
     pFoodSc: ' ・ 土地の機会費用 {c}%', cocCol: '＋機会費用',
-    cfH: '炭素だけではない：食材を比べる',
-    cfLead: '温室効果ガスは全体の一部にすぎません。土地・水・水質汚染で見ても、結果は同じ方向です。鶏肉は牛肉よりはるかにましですが、<b>どの指標でも</b>豆腐や豆などの植物性たんぱくの数倍の負荷があります。さらに、牛肉を鶏肉に替えると、犠牲になる動物の数は大きく増えます。',
-    cfBasis: '比べる単位', basis: { protein: 'たんぱく質100 gあたり（公平な比較）', kg: '食品1 kgあたり' },
-    ind: { ghg: '温室効果ガス', land: '土地利用', water: '淡水の使用', eutro: '水質汚染（栄養塩の流出）', animals: '犠牲になる動物' },
-    unit: { ghg: 'kg CO₂e', land: 'm²', water: 'L', eutro: 'g PO₄³⁻eq', animals: '' },
-    unitAnimals: { protein: 'たんぱく質100 kgあたりの頭・羽数', kg: '食肉1,000 kgあたりの頭・羽数' },
-    food: { beef: '牛肉', cheese: 'チーズ', pork: '豚肉', fish: '養殖魚', chicken: '鶏肉', eggs: '卵', tofu: '豆腐', peas: '豆類' },
-    cfSel: '植物性と比べる食材',
-    vsK: '{ind}：{food}は植物性の', vsS: '{food} {c} ・ 豆腐 {t} ・ 豆類 {p}',
-    animalK: '犠牲になる動物：{food}', animalV: '約{n}{u}', animalU: { beef: '頭', pork: '頭', chicken: '羽' }, animalS: 'たんぱく質100 kgあたりの頭・羽数 ・ 牛肉の約{x}倍', animalSB: 'たんぱく質100 kgあたりの頭・羽数 ・ 植物性は0',
-    times: '{x}倍', brk: '⫽ ＝ 棒を途中で省略（実際の値は右端）',
-    cfNote: '<b>数値について：</b>Poore &amp; Nemecek（2018年、<i>Science</i>）の世界平均値（Our World in Data 経由）です。ここでの温室効果ガスは<b>土地利用変化を含む平均値</b>のため、上の食事の計算（中央値）とは異なります。水は淡水の取水量、水質汚染は栄養塩の流出（富栄養化）です。動物の数は、1頭・1羽あたりの可食部の概算（牛 約220 kg、豚 約80 kg、ブロイラー 約1.3 kg）で求めています。環境負荷は生産者によって大きく異なり、最良の生産者は平均よりはるかに低く、最悪の生産者ははるかに高くなります。',
-    pfH: '炭素だけではない：食べ物が地球から奪っているもの',
-    pfLead: '世界の食を支えるために、人が住める土地の半分と、くみ上げる淡水の大部分が使われています。そして、それに伴う森林伐採が、アマゾンを後戻りできない地点へと押しやっています。',
-    pfAH: '食べ物が地球に占める割合',
-    share: {
-      ghg: ['温室効果ガスの排出', '年137億 t CO₂e（農場から店頭まで）'],
-      land: ['人が住める土地', '氷と砂漠を除いた陸地。その約半分が農地'],
-      water: ['淡水の取水', '川・湖・地下水からくみ上げる水'],
-      eutro: ['水質汚染（富栄養化）', '肥料やふん尿の流出による海と淡水の汚染'],
-    },
-    pfLiveH: '家畜：土地の大部分を使い、食べ物はわずか',
-    live: { land: '農地のうち家畜に使われる割合（牧草地＋飼料畑）', kcal: '世界のカロリーのうち家畜由来の割合', prot: '世界のたんぱく質のうち家畜由来の割合' },
-    liveLand: '約3/4',
-    pfDeath: '死者数に換算できるのは温室効果ガスの部分だけです。食べ物の排出137億 t CO₂e に1,000トン・ルールを当てはめると、<b>年約{n}の将来の死</b>が確定することになります（中央値、{tip}。実際は約10分の1〜10倍の幅があります）。<span class="own">私たちの概算</span><br><span class="hint">土地・水・汚染には同じような死者数への換算がないため、人数ではなく割合で示しています。ストーリーページのカウンターはCO₂だけを数えているので、その一部ではありません。</span>',
-    pfBH: 'アマゾンのティッピング計',
-    pfBLead: 'アマゾンの森は、自らの雨の多くを自分でつくっています。森林の<b>20〜25%</b>が失われると、温暖化や火災と重なって、東部・南部・中部が熱帯雨林からサバンナに変わってしまう恐れがある、と科学者は警告しています。',
-    gBasin: '流域全体<br><b>約17%が消失</b>', gBrazil: 'ブラジル側<br><b>約20%</b>', gDanger: '危険域 20〜25%',
-    amz: [
-      ['約63%', 'ブラジル法定アマゾンで切り開かれた土地のうち<b>牛の牧草地</b>の割合（762,464 km²のうち479,760 km²、2014年。2004年以降ほぼ横ばい）'],
-      ['日本の約2倍', '2014年までにブラジル法定アマゾンで失われた森林 76万 km²は、<b>日本の面積の約2倍</b>'],
-      ['約23%', '失われた森林のうち、<b>放棄された</b>牧草地や畑の割合。森を回復させて安全の余裕を取り戻せる場所です'],
-      ['7%', '世界の大豆のうち人が直接食べる（豆腐・豆乳など）割合。<b>大部分は家畜の飼料</b>です'],
-    ],
-    pfBNote: '<b>数値について：</b>約17%・約20%と、20〜25%の閾値は Lovejoy &amp; Nobre（<i>Science Advances</i>、2018年と2019年12月）によります。より新しい推計では値が異なる可能性があります。著者らは「正確な閾値を、実際に越えて確かめるべきではない」とし、森林の回復で森林減少を20%未満に戻すよう求めています。牧草地の割合は INPE・Embrapa の TerraClass 2014。<i>Global Tipping Points Report 2025</i> は、森林破壊と重なると、2℃未満の温暖化でもアマゾンの大規模な枯死が起こりうると警告しています。',
-    pfCH: '世界の食べ方が変わったら',
-    pfCLead: '世界中の人が同じ食べ方をしたら、農地はどれだけ必要でしょうか。どれも、すべての人のカロリーとたんぱく質をまかなう前提で公表されたシナリオです。',
-    pfCSel: '世界中が',
-    diet: { now: 'いまの食べ方', nobeef: '牛肉・羊肉なし', nodairy: '牛肉・羊肉・乳製品なし', eggfish: '卵と魚だけ', vegan: '植物性（ヴィーガン）' },
-    dietSub: { nobeef: '乳牛由来の牛肉は含む', eggfish: '赤身肉・乳製品・鶏肉なし' },
-    dTotK: '必要な農地', dFreeK: '空く農地', dJpK: '空く土地（日本の何個分）',
-    dTotS: 'いまの{p}', dFreeS: '億ヘクタール', dJpS: '日本の面積の約{n}倍{x}', dNA: '（北米＋ブラジルほど）',
-    dNone: '出発点',
-    bha: '{n}億 ha', lgCrop: '人の食べ物の畑', lgFeed: '家畜の飼料の畑', lgPast: '放牧用の牧草地', lgCropAll: '畑（すべての用途）',
-    pfCNote: '<b>このグラフの読み方：</b>牛肉と羊肉をやめるだけで、広大な牧草地が空くため農地はほぼ半分になります。ただし鶏肉に置き換えると、植物性たんぱくより動物の数も水質汚染も多くなります（上の比較を参照）。最も大きく減らせるのは植物性中心の食べ方です。空いた土地は森林に戻り、CO₂を吸収できます（<a href="#landExplain" class="coc-link">炭素の機会費用</a>）。このグラフは土地だけを示しています。出典：Poore &amp; Nemecek（2018）、Our World in Data 経由。',
+    byH: '炭素だけではない：食べ物・土地・水・アマゾン',
+    byS: '気候変動との戦いは、自然を健全に保つ戦いでもあります。食べ物が地球をどれだけ使っているか、アマゾンがどこまで限界に近づいているか、炭素以外の指標での食材の比較を見られます。',
+    byBtn: '「炭素だけではない」へ →',
     exH: '考え方：「森林破壊」と「土地の機会費用」はどう違う？（結果が大きく変わる理由）',
     exBody: `<p>食べ物と森林のかかわりには、性質の違う2つの効果があります。<b>どちらも大気中のCO₂を増やし、温暖化と死者数につながります。</b>違うのは「何と比べた量か」です。</p>
       <ol>
@@ -926,7 +768,7 @@ const I18N = {
     swapH: '牛肉1食を置き換えると', swapCols: ['', 'CO₂e削減（100年）', 'CO₂e削減（20年）', '空く農地', '犠牲になる動物（{name}・1年）', '1年で救える命（{name}）：排出のみ', '土地の回復も含む'],
     toChicken: '牛肉 → 鶏肉', toPlant: '牛肉 → 植物性（豆腐・豆）', best: 'いちばん効く',
     cattle: '牛 −約{n}頭', chickens: '鶏 +約{n}羽',
-    swapCall: '<b>鶏肉では解決になりません。</b>牛肉を鶏肉に替えると温室効果ガスは大きく減ります。それでも、たんぱく質あたりで比べると、鶏肉は植物性たんぱくの温室効果ガスで約<b>{g}倍</b>、土地で約<b>{l}倍</b>、水質汚染で約<b>{e}倍</b>。同じたんぱく質のために犠牲になる動物は、牛肉の約<b>{a}倍</b>です。どの指標でも最も効くのは<b>植物性への置き換え</b>です。<a href="#cmpfood">食材を比べる →</a>',
+    swapCall: '<b>鶏肉では解決になりません。</b>牛肉を鶏肉に替えると温室効果ガスは大きく減ります。それでも、たんぱく質あたりで比べると、鶏肉は植物性たんぱくの温室効果ガスで約<b>{g}倍</b>、土地で約<b>{l}倍</b>、水質汚染で約<b>{e}倍</b>。同じたんぱく質のために犠牲になる動物は、牛肉の約<b>{a}倍</b>です。どの指標でも最も効くのは<b>植物性への置き換え</b>です。<a href="nature.html#cmpfood">食材を比べる →</a>',
     swapNote: '救える命は、{name}の全員が1日1食の牛肉を1年間置き換えた場合の数です（メタンの評価期間は上の設定）。「土地の回復も含む」は、空いた農地が森林に戻って吸収する分（土地の機会費用）も含めた値です（上の解説を参照）。',
     notIncl: '<b>まだ含めていないもの：</b>間接的な土地利用変化（飼料用の大豆畑が広がり、押し出された放牧がアマゾンの奥へ移るなど）、セラードのようなサバンナや泥炭地の転換、土壌炭素の損失、20年以上前に開墾された土地の分は、一部しかとらえていないか、含まれていません。上の「土地の機会費用」は、土地を通じた影響がどれほど大きくなりうるかを見るための概算です。水の使用、生物多様性の損失、肥料の流出も含めていません。また、1,000トン・ルールはCO₂について導かれたもので、CO₂換算（特に20年基準）に当てはめるのは近似です。',
     wholeSum: '全体像のなかでの位置を見る（消費ベース・概算）',
@@ -988,7 +830,7 @@ const I18N = {
 const store = { get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
                 set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} } };
 const S = {
-  lang: store.get('scw-lang') === 'ja' ? 'ja' : 'en', country: 'japan', tip: 1, scale: 'country', ref: null, gwp: 100, coc: false, cocRate: 0.5, basis: 'protein', sel: 'chicken', diet: 'vegan',
+  lang: store.get('scw-lang') === 'ja' ? 'ja' : 'en', country: 'japan', tip: 1, scale: 'country', ref: null, gwp: 100, coc: false, cocRate: 0.5,
   // 初期設定は平均的な日本人に近い1日（車15 km、国内線は年1往復、長距離は飛ばない）。
   // ただし夕食の牛肉は、影響の大きさを見てもらうために「あえて」入れている（画面にも明記）
   day: { mode: 'car', km: 15, meals: ['veg', 'fish', 'beef'], hvac: 'cool', hours: 4, eco: false, appl: 'avg', bath: 'bath', heater: 'gas', green: false,
@@ -1165,7 +1007,7 @@ function renderStatic() {
   $('tip').innerHTML = TIPS.map((x, i) => `<option value="${i}">${x[S.lang]}</option>`).join('');
   $('tip').value = S.tip;
   if (typeof swNav === 'function') { swNav(S.lang); swNext($('next'), S.lang); swAuthor($('author'), S.lang); }
-  if (typeof swRenderSources === 'function') swRenderSources($('sources'), S.lang, ['core', 'food', 'land', 'tipping', 'energy', 'emissions', 'further'], 4);
+  if (typeof swRenderSources === 'function') swRenderSources($('sources'), S.lang, ['core', 'food', 'land', 'energy', 'emissions', 'further'], 4);
   buildInputs();
   update();
 }
@@ -1275,8 +1117,6 @@ function update() {
   $('savedWS').textContent = saved > 0 ? tpl(l.savedS, { x: fmt(sw / WW2 * 100) }) : '';
 
   renderPlate();
-  renderCompare();
-  renderPlanet();
 
   // 説明
   $('aboutList').innerHTML = l.about.map(s => `<li>${tpl(s, { where: cname(), grid: c.grid })}</li>`).join('');
@@ -1349,117 +1189,11 @@ function renderPlate() {
   $('swapNote').textContent = tpl(l.swapNote, { name: cname() });
 }
 
-function renderCompare() {
-  const l = L(), b = S.basis;
-  const sel = S.sel, sname = l.food[sel];
-  $('selChips').innerHTML = Object.keys(FOODS).filter(f => !PLANTS.includes(f)).map(f => chip('sel', f, l.food[f], sel === f)).join('');
-  $('basisChips').innerHTML = ['protein', 'kg'].map(v => chip('basis', v, l.basis[v], b === v)).join('');
-  // 基準：たんぱく質100 gあたり ＝ 1 kgあたり ÷ (たんぱく質割合 × 10)
-  const val = (f, ind) => { const x = FOODS[f][ind]; return b === 'protein' ? x / (FOODS[f].protein * 10) : x; };
-  const num = v => v >= 100 ? fmt(v) : v >= 10 ? v.toFixed(1) : v.toFixed(2);
-  const rx = x => x >= 10 ? fmt(x) : trim(x.toFixed(1));
-
-  // 選んだ食材と植物性の倍率
-  const cards = INDICATORS.map(ind => {
-    const c = val(sel, ind), r = PLANTS.map(p => c / val(p, ind)), lo = Math.min(...r), hi = Math.max(...r);
-    const x = Math.abs(hi - lo) < 0.25 ? tpl(l.times, { x: rx(lo) }) : tpl(l.times, { x: rx(lo) + '–' + rx(hi) });
-    return `<div><div class="k">${tpl(l.vsK, { ind: l.ind[ind], food: sname })}</div><div class="v num">${x}</div>
-      <div class="s">${tpl(l.vsS, { food: sname, c: num(c), t: num(val('tofu', ind)), p: num(val('peas', ind)) })} ${l.unit[ind]}</div></div>`;
-  });
-  const per100kgProtein = f => FOODS[f].animals / FOODS[f].protein * 100;
-  if (FOODS[sel].animals) {
-    const n = per100kgProtein(sel), ratio = n / per100kgProtein('beef');
-    cards.push(`<div class="animal"><div class="k">${tpl(l.animalK, { food: sname })}</div><div class="v num">${tpl(l.animalV, { n: n >= 10 ? fmt(n) : trim(n.toFixed(1)), u: l.animalU[sel] })}</div>
-      <div class="s">${sel === 'beef' ? l.animalSB : tpl(l.animalS, { x: fmt(ratio) })}</div></div>`);
-  }
-  $('vsCards').innerHTML = cards.join('');
-
-  // 指標ごとの棒グラフ（桁違いの値は棒を省略して、鶏肉と植物性の差が見えるようにする）
-  const panel = (title, unit, rows) => {
-    const vs = rows.map(r => r.v).sort((a, b) => b - a);
-    let cap = (vs[2] ?? vs[0]) * 1.15;
-    if (vs[0] <= cap * 1.3) cap = vs[0] * 1.02;
-    const anyBroken = rows.some(r => r.v > cap);
-    return `<div class="fpanel"><h4>${title}</h4><div class="u">${unit}</div>${rows.map(r => {
-      const cls = r.f === sel ? 'hl-sel' : PLANTS.includes(r.f) ? 'hl-plant' : '';
-      const col = r.f === sel ? 'var(--amber)' : PLANTS.includes(r.f) ? 'var(--green)' : '#6b7078';
-      return `<div class="frow ${cls}"><span class="fn">${l.food[r.f]}</span>
-        <div class="fb${r.v > cap ? ' broken' : ''}"><span style="width:${Math.min(1, r.v / cap) * 100}%;background:${col}"></span></div>
-        <span class="fv">${num(r.v)}</span></div>`;
-    }).join('')}${anyBroken ? `<div class="brk">${l.brk}</div>` : ''}</div>`;
-  };
-  const foods = Object.keys(FOODS);
-  const panels = INDICATORS.map(ind => panel(l.ind[ind], l.unit[ind] + ' / ' + l.basis[b].replace(/（.*|\s*\(.*/, ''), foods.map(f => ({ f, v: val(f, ind) }))));
-  const meats = foods.filter(f => FOODS[f].animals);
-  panels.push(panel(l.ind.animals, l.unitAnimals[b], meats.map(f => ({ f, v: b === 'protein' ? per100kgProtein(f) : FOODS[f].animals * 1000 }))));
-  $('fpanels').innerHTML = panels.join('');
-}
-
-// 食べ物と地球（Our World in Data / Poore & Nemecek 2018、Lovejoy & Nobre 2018・2019、INPE・Embrapa TerraClass 2014）
-const PLANET = {
-  share: { ghg: 26, land: 50, water: 70, eutro: 78 },
-  live: { land: 75, kcal: 18, prot: 37 },
-  foodGt: 13.7,                  // 食べ物の温室効果ガス（十億 t CO₂e/年）
-  amz: { basin: 17, brazil: 20, lo: 20, hi: 25, max: 40 },
-  // 世界の食べ方別の農地（十億 ha）：cropFood＝人の食べ物、cropFeed＝飼料、crop＝畑全体、past＝牧草地
-  diets: {
-    now:     { cropFood: 0.704, cropFeed: 0.538, past: 2.89 },
-    nobeef:  { crop: 1.17, past: 1.04 },
-    nodairy: { crop: 1.1, past: 0 },
-    eggfish: { crop: 1.01, past: 0 },
-    vegan:   { crop: 1.0, past: 0 },
-  },
-  japanBha: 0.0378,              // 日本の面積 377,975 km²
-};
-const dietTotal = k => { const x = PLANET.diets[k]; return (x.crop ?? x.cropFood + x.cropFeed) + x.past; };
-
-function renderPlanet() {
-  const l = L(), ja = S.lang === 'ja';
-  const col = { ghg: 'var(--red)', land: 'var(--s-farm, #b08a5a)', water: '#4a90c2', eutro: '#5bb5a2' };
-  $('shareBars').innerHTML = Object.entries(PLANET.share).map(([k, v]) => `<div class="share-row"><span>${l.share[k][0]}</span>
-    <div class="sb"><span style="width:${v}%;background:${col[k]}"></span></div><span class="sv num">${v}%</span><span class="ss">${l.share[k][1]}</span></div>`).join('');
-  $('liveBars').innerHTML = Object.entries(PLANET.live).map(([k, v]) => `<div class="share-row"><span>${l.live[k]}</span>
-    <div class="sb"><span style="width:${v}%;background:${k === 'land' ? '#8a6d4a' : 'var(--amber)'}"></span></div><span class="sv num">${k === 'land' ? l.liveLand : v + '%'}</span></div>`).join('');
-  const deaths = PLANET.foodGt * 1e9 / 3664 * mult();
-  $('foodDeath').innerHTML = tpl(l.pfDeath, { n: people(sig(deaths)), tip: TIPS[S.tip][S.lang] });
-
-  // B：アマゾンのゲージ（0〜40%）
-  const a = PLANET.amz, pos = v => v / a.max * 100;
-  $('gauge').innerHTML = `<div class="track">
-      <div class="danger" style="left:${pos(a.lo)}%;width:${pos(a.hi) - pos(a.lo)}%"></div>
-      <div class="mk" style="left:${pos(a.basin)}%"></div><div class="mk" style="left:${pos(a.brazil)}%;background:#ffd27a"></div>
-    </div>
-    <div class="dlab" style="left:${pos((a.lo + a.hi) / 2)}%">${l.gDanger}</div>
-    <div class="mlab" style="left:${pos(a.basin)}%;transform:translateX(calc(-100% - 4px));text-align:right">${l.gBasin}</div>
-    <div class="mlab" style="left:${pos(a.brazil)}%;transform:translateX(4px);text-align:left;color:#ffd27a">${l.gBrazil}</div>
-    <div class="ticks">${[0, 10, 20, 30, 40].map(x => `<span>${x}%</span>`).join('')}</div>`;
-  $('amzStats').innerHTML = l.amz.map(([v, s]) => `<div><div class="v num" style="font-size:28px">${v}</div><div class="s">${s}</div></div>`).join('');
-
-  // C：世界の食べ方が変わったら
-  const keys = Object.keys(PLANET.diets), sel = S.diet, now = dietTotal('now'), max = now;
-  $('dietChips').innerHTML = keys.map(k => chip('diet', k, l.diet[k], sel === k)).join('');
-  const tot = dietTotal(sel), freed = now - tot;
-  const bn = n => ja ? trim((n * 10).toFixed(1)) : n.toFixed(2);
-  $('dietStats').innerHTML = `
-    <div><div class="k">${l.dTotK}</div><div class="v num">${tpl(l.bha, { n: bn(tot) })}</div><div class="s">${tpl(l.dTotS, { p: Math.round(tot / now * 100) + '%' })}</div></div>
-    <div><div class="k">${l.dFreeK}</div><div class="v num" style="color:var(--green)">${freed > 0 ? (ja ? '' : '') + tpl(l.bha, { n: bn(freed) }) : '—'}</div><div class="s">${freed > 0 ? '−' + Math.round(freed / now * 100) + '%' : l.dNone}</div></div>
-    <div><div class="k">${l.dJpK}</div><div class="v num" style="color:var(--green)">${freed > 0 ? '×' + fmt(freed / PLANET.japanBha) : '—'}</div><div class="s">${freed > 0 ? tpl(l.dJpS, { n: fmt(freed / PLANET.japanBha), x: sel === 'vegan' ? l.dNA : '' }) : l.dNone}</div></div>`;
-  const seg = (v, c, label) => v > 0 ? `<span style="width:${v / max * 100}%;background:${c}" title="${label}">${v / max > 0.12 ? tpl(l.bha, { n: bn(v) }) : ''}</span>` : '';
-  $('dietBars').innerHTML = keys.map(k => {
-    const x = PLANET.diets[k];
-    const bars = x.crop != null ? seg(x.crop, '#a0786a', l.lgCropAll) : seg(x.cropFood, '#a0786a', l.lgCrop) + seg(x.cropFeed, '#7a5146', l.lgFeed);
-    return `<div class="diet-row${k === sel ? ' on' : ''}" data-g="diet" data-v="${k}" role="button" tabindex="0"><span class="dn">${l.diet[k]}${l.dietSub[k] ? `<br><span class="hint" style="font-size:11px">${l.dietSub[k]}</span>` : ''}</span>
-      <div class="db">${bars}${seg(x.past, '#5a7d5c', l.lgPast)}</div><span class="dt">${tpl(l.bha, { n: bn(dietTotal(k)) })}</span></div>`;
-  }).join('');
-  $('dietLegend').innerHTML = [['#a0786a', l.lgCrop + ' / ' + l.lgCropAll], ['#7a5146', l.lgFeed], ['#5a7d5c', l.lgPast]]
-    .map(([c, t]) => `<span><i style="background:${c}"></i>${t}</span>`).join('');
-}
-
 /* ===================== EVENTS ===================== */
 document.addEventListener('click', e => {
   const link = e.target.closest('.coc-link');
   if (link) { e.preventDefault(); const a = $('landExplain'); a.open = true; $('plateAdv').open = true; a.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
-  const t = e.target.closest('button, .item, .diet-row');
+  const t = e.target.closest('button, .item');
   if (!t) return;
   const d = S.day;
   if (t.dataset.lang) { S.lang = t.dataset.lang; store.set('scw-lang', S.lang); renderStatic(); return; }
@@ -1472,9 +1206,6 @@ document.addEventListener('click', e => {
   if (t.dataset.g) {
     const g = t.dataset.g, v = t.dataset.v;
     if (g === 'gwp') { S.gwp = +v; rebuild(); return; }
-    if (g === 'basis') { S.basis = v; renderCompare(); return; }
-    if (g === 'sel') { S.sel = v; renderCompare(); return; }
-    if (g === 'diet') { S.diet = v; renderPlanet(); return; }
     if (g === 'coc') { S.coc = v === '1'; rebuild(); return; }
     if (g === 'mode') d.mode = v;
     else if (g === 'hvac') { d.hvac = v; $('hvacMore').hidden = v === 'off'; }
@@ -1505,6 +1236,7 @@ $('country').addEventListener('change', e => {
   rebuild();
 });
 $('tip').addEventListener('change', e => { S.tip = +e.target.value; update(); });
+if (location.hash === '#landExplain') { $('plateAdv').open = true; $('landExplain').open = true; setTimeout(() => $('landExplain').scrollIntoView({ block: 'start' }), 50); }
 
 renderStatic();
 </script>
