@@ -431,10 +431,53 @@ function swFloat(lang) {
 .sw-float button { width: 28px; height: 28px; border-radius: 50%; border: 0; background: rgba(20,20,22,.85); color: #ddd; font-size: 16px; line-height: 1; cursor: pointer; }
 @media (prefers-reduced-motion: no-preference) { .sw-float.show a { animation: sw-pulse 2.6s ease-in-out 1s 3; } }
 @keyframes sw-pulse { 50% { box-shadow: 0 10px 28px -8px rgba(0,0,0,.6), 0 0 0 10px color-mix(in srgb, var(--c) 0%, transparent); } }
-@media (max-width: 899px) { body:has(.mbar) .sw-float { bottom: 76px; } }`;
+@media (max-width: 899px) { body:has(.mbar) .sw-float { bottom: 104px; } }
+/* 狭い画面：上の設定バーを1段にまとめ、下へスクロール中は隠す */
+.bar-top, .top { transition: transform .25s ease; }
+.sw-tucked { transform: translateY(-115%); }
+@media (max-width: 560px) {
+  .bar-top .wrap, .top .wrap { flex-wrap: nowrap !important; gap: 6px !important; padding-top: 6px !important; padding-bottom: 6px !important; }
+  .bar-top .ctl { min-width: 0; flex: 0 1 auto; gap: 0 !important; }
+  .bar-top .ctl > span, .top label[for] { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .bar-top select, .top select { font-size: 12.5px !important; padding: 5px 4px !important; min-width: 0; text-overflow: ellipsis; }
+  .bar-top #country { max-width: 30vw; }
+  .bar-top #tip, .top #tip { max-width: 36vw; }
+  .bar-top .lang button, .top .lang button { padding: 5px 8px !important; }
+}`;
   const st = document.createElement('style');
   st.textContent = css;
   document.head.appendChild(st);
+
+  const mq = matchMedia('(max-width: 560px)');
+  // ティッピングの選択肢：狭い画面では「×1.5 中程度…」のように倍率を先頭にして、切れても倍率が見えるようにする
+  function compactTips() {
+    const sel = document.getElementById('tip');
+    if (!sel) return;
+    [...sel.options].forEach(o => {
+      if (!o.dataset.full) o.dataset.full = o.textContent;
+      const full = o.dataset.full, m = full.match(/×\s?\d+(\.\d+)?/);
+      o.textContent = mq.matches ? `${m ? m[0] : '×1'} ${full.replace(m ? m[0] : '', '').replace(/[（(].*?[）)]/g, '').trim()}` : full;
+    });
+  }
+  function initTips() {
+    const sel = document.getElementById('tip');
+    if (!sel) return;
+    compactTips();
+    new MutationObserver(compactTips).observe(sel, { childList: true });
+    mq.addEventListener('change', compactTips);
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initTips); else initTips();
+  // 下へスクロールしている間は設定バーを隠し、少し上に戻すと出す
+  let lastY = window.scrollY;
+  window.addEventListener('scroll', () => {
+    const bar = document.querySelector('.bar-top, .top');
+    if (!bar) return;
+    const y = window.scrollY;
+    if (!mq.matches || y < 80 || bar.contains(document.activeElement)) bar.classList.remove('sw-tucked');
+    else if (y > lastY + 6) bar.classList.add('sw-tucked');
+    else if (y < lastY - 6) bar.classList.remove('sw-tucked');
+    lastY = y;
+  }, { passive: true });
 })();
 
 /* ===================== 作者紹介 ===================== */
