@@ -111,14 +111,35 @@
   .death-line { font-size: 14px; color: #c9c8c3; max-width: 760px; margin-top: 18px; line-height: 1.7; }
   .death-line b { color: var(--red); }
   .own { display: inline-block; font-size: 11px; color: var(--amber); border: 1px solid rgba(232,163,61,.5); border-radius: 999px; padding: 0 8px; margin-left: 4px; }
-  .gauge { position: relative; margin: 54px 0 40px; max-width: 760px; }
-  .gauge .track { position: relative; height: 22px; border-radius: 11px; background: linear-gradient(90deg, #2e6b4f, #4fb38a 30%, #c9a43d 50%, #e5483b 62.5%, #8c1f17); overflow: visible; }
-  .gauge .danger { position: absolute; top: -6px; bottom: -6px; border: 2px dashed #fff; border-radius: 6px; background: repeating-linear-gradient(135deg, rgba(255,255,255,.22) 0 4px, transparent 4px 9px); }
-  .gauge .dlab { position: absolute; top: -40px; transform: translateX(-50%); font-size: 12px; font-weight: 700; color: var(--red); white-space: nowrap; }
-  .gauge .mk { position: absolute; top: -8px; width: 3px; height: 38px; background: #fff; transform: translateX(-50%); border-radius: 2px; }
-  .gauge .mlab { position: absolute; top: 34px; transform: translateX(-50%); font-size: 12px; color: var(--text); white-space: nowrap; text-align: center; line-height: 1.35; }
-  .gauge .mlab.up { top: -40px; }
-  .gauge .ticks { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-top: 44px; }
+  .forest { max-width: 760px; margin: 28px 0 8px; }
+  .forest .fhead { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; font-size: 13px; color: #c9c8c3; margin-bottom: 8px; }
+  .forest .left { font-size: 15px; color: var(--text); }
+  .forest .left b { font-size: clamp(22px, 3.4vw, 28px); color: var(--amber); font-weight: 900; margin: 0 4px; }
+  .forest .bar { position: relative; height: 34px; border-radius: 8px; background: linear-gradient(90deg, #2f7d62, #3f9a77); overflow: visible; }
+  .forest .lost { position: absolute; inset: 0 auto 0 0; border-radius: 8px 0 0 8px; background: repeating-linear-gradient(135deg, #8c4a2f 0 6px, #a65a38 6px 12px); }
+  .forest .zone { position: absolute; top: -8px; bottom: -8px; border: 2px dashed #ff7a6b; border-radius: 6px; background: rgba(229,72,59,.28); }
+  .forest .labs { position: relative; height: 54px; font-size: 12px; line-height: 1.4; }
+  .forest .labs span { position: absolute; top: 10px; white-space: nowrap; }
+  .forest .labs .l1 { transform: translateX(calc(-100% - 6px)); text-align: right; color: #e9b08f; }
+  .forest .labs .l2 { transform: translateX(6px); color: #ff8a7d; font-weight: 700; }
+  @media (max-width: 560px) { .forest .labs { height: 62px; } .forest .labs .l1 { left: 0 !important; transform: none; text-align: left; } .forest .labs .l2 { top: 32px; left: 0 !important; transform: none; } }
+  .forest .key { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12px; color: #c9c8c3; }
+  .forest .key i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
+  .tip-impact { margin-top: 28px; background: rgba(229,72,59,.06); border: 1px solid rgba(229,72,59,.35); border-radius: 16px; padding: 18px; max-width: 900px; }
+  .tip-impact h4 { margin: 0 0 4px; font-size: 17px; }
+  .tip-impact .sub { font-size: 13px; color: #c9c8c3; margin: 0 0 12px; }
+  .imp { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
+  .imp > div { background: var(--bg2); border: 1px solid var(--faint); border-radius: 12px; padding: 14px; }
+  .imp .ic { font-size: 18px; }
+  .imp .v { font-size: 24px; font-weight: 900; color: var(--text); line-height: 1.25; margin: 2px 0 4px; }
+  .imp .s { font-size: 12.5px; color: #c9c8c3; line-height: 1.6; }
+  .imp-death { margin-top: 12px; background: var(--bg2); border: 1px solid var(--faint); border-radius: 12px; padding: 14px; font-size: 13.5px; color: #c9c8c3; }
+  .imp-death .big { font-size: 26px; font-weight: 900; color: var(--red); }
+  .hab { max-width: 820px; margin: 18px 0 4px; }
+  .hab .hbar { display: flex; height: 30px; border-radius: 8px; overflow: hidden; background: #3a3f45; }
+  .hab .hbar span { height: 100%; transition: width .4s ease; display: grid; place-items: center; font-size: 11.5px; color: #fff; white-space: nowrap; overflow: hidden; }
+  .hab .hbar .free { background: repeating-linear-gradient(135deg, #3f9a77 0 6px, #4fb38a 6px 12px); }
+  .hab .cap { font-size: 12px; color: var(--muted); margin-top: 6px; }
   .diet-bars { margin-top: 18px; max-width: 820px; }
   .diet-row { display: grid; grid-template-columns: 190px 1fr; gap: 10px; align-items: center; margin: 8px 0; font-size: 13px; cursor: pointer; opacity: .55; transition: opacity .2s; }
   .diet-row.on { opacity: 1; }
@@ -157,14 +178,25 @@
 
     <h3 class="ph3" data-i18n="pfBH"></h3>
     <p class="lead" data-i18n="pfBLead"></p>
-    <div class="gauge" id="gauge"></div>
+    <div class="forest" id="forest"></div>
     <div class="pstats" id="amzStats"></div>
+    <div class="tip-impact">
+      <h4 data-i18n="impH"></h4>
+      <p class="sub" data-i18n="impSub"></p>
+      <div class="imp" id="impCards"></div>
+      <div class="imp-death">
+        <div class="gwp-row" style="margin:0 0 8px"><span data-i18n="impRel"></span><div class="chips" id="relChips"></div></div>
+        <div id="impDeath"></div>
+      </div>
+    </div>
     <p class="note-box" data-i18n="pfBNote"></p>
 
     <h3 class="ph3" data-i18n="pfCH"></h3>
     <p class="lead" data-i18n="pfCLead"></p>
     <div class="gwp-row"><span data-i18n="pfCSel"></span><div class="chips" id="dietChips"></div></div>
     <div class="pstats" id="dietStats"></div>
+    <div class="hab" id="hab"></div>
+    <h3 class="ph3" data-i18n="dBarsH"></h3>
     <div class="diet-bars" id="dietBars"></div>
     <div class="slegend" id="dietLegend"></div>
     <p class="note-box" data-i18n="pfCNote"></p>
@@ -193,7 +225,7 @@
 
 <footer data-i18n="footer"></footer>
 
-<script src="site.js?v=20261020e"></script>
+<script src="site.js?v=20261020f"></script>
 <script>
 const TIPS = [
   { m: 1,   en: 'None (1,000-ton rule only)',     ja: 'なし（1,000トン・ルールのみ）' },
@@ -256,23 +288,35 @@ const I18N = {
     live: { land: 'Share of farmland used for livestock (pasture + feed crops)', kcal: 'Share of the world’s calories it provides', prot: 'Share of the world’s protein it provides' },
     liveLand: '~3/4',
     pfDeath: 'Only the greenhouse-gas part can be turned into lives. Applying the 1,000-ton rule to food’s 13.7 billion t CO₂e gives about <b>{n} future deaths a year</b> (central estimate, {tip}; the true figure could be ~10× lower or higher). <span class="own">our estimate</span><br><span class="hint">Land, water and pollution have no comparable death factor, so they are shown as shares, not lives. The counter on the story page counts CO₂ only, so this is not a slice of it.</span>',
-    pfBH: 'The Amazon’s tipping gauge',
+    pfBH: 'The Amazon: how close to the tipping point?',
     pfBLead: 'The Amazon makes much of its own rain. Scientists warn that once <b>20–25%</b> of the forest is lost — together with warming and fire — the east, south and centre could flip from rainforest to savanna.',
-    gBasin: 'Whole basin<br><b>~17% lost</b>', gBrazil: 'Brazilian part<br><b>~20%</b>', gDanger: 'Danger zone 20–25%',
+    fAll: 'The whole Amazon rainforest, as it originally was (= 100%)', fLeft: 'To the danger zone: <b>3–8</b> percentage points', fLost: 'Already lost: ~17%', fZone: 'Danger zone: 20–25% lost', kLost: 'Forest already lost', kLeft: 'Forest still standing', kZone: 'Beyond this, the forest may no longer sustain its own rain',
+    impH: 'If the Amazon tips', impSub: 'Large parts of the rainforest would turn into degraded forest or savanna — and would not come back simply because emissions fall.',
+    imp: [
+      ['🌳', '150–200 billion t', 'of carbon stored in the forest — <b>15–20 years</b> of the world’s CO₂ emissions. Dying forest releases it, speeding up warming.'],
+      ['🌧️', 'up to 50%', 'of the region’s rainfall comes from the forest itself. It carries moisture across South America — to farms, cities and wetlands such as the Pantanal and the La Plata basin.'],
+      ['👥', '40 million+', 'people live in the Amazon, including <b>2.2 million Indigenous people</b> of more than 300 groups.'],
+      ['🦜', '10%+', 'of the Earth’s land species live there. Much of that loss could never be undone.'],
+      ['📉', '62–77%', 'of the forest could shift almost system-wide if warming reaches <b>1.5–1.9 °C</b> while deforestation reaches 22–28% (a 2026 modelling study).'],
+    ],
+    impRel: 'If this share of the forest’s carbon were released:',
+    impDeath: 'By the 1,000-ton rule (1 future death per 1,000 t of carbon) that would lock in about <span class="big">{lo}–{hi}</span> future deaths — on top of the counter. {ww2} <span class="own">our estimate</span><br><span class="hint" style="display:block;margin-top:6px">No tipping multiplier is applied, since this is itself a tipping effect. How much carbon would be lost, and how fast, is not known; this only shows the scale.</span>',
+    impWW2: '(World War II: about 80 million.)',
     amz: [
       ['~63%', 'of cleared land in the Brazilian Legal Amazon is <b>cattle pasture</b> (479,760 of 762,464 km², 2014; stable since 2004)'],
       ['×2 Japan', '762,000 km² of forest cleared in the Brazilian Legal Amazon by 2014 — about <b>twice the area of Japan</b>'],
       ['~23%', 'of the destroyed area is <b>abandoned</b> pasture and cropland — where regrowth could rebuild a safety margin'],
       ['7%', 'of the world’s soy is eaten by people (tofu, soy milk…). <b>Most goes to animal feed</b>'],
     ],
-    pfBNote: '<b>About these figures:</b> 17% / ~20% and the 20–25% threshold are from Lovejoy &amp; Nobre (<i>Science Advances</i>, 2018 and Dec 2019); newer estimates may differ. Their advice: don’t find the exact threshold by crossing it — bring deforestation back below 20% through reforestation. Pasture share: INPE &amp; Embrapa, TerraClass 2014. The <i>Global Tipping Points Report 2025</i> warns that, combined with deforestation, Amazon dieback is a risk even below 2 °C of warming.',
+    pfBNote: '<b>About these figures:</b> “lost” means the share of the original forest that has been cleared — about 17% across the whole Amazon basin, and approaching 20% in the Brazilian Amazon, where clearing is heaviest (Lovejoy &amp; Nobre, <i>Science Advances</i>, Dec 2019). The 20–25% danger zone is from the same authors (2018); newer estimates may differ. Their advice: don’t find the exact threshold by crossing it — bring deforestation back below 20% through reforestation. A 2026 study (Wunderling et al., <i>Nature</i>) finds that the threshold falls as the world warms. Impacts: Flores et al. (2024, <i>Nature</i>). Pasture share: INPE &amp; Embrapa, TerraClass 2014.',
     pfCH: 'If the whole world ate differently',
     pfCLead: 'How much farmland would the world need if everyone ate a given diet? These are published scenarios that still meet everyone’s calorie and protein needs.',
     pfCSel: 'If everyone ate',
     diet: { now: 'Today’s diet', nobeef: 'No beef or mutton', nodairy: 'No beef, mutton or dairy', eggfish: 'Eggs and fish only', vegan: 'Plant-based (vegan)' },
     dietSub: { nobeef: 'beef from dairy cows still included', eggfish: 'no red meat, dairy or poultry' },
-    dTotK: 'Farmland needed', dFreeK: 'Farmland freed', dJpK: 'Freed land, compared with Japan',
-    dTotS: '{p} of today', dFreeS: 'billion hectares', dJpS: 'times the area of Japan{x}', dNA: ' — about North America plus Brazil',
+    dTotK: 'Farmland needed', dFreeK: 'Land that could return to nature', dJpK: 'Freed land, compared with Japan',
+    dTotS: '{p} of the world’s habitable land · {b}', dFreeS: '{p} of the world’s habitable land · {b}', dForS: 'about <b>{p}</b> of the area of all the world’s forests today', dJpS: 'about {n} times the area of Japan{x}', dNA: ' — about North America plus Brazil',
+    hab: 'The world’s habitable land (free of ice and desert = 100%)', hFarm: 'Farmland', hFree: 'Could return to nature', hRest: 'Forests, grassland, shrubs, towns…', hCap: 'Today farmland covers about 43% of habitable land (Poore &amp; Nemecek 2018); forests about 38% (Our World in Data).', dBarsH: 'Farmland by diet (cropland and pasture)',
     dNone: 'the starting point',
     bha: '{n} billion ha', lgCrop: 'Cropland for food', lgFeed: 'Cropland for animal feed', lgPast: 'Pasture for grazing', lgCropAll: 'Cropland (all uses)',
     pfCNote: '<b>Reading this chart:</b> cutting out beef and mutton alone almost halves farmland, because huge areas of pasture are freed. But swapping in chicken has its own costs — more animals and more water pollution than plant protein (see the comparison below). The deepest cut comes from plant-based diets. Freed land could regrow forest and draw CO₂ back down (<a href="my-day.html#landExplain">the carbon opportunity cost</a>). This chart shows land only. Source: Poore &amp; Nemecek (2018) via Our World in Data.',
@@ -314,23 +358,35 @@ const I18N = {
     live: { land: '農地のうち家畜に使われる割合（牧草地＋飼料畑）', kcal: '世界のカロリーのうち家畜由来の割合', prot: '世界のたんぱく質のうち家畜由来の割合' },
     liveLand: '約3/4',
     pfDeath: '死者数に換算できるのは温室効果ガスの部分だけです。食べ物の排出137億 t CO₂e に1,000トン・ルールを当てはめると、<b>年約{n}の将来の死</b>が確定することになります（中央値、{tip}。実際は約10分の1〜10倍の幅があります）。<span class="own">私たちの概算</span><br><span class="hint">土地・水・汚染には同じような死者数への換算がないため、人数ではなく割合で示しています。ストーリーページのカウンターはCO₂だけを数えているので、その一部ではありません。</span>',
-    pfBH: 'アマゾンのティッピング計',
+    pfBH: 'アマゾンは、限界まであとどれくらい？',
     pfBLead: 'アマゾンの森は、自らの雨の多くを自分でつくっています。森林の<b>20〜25%</b>が失われると、温暖化や火災と重なって、東部・南部・中部が熱帯雨林からサバンナに変わってしまう恐れがある、と科学者は警告しています。',
-    gBasin: '流域全体<br><b>約17%が消失</b>', gBrazil: 'ブラジル側<br><b>約20%</b>', gDanger: '危険域 20〜25%',
+    fAll: 'アマゾンの熱帯雨林の、もとの広さ全体（＝100%）', fLeft: '危険域まで、あと <b>3〜8</b> ポイント', fLost: 'すでに失われた：約17%', fZone: '危険域：20〜25%が失われると', kLost: 'すでに失われた森', kLeft: '残っている森', kZone: 'ここを越えると、森が自らの雨を保てなくなる恐れ',
+    impH: 'もしアマゾンが限界を越えたら', impSub: '熱帯雨林の広い範囲が、劣化した森やサバンナに変わってしまいます。排出を減らしても、簡単には元に戻りません。',
+    imp: [
+      ['🌳', '1,500億〜2,000億 t', 'の炭素が森にたくわえられています。世界のCO₂排出の<b>15〜20年分</b>です。森が枯れれば放出され、温暖化を加速させます。'],
+      ['🌧️', '最大50%', 'この地域の雨の最大半分は、森そのものがつくっています。その水分は南米の広い範囲に運ばれ、農地や都市、パンタナール湿地やラプラタ川流域を支えています。'],
+      ['👥', '4,000万人以上', 'がアマゾンに暮らしています。300以上の民族、<b>220万人の先住民</b>を含みます。'],
+      ['🦜', '10%以上', '地球の陸の生き物の1割以上がここにいます。失われれば、その多くは二度と戻りません。'],
+      ['📉', '62〜77%', '温暖化が<b>1.5〜1.9℃</b>に達し、森林減少が22〜28%に進むと、森のこれだけの面積がほぼ全体で転換しうる、とする研究があります（2026年のモデル研究）。'],
+    ],
+    impRel: '森の炭素のうち、これだけが放出されたら：',
+    impDeath: '1,000トン・ルール（炭素1,000 tで将来の死1人）で換算すると、約<span class="big">{lo}〜{hi}</span>の将来の死が、カウンターの数字に上乗せされることになります。{ww2}<span class="own">私たちの概算</span><br><span class="hint" style="display:block;margin-top:6px">これ自体がティッピングによる影響なので、ティッピング係数はかけていません。どれだけの炭素が、どれほどの速さで失われるかはわかっていません。規模の目安としてご覧ください。</span>',
+    impWW2: '（第二次世界大戦の死者は約8,000万人）',
     amz: [
       ['約63%', 'ブラジル法定アマゾンで切り開かれた土地のうち<b>牛の牧草地</b>の割合（762,464 km²のうち479,760 km²、2014年。2004年以降ほぼ横ばい）'],
       ['日本の約2倍', '2014年までにブラジル法定アマゾンで失われた森林 76万 km²は、<b>日本の面積の約2倍</b>'],
       ['約23%', '失われた森林のうち、<b>放棄された</b>牧草地や畑の割合。森を回復させて安全の余裕を取り戻せる場所です'],
       ['7%', '世界の大豆のうち人が直接食べる（豆腐・豆乳など）割合。<b>大部分は家畜の飼料</b>です'],
     ],
-    pfBNote: '<b>数値について：</b>約17%・約20%と、20〜25%の閾値は Lovejoy &amp; Nobre（<i>Science Advances</i>、2018年と2019年12月）によります。より新しい推計では値が異なる可能性があります。著者らは「正確な閾値を、実際に越えて確かめるべきではない」とし、森林の回復で森林減少を20%未満に戻すよう求めています。牧草地の割合は INPE・Embrapa の TerraClass 2014。<i>Global Tipping Points Report 2025</i> は、森林破壊と重なると、2℃未満の温暖化でもアマゾンの大規模な枯死が起こりうると警告しています。',
+    pfBNote: '<b>数値について：</b>「失われた」は、もとの森の広さのうち切り開かれた割合です。アマゾン流域全体で約17%、森林破壊が最も進むブラジル側では20%近くに達しています（Lovejoy &amp; Nobre、<i>Science Advances</i>、2019年12月）。20〜25%の危険域は同じ著者（2018年）によるもので、より新しい推計では値が異なる可能性があります。著者らは「正確な閾値を、実際に越えて確かめるべきではない」とし、森林の回復で森林減少を20%未満に戻すよう求めています。2026年の研究（Wunderling ら、<i>Nature</i>）は、温暖化が進むほどこの限界が手前に来ることを示しました。影響：Flores ら（2024年、<i>Nature</i>）。牧草地の割合：INPE・Embrapa の TerraClass 2014。',
     pfCH: '世界の食べ方が変わったら',
     pfCLead: '世界中の人が同じ食べ方をしたら、農地はどれだけ必要でしょうか。どれも、すべての人のカロリーとたんぱく質をまかなう前提で公表されたシナリオです。',
     pfCSel: '世界中が',
     diet: { now: 'いまの食べ方', nobeef: '牛肉・羊肉なし', nodairy: '牛肉・羊肉・乳製品なし', eggfish: '卵と魚だけ', vegan: '植物性（ヴィーガン）' },
     dietSub: { nobeef: '乳牛由来の牛肉は含む', eggfish: '赤身肉・乳製品・鶏肉なし' },
-    dTotK: '必要な農地', dFreeK: '空く農地', dJpK: '空く土地（日本の何個分）',
-    dTotS: 'いまの{p}', dFreeS: '億ヘクタール', dJpS: '日本の面積の約{n}倍{x}', dNA: '（北米＋ブラジルほど）',
+    dTotK: '必要な農地', dFreeK: '自然に戻せる土地', dJpK: '空く土地（日本の何個分）',
+    dTotS: '人が住める土地の{p}・{b}', dFreeS: '人が住める土地の{p}・{b}', dForS: 'いまの世界の森林すべての、約<b>{p}</b>に当たる広さ', dJpS: '日本の面積の約{n}倍{x}', dNA: '（北米＋ブラジルほど）',
+    hab: '世界の、人が住める土地（氷と砂漠を除く陸地＝100%）', hFarm: '農地', hFree: '自然に戻せる', hRest: '森林・草原・低木地・まちなど', hCap: 'いまの農地は人が住める土地の約43%（Poore &amp; Nemecek 2018）、森林は約38%（Our World in Data）。', dBarsH: '食べ方別の農地（畑と牧草地）',
     dNone: '出発点',
     bha: '{n}億 ha', lgCrop: '人の食べ物の畑', lgFeed: '家畜の飼料の畑', lgPast: '放牧用の牧草地', lgCropAll: '畑（すべての用途）',
     pfCNote: '<b>このグラフの読み方：</b>牛肉と羊肉をやめるだけで、広大な牧草地が空くため農地はほぼ半分になります。ただし鶏肉に置き換えると、植物性たんぱくより動物の数も水質汚染も多くなります（下の比較を参照）。最も大きく減らせるのは植物性中心の食べ方です。空いた土地は森林に戻り、CO₂を吸収できます（<a href="my-day.html#landExplain">炭素の機会費用</a>）。このグラフは土地だけを示しています。出典：Poore &amp; Nemecek（2018）、Our World in Data 経由。',
@@ -340,7 +396,7 @@ const I18N = {
 /* ===================== HELPERS ===================== */
 const store = { get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
                 set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} } };
-const S = { lang: store.get('scw-lang') === 'ja' ? 'ja' : 'en', tip: 1, basis: 'protein', sel: 'chicken', diet: 'vegan' };
+const S = { lang: store.get('scw-lang') === 'ja' ? 'ja' : 'en', tip: 1, basis: 'protein', sel: 'chicken', diet: 'vegan', rel: 25 };
 const $ = id => document.getElementById(id);
 const L = () => I18N[S.lang];
 const tpl = (s, v = {}) => s.replace(/\{(\w+)\}/g, (_, x) => v[x] ?? '');
@@ -413,7 +469,9 @@ const PLANET = {
   share: { ghg: 26, land: 50, water: 70, eutro: 78 },
   live: { land: 75, kcal: 18, prot: 37 },
   foodGt: 13.7,                  // 食べ物の温室効果ガス（十億 t CO₂e/年）
-  amz: { basin: 17, brazil: 20, lo: 20, hi: 25, max: 40 },
+  amz: { lost: 17, lo: 20, hi: 25, carbonLo: 150e9, carbonHi: 200e9 },   // 炭素 t（Flores et al. 2024：150–200 Pg C）
+  habFarm: 43,                   // いまの農地が人が住める土地に占める割合 %（Poore & Nemecek 2018）
+  forestBha: 4.0,                // 世界の森林 約40百万 km²（Our World in Data）
   // 世界の食べ方別の農地（十億 ha）：cropFood＝人の食べ物、cropFeed＝飼料、crop＝畑全体、past＝牧草地
   diets: {
     now:     { cropFood: 0.704, cropFeed: 0.538, past: 2.89 },
@@ -436,16 +494,16 @@ function renderPlanet() {
   const deaths = PLANET.foodGt * 1e9 / 3664 * mult();
   $('foodDeath').innerHTML = tpl(l.pfDeath, { n: people(sig(deaths)), tip: TIPS[S.tip][S.lang] });
 
-  // B：アマゾンのゲージ（0〜40%）
-  const a = PLANET.amz, pos = v => v / a.max * 100;
-  $('gauge').innerHTML = `<div class="track">
-      <div class="danger" style="left:${pos(a.lo)}%;width:${pos(a.hi) - pos(a.lo)}%"></div>
-      <div class="mk" style="left:${pos(a.basin)}%"></div><div class="mk" style="left:${pos(a.brazil)}%;background:#ffd27a"></div>
-    </div>
-    <div class="dlab" style="left:${pos((a.lo + a.hi) / 2)}%">${l.gDanger}</div>
-    <div class="mlab" style="left:${pos(a.basin)}%;transform:translateX(calc(-100% - 4px));text-align:right">${l.gBasin}</div>
-    <div class="mlab" style="left:${pos(a.brazil)}%;transform:translateX(4px);text-align:left;color:#ffd27a">${l.gBrazil}</div>
-    <div class="ticks">${[0, 10, 20, 30, 40].map(x => `<span>${x}%</span>`).join('')}</div>`;
+  // B：アマゾンの森（もとの広さ＝100%）。失われた割合と危険域
+  const a = PLANET.amz;
+  $('forest').innerHTML = `<div class="fhead"><span>${l.fAll}</span><span class="left">${l.fLeft}</span></div>
+    <div class="bar"><div class="lost" style="width:${a.lost}%"></div><div class="zone" style="left:${a.lo}%;width:${a.hi - a.lo}%"></div></div>
+    <div class="labs"><span class="l1" style="left:${a.lost}%">${l.fLost}</span><span class="l2" style="left:${a.hi}%">${l.fZone}</span></div>
+    <div class="key"><span><i style="background:#a65a38"></i>${l.kLost}</span><span><i style="background:#3f9a77"></i>${l.kLeft}</span><span><i style="background:rgba(229,72,59,.5);outline:1px dashed #ff7a6b"></i>${l.kZone}</span></div>`;
+  $('impCards').innerHTML = l.imp.map(([ic, v, t]) => `<div><div class="ic">${ic}</div><div class="v num">${v}</div><div class="s">${t}</div></div>`).join('');
+  $('relChips').innerHTML = [10, 25, 50, 100].map(x => chip('rel', x, x + '%', S.rel === x)).join('');
+  const rl = a.carbonLo * S.rel / 100 / 1000, rh = a.carbonHi * S.rel / 100 / 1000;
+  $('impDeath').innerHTML = tpl(l.impDeath, { lo: people(rl).replace(/人$|\s(million|billion)$/, ''), hi: people(rh), ww2: l.impWW2 });
   $('amzStats').innerHTML = l.amz.map(([v, s]) => `<div><div class="v num" style="font-size:28px">${v}</div><div class="s">${s}</div></div>`).join('');
 
   // C：世界の食べ方が変わったら
@@ -453,10 +511,15 @@ function renderPlanet() {
   $('dietChips').innerHTML = keys.map(k => chip('diet', k, l.diet[k], sel === k)).join('');
   const tot = dietTotal(sel), freed = now - tot;
   const bn = n => ja ? trim((n * 10).toFixed(1)) : n.toFixed(2);
+  const habOf = v => v / now * PLANET.habFarm, pct = v => Math.round(v) + '%';
+  const hFarm = habOf(tot), hFree = habOf(freed);
   $('dietStats').innerHTML = `
-    <div><div class="k">${l.dTotK}</div><div class="v num">${tpl(l.bha, { n: bn(tot) })}</div><div class="s">${tpl(l.dTotS, { p: Math.round(tot / now * 100) + '%' })}</div></div>
-    <div><div class="k">${l.dFreeK}</div><div class="v num" style="color:var(--green)">${freed > 0 ? (ja ? '' : '') + tpl(l.bha, { n: bn(freed) }) : '—'}</div><div class="s">${freed > 0 ? '−' + Math.round(freed / now * 100) + '%' : l.dNone}</div></div>
-    <div><div class="k">${l.dJpK}</div><div class="v num" style="color:var(--green)">${freed > 0 ? '×' + fmt(freed / PLANET.japanBha) : '—'}</div><div class="s">${freed > 0 ? tpl(l.dJpS, { n: fmt(freed / PLANET.japanBha), x: sel === 'vegan' ? l.dNA : '' }) : l.dNone}</div></div>`;
+    <div><div class="k">${l.dTotK}</div><div class="v num">${pct(hFarm)}</div><div class="s">${tpl(l.dTotS, { p: pct(hFarm), b: tpl(l.bha, { n: bn(tot) }) })}</div></div>
+    <div><div class="k">${l.dFreeK}</div><div class="v num" style="color:var(--green)">${freed > 0 ? pct(hFree) : '—'}</div><div class="s">${freed > 0 ? tpl(l.dFreeS, { p: pct(hFree), b: tpl(l.bha, { n: bn(freed) }) }) + '<br>' + tpl(l.dForS, { p: Math.round(freed / PLANET.forestBha * 10) * 10 + '%' }) + '<br>' + tpl(l.dJpS, { n: fmt(freed / PLANET.japanBha), x: sel === 'vegan' ? l.dNA : '' }) : l.dNone}</div></div>`;
+  $('hab').innerHTML = `<div class="ph3" style="margin:18px 0 8px;font-size:13px;color:#c9c8c3;font-weight:500">${l.hab}</div>
+    <div class="hbar"><span style="width:${hFarm}%;background:#a0786a">${l.hFarm} ${pct(hFarm)}</span>${freed > 0 ? `<span class="free" style="width:${hFree}%">${hFree > 8 ? l.hFree + ' ' + pct(hFree) : ''}</span>` : ''}<span style="flex:1;color:#c9c8c3">${l.hRest}</span></div>
+    <div class="slegend"><span><i style="background:#a0786a"></i>${l.hFarm}</span><span><i style="background:#4fb38a"></i>${l.hFree}</span><span><i style="background:#3a3f45"></i>${l.hRest}</span></div>
+    <div class="cap">${l.hCap}</div>`;
   const seg = (v, c, label) => v > 0 ? `<span style="width:${v / max * 100}%;background:${c}" title="${label}">${v / max > 0.12 ? tpl(l.bha, { n: bn(v) }) : ''}</span>` : '';
   $('dietBars').innerHTML = keys.map(k => {
     const x = PLANET.diets[k];
@@ -492,6 +555,7 @@ document.addEventListener('click', e => {
   if (g === 'basis') { S.basis = v; renderCompare(); }
   else if (g === 'sel') { S.sel = v; renderCompare(); }
   else if (g === 'diet') { S.diet = v; renderPlanet(); }
+  else if (g === 'rel') { S.rel = +v; renderPlanet(); }
 });
 $('tip').addEventListener('change', e => { S.tip = +e.target.value; renderPlanet(); });
 render();
