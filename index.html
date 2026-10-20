@@ -323,7 +323,7 @@
 
 <footer data-i18n="footer"></footer>
 
-<script src="site.js?v=20261020b"></script>
+<script src="site.js?v=20261020c"></script>
 <script>
 /* ===================== DATA ===================== */
 // 化石燃料CO₂（2023年頃の概算, Global Carbon Project）。世界合計は土地利用変化を含む 40 Gt。
@@ -392,6 +392,7 @@ const I18N = {
     mLead: 'We use the “1,000-ton rule”: for every 1,000 tonnes of fossil <b>carbon</b> burned — about 3,664 tonnes of CO₂ — roughly one premature death occurs in the future through about a century of warming. It is an order-of-magnitude estimate: the authors put the likely range at 0.1 to 10 deaths per 1,000 tonnes of carbon.',
     formula: 'Annual emissions of {where} <span class="num">≈ {gt}</span> ÷ <span class="num">3,664 t CO₂</span> (= 1,000 t of carbon){mult} = <span class="num">≈ {perYear}</span> deaths a year',
     mList: [
+      '<b>What this is — and is not.</b> The estimates rest on the “1,000-ton rule” proposed by Richard Parncutt (University of Graz, 2019) and re-examined with Joshua Pearce (Western University, 2023) against other studies: about one premature death for every 1,000 t of fossil carbon burned. We convert today’s CO₂ emissions to carbon (1 t C = 3.664 t CO₂). This is not a precise forecast for any person. It is a way to share the <b>order of magnitude</b> of the human toll we face, and to weigh the choices ahead.',
       'Calculated from {start}, holding annual emissions of {where} at about {gt} (unless a pathway is chosen).',
       'By default we show <b>moderate feedbacks (×1.5)</b>. With tipping effects set to “None” it is a <b>conservative lower bound</b>. Tipping multipliers (×1.5 / ×2 / ×3) are <b>rough illustrative assumptions, not peer-reviewed estimates</b>. They show how the linear estimate could grow if feedbacks such as permafrost thaw and forest dieback, and societal cascades (conflict, famine, mass migration), are included. The Global Tipping Points Report 2025 finds that warm-water coral reefs have already passed their tipping point.',
       '“Locked in” means the harm becomes unavoidable once the CO₂ is emitted; the deaths themselves may occur decades later.',
@@ -448,6 +449,7 @@ const I18N = {
     mLead: '研究にもとづく「1,000トン・ルール」を使っています。化石燃料の<b>炭素</b>を1,000トン（CO₂に換算すると約3,664トン）燃やすごとに、今後およそ1世紀の温暖化を通じて、将来1人の早すぎる死が生じるという推計です。桁の目安となる推計で、著者は炭素1,000トンあたり0.1〜10人の幅があるとしています。',
     formula: '{where}の年間排出量 <span class="num">約{gt}</span> ÷ <span class="num">CO₂ 3,664トン</span>（＝炭素1,000トン）{mult} ＝ 年間 <span class="num">約{perYear}</span>',
     mList: [
+      '<b>この推計が示すもの・示さないもの。</b>この推計は、リチャード・パーンカット（グラーツ大学）が2019年に提唱し、ジョシュア・ピアース（ウェスタン大学）と2023年にほかの研究とつき合わせてまとめ直した「1,000トン・ルール」（化石燃料の炭素1,000トンを燃やすごとに、将来の早すぎる死が約1人）にもとづきます。現在のCO₂排出量を炭素の重さに換算して（炭素1トン＝CO₂ 3.664トン）計算しています。これは一人ひとりの未来を精密に予測するものではありません。人類が直面している人道的な影響の<b>桁（規模感）</b>を共有し、これからの選択を考えるための物差しです。',
       '{start}年を起点に、{where}の年間排出量を約{gt}として計算しています（シナリオを選んだ場合を除く）。',
       '初期表示は<b>中程度のフィードバック（×1.5）</b>です。ティッピング効果を「なし」にすると<b>控えめな下限</b>の推計になります。×1.5／×2／×3 の係数は<b>査読済みの推計ではなく、目安として示した概算</b>です。永久凍土の融解や森林の枯死などのフィードバック、紛争・飢饉・大規模移民といった社会の連鎖的危機を含めた場合に、線形推計がどこまで膨らみうるかを示しています。Global Tipping Points Report 2025 は、暖かい海のサンゴ礁がすでにティッピング・ポイントを超えたと報告しています。',
       '「確定」とは、排出された時点でその被害が避けられなくなるという意味です。実際に亡くなるのは数十年先になることがあります。',

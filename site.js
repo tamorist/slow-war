@@ -27,6 +27,9 @@ const SW_GROUPS = {
 };
 const SW_SOURCES = [
   // 基本の推計
+  { g: 'core', cite: 'Parncutt, R. (2019)', title: 'The Human Cost of Anthropogenic Global Warming: Semi-Quantitative Prediction and the 1,000-Tonne Rule', venue: 'Frontiers in Psychology 10: 2323', url: 'https://doi.org/10.3389/fpsyg.2019.02323',
+    en: 'Where the 1,000-ton rule was first proposed: about one future premature death per 1,000 t of fossil carbon burned.',
+    ja: '1,000トン・ルールが最初に提唱された論文。化石燃料の炭素1,000 tを燃やすごとに、将来の早すぎる死が約1人。' },
   { g: 'core', cite: 'Pearce, J.M. & Parncutt, R. (2023)', title: 'Quantifying Global Greenhouse Gas Emissions in Human Deaths to Guide Energy Policy', venue: 'Energies 16(16): 6074', url: 'https://doi.org/10.3390/en16166074',
     en: 'The “1,000-ton rule”: about 1 future premature death per 1,000 t of fossil carbon burned (≈ 3,664 t of CO₂). An order-of-magnitude estimate (likely 0.1–10 deaths per 1,000 tC). The basis of every death estimate on this site.',
     ja: '「1,000トン・ルール」：化石燃料の炭素1,000 t（CO₂に換算して約3,664 t）を燃やすごとに、将来の早すぎる死が約1人。桁の目安となる推計です（炭素1,000 tあたり0.1〜10人の幅）。このサイトのすべての死者数の推計の土台です。' },
