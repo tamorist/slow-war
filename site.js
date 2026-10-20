@@ -93,12 +93,23 @@ const SW_SOURCES = [
     en: 'Warm-water coral reefs have passed their tipping point at ~1.4 °C — the first Earth-system tipping point reached. Amazon dieback and collapse of the Atlantic overturning circulation are at risk below 2 °C. Also covers positive tipping points in clean technology.',
     ja: '暖かい海のサンゴ礁が約1.4℃で臨界点を超えた（地球システムで最初に到達したティッピング・ポイント）。アマゾンの森林枯死や大西洋の海洋循環の崩壊も2℃未満で起こりうる。クリーン技術の「良いティッピング」も扱っています。' },
 
+  { g: 'tipping', cite: 'Lovejoy, T.E. & Nobre, C. (2018)', title: 'Amazon Tipping Point', venue: 'Science Advances 4: eaat2340', url: 'https://doi.org/10.1126/sciadv.aat2340',
+    en: 'Deforestation, warming and fire together point to a tipping point at 20–25% deforestation, beyond which eastern, southern and central Amazonia could flip to non-forest. Basis of the danger zone in the Amazon gauge.',
+    ja: '森林破壊・温暖化・火災が重なると、森林減少20〜25%でアマゾン東部・南部・中部が森林でなくなる転換点に達しうる、とする論説。アマゾンのティッピング計の危険域の根拠です。' },
+  { g: 'tipping', cite: 'Lovejoy, T.E. & Nobre, C. (2019)', title: 'Amazon tipping point: Last chance for action', venue: 'Science Advances 5: eaba2949', url: 'https://doi.org/10.1126/sciadv.aba2949',
+    en: 'Deforestation at 17% across the Amazon basin and approaching 20% in the Brazilian Amazon; about 23% of the destroyed area is abandoned pasture and cropland that could be reforested.',
+    ja: 'アマゾン流域全体で森林の17%、ブラジル側で20%近くが失われている。失われた面積の約23%は放棄された牧草地や畑で、森林の回復が可能。' },
+
   // 食べ物
   { g: 'food', cite: 'Poore, J. & Nemecek, T. (2018)', title: 'Reducing food’s environmental impacts through producers and consumers', venue: 'Science 360: 987–992', url: 'https://doi.org/10.1126/science.aaq0216',
     en: 'The main food dataset: emissions by supply-chain stage, land use, water use and eutrophication for ~40 foods.',
     ja: '食べ物の主なデータ：約40品目について、サプライチェーン段階別の排出、土地利用、水使用、富栄養化。' },
   { g: 'food', cite: 'Our World in Data', title: 'Environmental impacts of food production', venue: 'ourworldindata.org', url: 'https://ourworldindata.org/environmental-impacts-of-food',
-    en: 'An accessible guide to the dataset above.', ja: '上のデータをわかりやすく解説したページ。' },
+    en: 'An accessible guide to the dataset above. Food’s share of the planet: 26% of greenhouse gases, half of habitable land, 70% of freshwater withdrawals, 78% of eutrophication; livestock uses about 3/4 of farmland but gives 18% of calories and 37% of protein.',
+    ja: '上のデータをわかりやすく解説したページ。食べ物が占める割合：温室効果ガスの26%、人が住める土地の半分、淡水取水の70%、富栄養化の78%。家畜は農地の約4分の3を使うが、カロリーの18%、たんぱく質の37%しか生まない。' },
+  { g: 'food', cite: 'Our World in Data (Ritchie, H. 2021)', title: 'If the world adopted a plant-based diet, we would reduce global agricultural land use from 4 to 1 billion hectares', venue: 'ourworldindata.org', url: 'https://ourworldindata.org/land-use-diets',
+    en: 'Farmland needed if everyone ate a given diet (Poore & Nemecek 2018): today 4.13 billion ha; no beef or mutton 2.21; no beef, mutton or dairy 1.1; eggs and fish only 1.01; vegan 1.0. Also: only 7% of soy is eaten directly by people. Basis of “If the whole world ate differently”.',
+    ja: '世界中が同じ食べ方をした場合に必要な農地（Poore & Nemecek 2018）：いま41.3億 ha、牛肉・羊肉なし22.1億、牛肉・羊肉・乳製品なし11億、卵と魚だけ10.1億、ヴィーガン10億。大豆のうち人が直接食べるのは7%だけ。「世界の食べ方が変わったら」の根拠です。' },
   { g: 'food', cite: 'Our World in Data', title: 'Food: greenhouse gas emissions across the supply chain', venue: 'chart', url: 'https://ourworldindata.org/grapher/food-emissions-supply-chain',
     en: 'Stage breakdown used for meals (median values).', ja: '食事の段階別の内訳に使用（中央値）。' },
   { g: 'food', cite: 'Our World in Data', title: 'Greenhouse gas emissions per 100 grams of protein', venue: 'chart', url: 'https://ourworldindata.org/grapher/ghg-per-protein-poore',
@@ -125,6 +136,10 @@ const SW_SOURCES = [
     en: 'How much CO₂ could be drawn down if land used for animal foods were restored.', ja: '動物性食品に使われている土地を自然に戻した場合に吸収できるCO₂の量。' },
   { g: 'land', cite: 'Cook-Patton, S.C. et al. (2020)', title: 'Mapping carbon accumulation potential from global natural forest regrowth', venue: 'Nature 585: 545–550', url: 'https://doi.org/10.1038/s41586-020-2686-x',
     en: 'How fast regrowing forests absorb carbon. A guide for the absorption-rate slider.', ja: '自然に回復する森林が炭素を吸収する速さ。吸収量スライダーの目安です。' },
+
+  { g: 'land', cite: 'INPE & Embrapa (2016)', title: 'TerraClass Amazônia 2014: land use and cover in deforested areas of the Brazilian Legal Amazon', venue: 'gov.br/inpe', url: 'https://www.gov.br/inpe/pt-br/area-conhecimento/unidade-amazonia/repositorio-de-arquivos/terraclass_2014_v3.pdf',
+    en: 'Of 762,464 km² deforested by 2014, pasture covered 479,760 km² (≈ 63%), a share stable since 2004.',
+    ja: '2014年までに森林が失われた762,464 km²のうち、牧草地が479,760 km²（約63%）。2004年以降ほぼ横ばい。' },
 
   // 電気・交通・製品
   { g: 'energy', cite: 'Ember', title: 'Electricity data', venue: 'ember-energy.org', url: 'https://ember-energy.org/data/',
