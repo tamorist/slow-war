@@ -135,6 +135,11 @@
   .imp .s { font-size: 12.5px; color: #c9c8c3; line-height: 1.6; }
   .imp-death { margin-top: 12px; background: var(--bg2); border: 1px solid var(--faint); border-radius: 12px; padding: 14px; font-size: 13.5px; color: #c9c8c3; }
   .imp-death .big { font-size: 26px; font-weight: 900; color: var(--red); }
+  .palm { margin-top: 18px; max-width: 820px; background: var(--bg2); border: 1px solid var(--faint); border-radius: 14px; padding: 4px 16px; }
+  .palm summary { cursor: pointer; font-weight: 700; font-size: 14.5px; padding: 12px 0; color: var(--text); }
+  .palm ul { margin: 0 0 14px; padding-left: 20px; font-size: 13.5px; color: #c9c8c3; }
+  .palm li { margin-bottom: 6px; }
+  .palm .src { font-size: 11.5px; color: var(--muted); margin: 0 0 12px; }
   .pbh { font-size: 16px; margin: 32px 0 10px; }
   .pbgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 8px; }
   .pbgrid > div { border-radius: 12px; padding: 12px 14px; border: 1px solid; position: relative; }
@@ -255,6 +260,13 @@
     <div class="wbar" id="wfBar"></div>
     <div class="slegend" id="wfLegend"></div>
     <div class="facts" id="wfFacts"></div>
+
+    <h3 class="ph3" data-i18n="drH"></h3>
+    <div class="wcap" style="margin-top:0" data-i18n="drCap"></div>
+    <div class="wbar" id="drBar"></div>
+    <div class="slegend" id="drLegend"></div>
+    <p class="hint" style="margin-top:10px;max-width:820px" data-i18n="drNote"></p>
+    <details class="palm"><summary data-i18n="palmH"></summary><ul id="palmList"></ul><p class="src" data-i18n="palmSrc"></p></details>
     <p class="note-box" data-i18n="wfNote"></p>
 
     <h3 class="ph3" data-i18n="skH"></h3>
@@ -293,7 +305,7 @@
 
 <footer data-i18n="footer"></footer>
 
-<script src="site.js?v=20261020h"></script>
+<script src="site.js?v=20261020i"></script>
 <script>
 const TIPS = [
   { m: 1,   en: 'None (1,000-ton rule only)',     ja: 'なし（1,000トン・ルールのみ）' },
@@ -422,6 +434,18 @@ const I18N = {
       ['4.1 million ha', 'net loss each year, after new forest growth and planting are counted. Planted forest does not replace old forest’s carbon or species.', 'FAO, Global Forest Resources Assessment 2025'],
       ['6.7 million ha', 'of <b>tropical primary forest</b> lost in 2024 — a record, nearly double 2023. For the first time, <b>fire</b> was the biggest cause (nearly half).', 'Global Forest Watch / WRI (2025)'],
     ],
+    drH: 'Why are forests lost?',
+    drCap: 'Tropical deforestation by what replaced the forest (≈ 5.2 million ha a year, 2010–2014 average = 100%)',
+    dr: { cattle: 'Pasture for cattle', oil: 'Oilseeds (palm oil, soy…)', wood: 'Forestry: logging, paper and pulp', cereal: 'Other cereals (maize etc.)', other: 'Other crops (rice, fruit, vegetables, sugar…)' },
+    drNote: 'Animals are behind more than the pasture slice: about three-quarters of the world’s soy and about 41% of its cereals are fed to animals — the source data does not split feed out separately. Data: Pendrill et al. (2019) via Our World in Data; tropics only.',
+    palmH: 'What is the palm oil problem?',
+    palm: [
+      'Palm oil comes mostly from <b>Indonesia and Malaysia</b>, where rainforest and peatland have been turned into plantations, destroying the habitat of many species. Indonesian palm oil was the biggest part of the oilseed slice above.',
+      'It is everywhere: about <b>68%</b> goes into food (margarine, chocolate, bread, pizza, cooking oil, animal feed), <b>27%</b> into soaps, detergents and cosmetics, and <b>5%</b> into biofuel (in Germany, biofuel is the largest use at 41%).',
+      'But it is also the most land-efficient oil: about <b>2.9 t per hectare</b> — around 4× sunflower or rapeseed and 10–15× coconut or groundnut. It produced 36% of the world’s vegetable oil on 8.6% of the land used for oil crops (2017).',
+      'So a simple boycott could <b>shift the damage elsewhere</b>, onto even more land. What helps: palm oil that does not come from newly cleared forest or peatland, not burning it as fuel, and using less oil in processed foods overall.',
+    ],
+    palmSrc: 'Source: Our World in Data, “Palm oil” (Hannah Ritchie) and “Drivers of deforestation”.',
     wfNote: '<b>Reading this:</b> the 1/3 loss and its timing are long-term reconstructions and rounded. FAO figures are national reports of land use (deforestation = conversion to other uses); Global Forest Watch measures tree-cover loss from satellites. Unlike the Amazon, there is no single tipping threshold for all the world’s forests — but every hectare lost shrinks the sink below.',
     skH: 'Where does our CO₂ go?',
     skBarCap: 'All CO₂ emitted by people each year (= 100%, 2015–2024 average)',
@@ -542,6 +566,18 @@ const I18N = {
       ['年410万 ha', '新たに育つ森や植林を差し引いても、毎年これだけ減っています。植林は、古い森の炭素や生き物の代わりにはなりません。', 'FAO 世界森林資源評価 2025'],
       ['670万 ha', 'の<b>熱帯の原生林</b>が2024年に失われました。過去最大で、2023年のほぼ2倍。初めて<b>火災</b>が最大の原因になりました（約半分）。', 'Global Forest Watch / WRI（2025年）'],
     ],
+    drH: '森はなぜ失われるのか',
+    drCap: '熱帯の森林減少を、森のあとに何がつくられたかで分けると（年約520万 ha、2010〜2014年の平均＝100%）',
+    dr: { cattle: '牛の牧草地', oil: '油糧作物（パーム油・大豆など）', wood: '林業：木材・紙・パルプ', cereal: 'その他の穀物（トウモロコシなど）', other: 'その他の作物（米・果物・野菜・砂糖など）' },
+    drNote: '家畜につながる部分は、牧草地だけではありません。世界の大豆の約4分の3、穀物の約41%が家畜の飼料になっています（元データでは飼料を別には分けていません）。データ：Pendrill ら（2019）、Our World in Data 経由。熱帯のみ。',
+    palmH: 'パーム油の問題とは？',
+    palm: [
+      'パーム油の大部分は<b>インドネシアとマレーシア</b>でつくられています。熱帯雨林や泥炭地が農園に変えられ、多くの生き物のすみかが失われてきました。上の「油糧作物」の最大の部分は、インドネシアのパーム油でした。',
+      'パーム油はあらゆるところに使われています。約<b>68%</b>が食品（マーガリン、チョコレート、パン、ピザ、食用油、家畜の飼料）、<b>27%</b>が石けん・洗剤・化粧品、<b>5%</b>がバイオ燃料です（ドイツでは燃料が最大の用途で41%）。',
+      '一方で、最も土地を使わない油でもあります。1 haあたり約<b>2.9 t</b>で、ひまわり油や菜種油の約4倍、ココナッツ油や落花生油の10〜15倍。世界の植物油の36%を、油の作物の土地の8.6%でつくっています（2017年）。',
+      'そのため、単純な不買は<b>被害をほかの場所に移し</b>、より多くの土地を使うことになりかねません。効果があるのは、新たに森や泥炭地を切り開いていないパーム油を選ぶこと、燃料として燃やさないこと、加工食品の油を全体として減らすことです。',
+    ],
+    palmSrc: '出典：Our World in Data「Palm oil」（Hannah Ritchie）、「Drivers of deforestation」。',
     wfNote: '<b>読み方：</b>3分の1の消失とその時期は長期の復元推計で、丸めた値です。FAO の値は各国の報告による土地利用（森林減少＝ほかの用途への転換）、Global Forest Watch は衛星で測った樹木の消失で、定義が異なります。世界の森林全体には、アマゾンのような一つの限界値はありません。ただし、森が1 ha失われるごとに、下の吸収源は小さくなります。',
     skH: '私たちのCO₂は、どこへ行くのか',
     skBarCap: '人間が1年に出すCO₂のすべて（＝100%、2015〜2024年の平均）',
@@ -642,6 +678,8 @@ const PLANET = {
   forestBha: 4.0,
   // 世界の森林：氷期後 約60億 ha → いま約40億 ha（3分の1を失い、その半分が最近100年。Our World in Data）
   wf: { old: 16.7, recent: 16.7, left: 66.6 },
+  // 熱帯の森林減少の原因（Pendrill et al. 2019、OWID、ha/年）
+  drivers: { cattle: 2105753, oil: 950609, wood: 678744, cereal: 445902, other: 287785 + 379251 + 184020 + 57796 + 53342 + 25297 },
   // 人間のCO₂の行き先（Global Carbon Budget 2025、2015–2024年）：海 29%、陸 21%、残りが大気
   sink: { ocean: 29, land: 21 }, emisGt: 42,                // 世界の森林 約40百万 km²（Our World in Data）
   // 世界の食べ方別の農地（十億 ha）：cropFood＝人の食べ物、cropFeed＝飼料、crop＝畑全体、past＝牧草地
@@ -663,6 +701,11 @@ function renderForests() {
   $('wfLegend').innerHTML = [['#6e4a36', l.wf.old], ['#b0603c', l.wf.recent], ['#3f9a77', l.wf.left]].map(([c, t]) => `<span><i style="background:${c}"></i>${t}</span>`).join('');
   const facts = arr => arr.map(([v, t, src]) => `<div><div class="v num">${v}</div><div class="s">${t}</div><span class="src">${src}</span></div>`).join('');
   $('wfFacts').innerHTML = facts(l.wfFacts);
+  const dv = PLANET.drivers, dTot = Object.values(dv).reduce((a, b) => a + b, 0);
+  const dCol = { cattle: '#8a5a3c', oil: '#d08b2c', wood: '#7a6f5a', cereal: '#b5a14a', other: '#6b7078' };
+  $('drBar').innerHTML = Object.keys(dv).map(k => { const p = dv[k] / dTot * 100; return seg(p, dCol[k], p > 9 ? Math.round(p) + '%' : ''); }).join('');
+  $('drLegend').innerHTML = Object.keys(dv).map(k => `<span><i style="background:${dCol[k]}"></i>${l.dr[k]} ${Math.round(dv[k] / dTot * 100)}%</span>`).join('');
+  $('palmList').innerHTML = l.palm.map(x => `<li>${x}</li>`).join('');
   const k = PLANET.sink, air = 100 - k.ocean - k.land;
   $('skBar').innerHTML = seg(k.ocean, '#3f7fb5', l.sk.ocean) + seg(k.land, '#3f9a77', l.sk.land) + seg(air, '#8a4b3c', l.sk.air);
   $('skLegend').innerHTML = [['#3f7fb5', l.sk.ocean], ['#3f9a77', l.sk.land], ['#8a4b3c', l.sk.air]].map(([c, t]) => `<span><i style="background:${c}"></i>${t}</span>`).join('');
