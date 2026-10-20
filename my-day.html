@@ -241,6 +241,13 @@
   .mrow .mb span.coc { background-image: repeating-linear-gradient(135deg, rgba(255,255,255,.18) 0 3px, transparent 3px 7px); }
   .note-box { font-size: 13px; color: #c9c8c3; background: var(--bg2); border-left: 3px solid var(--s-farm); border-radius: 0 10px 10px 0; padding: 14px 16px; margin-top: 20px; max-width: 760px; }
 
+  .cmp-card { display: flex; align-items: center; gap: 14px; max-width: 760px; margin-top: 12px; padding: 14px 18px; border-radius: 14px; text-decoration: none; color: var(--text);
+    border: 1px solid rgba(79,179,138,.55); background: rgba(79,179,138,.08); transition: transform .15s, background .15s; }
+  .cmp-card:hover { transform: translateY(-2px); background: rgba(79,179,138,.14); }
+  .cmp-card .ic { font-size: 24px; flex: none; }
+  .cmp-card b { display: block; font-size: 15px; }
+  .cmp-card b + span { font-size: 12.5px; color: #c9c8c3; }
+  .cmp-card .go { margin-left: auto; font-size: 20px; color: var(--green); font-weight: 900; flex: none; }
   /* Beyond carbon (link to nature.html) */
   .beyond { padding: 40px 0 8px; border-top: 1px solid var(--faint); }
   .beyond-card { display: flex; flex-direction: column; gap: 8px; padding: 24px; border-radius: 18px; text-decoration: none; color: var(--text); max-width: 760px;
@@ -365,6 +372,7 @@
     <div class="tbl-wrap"><table class="swapt" id="swapT"></table></div>
     <p class="hint" id="swapNote"></p>
     <p class="swap-call" id="swapCall"></p>
+    <a class="cmp-card" href="nature.html#cmpfood"><span class="ic">⚖️</span><span><b data-i18n="cmpCardH"></b><span data-i18n="cmpCardS"></span></span><span class="go">→</span></a>
     <p class="note-box" data-i18n="notIncl"></p>
   </section>
 
@@ -614,6 +622,7 @@ const I18N = {
     byH: 'Not only carbon: food, land, water and the Amazon',
     byS: 'The fight against climate change is also a fight to keep nature healthy. See how much of the planet food takes, how close the Amazon is to tipping, and how foods compare beyond carbon.',
     byBtn: 'Go to “Beyond carbon” →',
+    cmpCardH: 'Compare beyond carbon', cmpCardS: 'Land, water, water pollution and animal numbers — chicken vs. plant protein, food by food.',
     exH: 'Deforestation vs. land’s lost carbon — what’s the difference? (why results change so much)',
     exBody: `<p>Food affects forests in two different ways. <b>Both add to the CO₂ in the air, and so to warming and deaths.</b> The difference is what each is measured against.</p>
       <ol>
@@ -751,6 +760,7 @@ const I18N = {
     byH: '炭素だけではない：食べ物・土地・水・アマゾン',
     byS: '気候変動との戦いは、自然を健全に保つ戦いでもあります。食べ物が地球をどれだけ使っているか、アマゾンがどこまで限界に近づいているか、炭素以外の指標での食材の比較を見られます。',
     byBtn: '「炭素だけではない」へ →',
+    cmpCardH: '炭素以外でも比べる', cmpCardS: '土地・水・水質汚染・動物の数。鶏肉と植物性たんぱくを、食材ごとに比べられます。',
     exH: '考え方：「森林破壊」と「土地の機会費用」はどう違う？（結果が大きく変わる理由）',
     exBody: `<p>食べ物と森林のかかわりには、性質の違う2つの効果があります。<b>どちらも大気中のCO₂を増やし、温暖化と死者数につながります。</b>違うのは「何と比べた量か」です。</p>
       <ol>
