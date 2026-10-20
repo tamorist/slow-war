@@ -149,6 +149,16 @@
   .grow .gb { height: 12px; background: var(--bg3); border-radius: 3px; overflow: hidden; }
   .grow .gb span { display: block; height: 100%; border-radius: 3px; }
   .grow .gv { text-align: right; color: #c9c8c3; font-variant-numeric: tabular-nums; }
+  .jp { margin-top: 22px; max-width: 900px; border: 2px solid rgba(79,179,138,.5); border-radius: 16px; padding: 18px; background: linear-gradient(145deg, rgba(79,179,138,.12), rgba(79,179,138,.03)); }
+  .jp h4 { margin: 0 0 6px; font-size: 17px; line-height: 1.45; }
+  .jp p { font-size: 14px; color: #c9c8c3; margin: 8px 0; }
+  .jp p b { color: var(--text); }
+  .jp .jgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 12px 0; }
+  @media (max-width: 640px) { .jp .jgrid { grid-template-columns: 1fr; } }
+  .jp .jgrid > div { background: var(--bg2); border: 1px solid var(--faint); border-radius: 12px; padding: 14px; }
+  .jp .eg { font-size: 13.5px; color: #c9c8c3; }
+  .jp .eg .big { font-size: 26px; font-weight: 900; color: var(--green); }
+  .jp .src { font-size: 11.5px; color: var(--muted); margin: 6px 0 0; }
   .steps { counter-reset: st; list-style: none; padding: 0; margin: 22px 0 0; max-width: 820px; }
   .steps li { counter-increment: st; position: relative; padding: 12px 14px 12px 52px; background: var(--bg2); border: 1px solid var(--faint); border-radius: 12px; margin-bottom: 8px; font-size: 14px; color: #c9c8c3; }
   .steps li::before { content: counter(st); position: absolute; left: 14px; top: 11px; width: 26px; height: 26px; border-radius: 50%; background: var(--green); color: #0b1a13; font-weight: 900; display: grid; place-items: center; font-size: 13px; }
@@ -317,6 +327,7 @@
       <div><h4 data-i18n="phdAnimH"></h4><div id="phdAnim"></div></div>
     </div>
     <p class="hint" style="margin-top:8px;max-width:900px" data-i18n="phdCap"></p>
+    <div class="jp" id="jpBox" hidden></div>
     <h3 class="ph3" data-i18n="stepsH"></h3>
     <ol class="steps" id="steps"></ol>
     <p class="note-box" data-i18n="actNote"></p>
@@ -334,7 +345,7 @@
 
 <footer data-i18n="footer"></footer>
 
-<script src="site.js?v=20261020j"></script>
+<script src="site.js?v=20261020k"></script>
 <script>
 const TIPS = [
   { m: 1,   en: 'None (1,000-ton rule only)',     ja: 'なし（1,000トン・ルールのみ）' },
@@ -581,6 +592,17 @@ const I18N = {
       '<b>お皿の外も変えていく。</b>学校や職場の食事、表示、健康で負荷の小さい食べ物を安くする補助金など。個人の選択と社会の仕組みは、一緒に変わっていきます。',
     ],
     actNote: '<b>完璧でなくて大丈夫です。</b>プラネタリー・ヘルス・ダイエットは「方向」であって、厳しい決まりではありません。委員会は、地域の食文化に合わせること、そしていまあまり食べられていない人々（主に貧しい国々）は、動物性食品を減らすのではなく増やす必要がある場合もあることを強調しています。出典：EAT–ランセット委員会（Willett ら、<i>The Lancet</i>、2019年／2025年報告）、目安の量はハーバード公衆衛生大学院「The Nutrition Source」による。',
+    jp: {
+      h: '日本は「大豆の国」：特別な代替肉がなくても、毎日の選択で変えられる',
+      p1: '豆腐、納豆、味噌、醤油、油揚げ、枝豆……。日本には大豆を毎日のように食べる文化があります。プラネタリー・ヘルス・ダイエットが勧める「豆類」「大豆食品」を、私たちはすでに食べ慣れています。代替肉の普及を待たなくても、<b>いつもの食卓の選び方だけで、肉を大きく減らせます</b>。',
+      protH: 'たんぱく質（可食部100 gあたり）',
+      prot: [['糸引き納豆', 16.5], ['木綿豆腐', 7.0], ['スパゲッティ（ゆで）', 5.8], ['絹ごし豆腐', 5.3], ['中華めん（ゆで）', 4.9]],
+      egH: 'たとえば1日に',
+      eg: '納豆1パック（45 g）＋ 木綿豆腐 半丁（150 g）＋ ラーメン1玉（ゆで約200 g）で、たんぱく質 <span class="big">約28 g</span><br>牛肉の主菜120 g（約24 g）を上回ります。麺類にも、意外と多くのたんぱく質が含まれています。<span class="own">私たちの概算</span>',
+      p2: 'ただ、日本の肉の供給量は、1人あたり年<b>約7 kg（1961年）から約60 kg（2022年）へ、8倍</b>に増え、いまでは世界平均（約44 kg）を上回っています。大豆中心の食卓に戻ることは、新しい我慢ではなく、<b>私たちの「もともとの食べ方」に近づくこと</b>でもあります。',
+      p3: '大豆を生かした和食は、地球にもからだにもやさしい食べ方として、<b>世界に発信できる強み</b>です。味噌や醤油の塩分は控えめに、魚は資源に配慮して選ぶと、さらによくなります。',
+      src: '出典：たんぱく質は文部科学省「日本食品標準成分表（八訂）」（納豆・豆腐・ゆで麺の100 gあたりの値）。1食分の量と合計は私たちの概算。肉の供給量は FAO（Our World in Data 経由）。',
+    },
     pfH: '食べ物が地球から奪っているもの',
     pfLead: '世界の食を支えるために、人が住める土地の半分と、くみ上げる淡水の大部分が使われています。そして、それに伴う森林伐採が、アマゾンを後戻りできない地点へと押しやっています。',
     pfAH: '食べ物が地球に占める割合',
@@ -702,6 +724,15 @@ function renderAct() {
   $('phdPlant').innerHTML = rows(plant, 'var(--green)');
   $('phdAnim').innerHTML = rows(anim, 'var(--amber)');
   $('steps').innerHTML = l.steps.map(x => `<li>${x}</li>`).join('');
+  // 日本語のときだけ：日本は「大豆の国」
+  const jb = $('jpBox');
+  if (S.lang === 'ja' && l.jp) {
+    const j = l.jp;
+    jb.innerHTML = `<h4>${j.h}</h4><p>${j.p1}</p><div class="jgrid">
+      <div><h4 style="font-size:13.5px">${j.protH}</h4>${j.prot.map(([n, g]) => `<div class="grow"><span>${n}</span><div class="gb"><span style="width:${g / 16.5 * 100}%;background:var(--green)"></span></div><span class="gv">${g.toFixed(1)} g</span></div>`).join('')}</div>
+      <div class="eg"><h4 style="font-size:13.5px">${j.egH}</h4>${j.eg}</div></div><p>${j.p2}</p><p>${j.p3}</p><p class="src">${j.src}</p>`;
+    jb.hidden = false;
+  } else { jb.hidden = true; jb.innerHTML = ''; }
 }
 
 function renderCompare() {
