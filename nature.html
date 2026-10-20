@@ -140,6 +140,20 @@
   .palm ul { margin: 0 0 14px; padding-left: 20px; font-size: 13.5px; color: #c9c8c3; }
   .palm li { margin-bottom: 6px; }
   .palm .src { font-size: 11.5px; color: var(--muted); margin: 0 0 12px; }
+  .act { padding: 56px 0 24px; border-top: 1px solid var(--faint); }
+  .phd { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 20px; max-width: 900px; }
+  @media (max-width: 640px) { .phd { grid-template-columns: 1fr; } }
+  .phd > div { background: var(--bg2); border: 1px solid var(--faint); border-radius: 14px; padding: 16px; }
+  .phd h4 { margin: 0 0 8px; font-size: 14px; }
+  .grow { display: grid; grid-template-columns: 150px 1fr 48px; gap: 8px; align-items: center; font-size: 12.5px; margin: 5px 0; }
+  .grow .gb { height: 12px; background: var(--bg3); border-radius: 3px; overflow: hidden; }
+  .grow .gb span { display: block; height: 100%; border-radius: 3px; }
+  .grow .gv { text-align: right; color: #c9c8c3; font-variant-numeric: tabular-nums; }
+  .steps { counter-reset: st; list-style: none; padding: 0; margin: 22px 0 0; max-width: 820px; }
+  .steps li { counter-increment: st; position: relative; padding: 12px 14px 12px 52px; background: var(--bg2); border: 1px solid var(--faint); border-radius: 12px; margin-bottom: 8px; font-size: 14px; color: #c9c8c3; }
+  .steps li::before { content: counter(st); position: absolute; left: 14px; top: 11px; width: 26px; height: 26px; border-radius: 50%; background: var(--green); color: #0b1a13; font-weight: 900; display: grid; place-items: center; font-size: 13px; }
+  .steps li b { color: var(--text); }
+  .steps a { color: var(--green); }
   .pbh { font-size: 16px; margin: 32px 0 10px; }
   .pbgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 8px; }
   .pbgrid > div { border-radius: 12px; padding: 12px 14px; border: 1px solid; position: relative; }
@@ -293,6 +307,21 @@
     <p class="note-box" data-i18n="cfNote"></p>
   </section>
 
+  <section class="act" id="act">
+    <p class="eyebrow">5 · What can we do?</p>
+    <h2 data-i18n="actH"></h2>
+    <p class="lead" data-i18n="actLead"></p>
+    <div class="facts" id="eatFacts"></div>
+    <div class="phd">
+      <div><h4 data-i18n="phdPlantH"></h4><div id="phdPlant"></div></div>
+      <div><h4 data-i18n="phdAnimH"></h4><div id="phdAnim"></div></div>
+    </div>
+    <p class="hint" style="margin-top:8px;max-width:900px" data-i18n="phdCap"></p>
+    <h3 class="ph3" data-i18n="stepsH"></h3>
+    <ol class="steps" id="steps"></ol>
+    <p class="note-box" data-i18n="actNote"></p>
+  </section>
+
   <section style="padding:40px 0 8px"><div id="next"></div></section>
 
   <section class="sources-wrap">
@@ -305,7 +334,7 @@
 
 <footer data-i18n="footer"></footer>
 
-<script src="site.js?v=20261020i"></script>
+<script src="site.js?v=20261020j"></script>
 <script>
 const TIPS = [
   { m: 1,   en: 'None (1,000-ton rule only)',     ja: 'なし（1,000トン・ルールのみ）' },
@@ -378,6 +407,27 @@ const I18N = {
     animalK: 'Animals slaughtered: {food}', animalV: '≈ {n} {u}', animalU: { beef: 'cattle', pork: 'pigs', chicken: 'chickens' }, animalS: 'per 100 kg of protein · {x}× as many as beef', animalSB: 'per 100 kg of protein · plants: none',
     times: '×{x}', brk: '⫽ = bar cut short; actual value shown at right',
     cfNote: '<b>About these figures:</b> global averages from Poore &amp; Nemecek (2018, <i>Science</i>) via Our World in Data. Greenhouse gases here are <b>means including land-use change</b>, so they differ from the median-based meal calculation in the personal simulator. Water = freshwater withdrawals; water pollution = nutrient run-off (eutrophication). Animal counts use approximate edible meat per animal (cattle ~220 kg, pigs ~80 kg, broilers ~1.3 kg). Impacts vary hugely between farms: the best producers can be far below average, the worst far above.',
+    actH: 'So what should we eat? The “planetary health diet”',
+    actLead: 'You don’t have to work this out alone. The EAT–Lancet Commission — scientists in nutrition, climate, agriculture and economics — designed a diet that is good for people and stays within planetary limits. It is not vegan: it is mostly plants, with modest amounts of animal foods, and it adapts to local food cultures.',
+    eatFacts: [
+      ['~15 million', 'early deaths a year could be prevented by shifting global diets (from diet-related disease — separate from this site’s climate counter).', 'EAT–Lancet Commission 2025'],
+      ['~30% → ½', 'food systems cause about 30% of greenhouse gases; transforming them could cut those emissions by more than half.', 'EAT–Lancet Commission 2025'],
+      ['×2 and −50%', 'globally, fruit, vegetables, nuts and legumes roughly double; red meat and sugar fall by more than half.', 'EAT–Lancet Commission 2019'],
+      ['30% → 70%', 'the wealthiest 30% of people drive over 70% of food’s environmental impacts — the biggest shifts fall on high-consuming countries.', 'EAT–Lancet Commission 2025'],
+    ],
+    phdPlantH: 'Plenty of plants (grams a day)', phdAnimH: 'Modest animal foods (grams a day)',
+    phd: { veg: 'Vegetables', fruit: 'Fruit', grain: 'Whole grains (dry)', legume: 'Beans, lentils, peas (dry)', soy: 'Soy foods (dry)', nuts: 'Nuts and peanuts', dairy: 'Milk and dairy', redmeat: 'Red meat', poultry: 'Poultry', fish: 'Fish', eggs: 'Eggs' },
+    phdEq: { redmeat: '≈ one burger a week', poultry: '≈ 200 g a week', eggs: '≈ 2 eggs a week' },
+    phdCap: 'Reference targets for an average adult eating 2,500 kcal a day (EAT–Lancet Commission 2019; ranges allow for local diets). The 2025 report builds on this diet.',
+    stepsH: 'Where to start',
+    steps: [
+      '<b>Make red meat occasional</b> — about one burger’s worth a week, not every day. Beef is by far the biggest single lever (<a href="my-day.html">try it in “Your day”</a>).',
+      '<b>Get protein mainly from beans, soy and nuts.</b> Swapping beef for chicken helps the climate but costs more animals and pollution than plants (<a href="#cmpfood">see the comparison</a>).',
+      '<b>Fill half the plate with vegetables and fruit</b>, and choose whole grains.',
+      '<b>Waste less food</b> — less waste means less land, water and emissions for food nobody eats.',
+      '<b>Push for change beyond your plate</b>: school and workplace meals, labels, and subsidies that make healthy, low-impact food cheaper. Individual choices and systems change together.',
+    ],
+    actNote: '<b>Not about perfection.</b> The planetary health diet is a direction, not a rulebook — the Commission stresses that targets should fit local cultures, and that people who eat little today, mostly in poorer countries, may need to eat more animal foods, not less. Sources: EAT–Lancet Commission (Willett et al., <i>The Lancet</i>, 2019; 2025 report); targets as listed by Harvard T.H. Chan School of Public Health, The Nutrition Source.',
     pfH: 'What food takes from the planet',
     pfLead: 'Feeding the world uses half of all habitable land and most of the fresh water we draw — and the clearing that comes with it is pushing the Amazon toward a point of no return.',
     pfAH: 'Food’s share of the planet',
@@ -510,6 +560,27 @@ const I18N = {
     animalK: '犠牲になる動物：{food}', animalV: '約{n}{u}', animalU: { beef: '頭', pork: '頭', chicken: '羽' }, animalS: 'たんぱく質100 kgあたりの頭・羽数 ・ 牛肉の約{x}倍', animalSB: 'たんぱく質100 kgあたりの頭・羽数 ・ 植物性は0',
     times: '{x}倍', brk: '⫽ ＝ 棒を途中で省略（実際の値は右端）',
     cfNote: '<b>数値について：</b>Poore &amp; Nemecek（2018年、<i>Science</i>）の世界平均値（Our World in Data 経由）です。ここでの温室効果ガスは<b>土地利用変化を含む平均値</b>のため、個人シミュレータの食事の計算（中央値）とは異なります。水は淡水の取水量、水質汚染は栄養塩の流出（富栄養化）です。動物の数は、1頭・1羽あたりの可食部の概算（牛 約220 kg、豚 約80 kg、ブロイラー 約1.3 kg）で求めています。環境負荷は生産者によって大きく異なり、最良の生産者は平均よりはるかに低く、最悪の生産者ははるかに高くなります。',
+    actH: 'では、何を食べればいいのか：「プラネタリー・ヘルス・ダイエット」',
+    actLead: 'ひとりで答えを探す必要はありません。栄養・気候・農業・経済の科学者からなる EAT–ランセット委員会が、人の健康にも地球にもよく、地球の限界の内側におさまる食べ方を示しています。ヴィーガンではありません。植物性を中心に、動物性は適量。地域の食文化に合わせて調整できる食べ方です。',
+    eatFacts: [
+      ['約1,500万人', '世界の食べ方が変われば、毎年これだけの早すぎる死を防げるとされます（食事に関わる病気による死。このサイトの気候のカウンターとは別の推計です）。', 'EAT–ランセット委員会 2025'],
+      ['約30% → 半分以下', '食料システムは温室効果ガスの約30%を出しています。食料システムを変えれば、その排出を半分以上減らせます。', 'EAT–ランセット委員会 2025'],
+      ['2倍と−50%', '世界全体で、果物・野菜・ナッツ・豆はおよそ2倍に、赤身肉と砂糖は半分以下に。', 'EAT–ランセット委員会 2019'],
+      ['30% → 70%', '最も豊かな30%の人々が、食べ物の環境負荷の70%以上を生んでいます。大きく変わるべきなのは、消費の多い国です。', 'EAT–ランセット委員会 2025'],
+    ],
+    phdPlantH: '植物性をたっぷり（1日のグラム）', phdAnimH: '動物性は適量（1日のグラム）',
+    phd: { veg: '野菜', fruit: '果物', grain: '全粒穀物（乾燥）', legume: '豆類（乾燥）', soy: '大豆食品（乾燥）', nuts: 'ナッツ・落花生', dairy: '牛乳・乳製品', redmeat: '赤身肉（牛・豚・羊）', poultry: '鶏肉など', fish: '魚介', eggs: '卵' },
+    phdEq: { redmeat: '≈ 週にハンバーグ1個', poultry: '≈ 週に約200 g', eggs: '≈ 週に卵2個' },
+    phdCap: '1日2,500 kcal を食べる平均的な大人の目安（EAT–ランセット委員会 2019。地域の食文化に合わせた幅があります）。2025年の報告も、この食べ方を土台にしています。',
+    stepsH: 'どこから始めるか',
+    steps: [
+      '<b>赤身肉は「ときどき」に。</b>毎日ではなく、週にハンバーグ1個分ほど。牛肉は、ひとりでできる最も大きな変化です（<a href="my-day.html">「あなたの1日」で試す</a>）。',
+      '<b>たんぱく質は、豆・大豆・ナッツを中心に。</b>牛肉を鶏肉に替えると気候には効きますが、植物性より動物の犠牲も水質汚染も多くなります（<a href="#cmpfood">比較を見る</a>）。',
+      '<b>お皿の半分を野菜と果物に。</b>穀物は全粒のものを。',
+      '<b>食べ物を捨てない。</b>誰も食べない食べ物のために、土地も水も排出も使われています。',
+      '<b>お皿の外も変えていく。</b>学校や職場の食事、表示、健康で負荷の小さい食べ物を安くする補助金など。個人の選択と社会の仕組みは、一緒に変わっていきます。',
+    ],
+    actNote: '<b>完璧でなくて大丈夫です。</b>プラネタリー・ヘルス・ダイエットは「方向」であって、厳しい決まりではありません。委員会は、地域の食文化に合わせること、そしていまあまり食べられていない人々（主に貧しい国々）は、動物性食品を減らすのではなく増やす必要がある場合もあることを強調しています。出典：EAT–ランセット委員会（Willett ら、<i>The Lancet</i>、2019年／2025年報告）、目安の量はハーバード公衆衛生大学院「The Nutrition Source」による。',
     pfH: '食べ物が地球から奪っているもの',
     pfLead: '世界の食を支えるために、人が住める土地の半分と、くみ上げる淡水の大部分が使われています。そして、それに伴う森林伐採が、アマゾンを後戻りできない地点へと押しやっています。',
     pfAH: '食べ物が地球に占める割合',
@@ -622,6 +693,17 @@ function people(n) {
 const chip = (group, val, label, on, extra = '') => `<button class="chip" data-g="${group}" data-v="${val}" aria-pressed="${on}">${label}${extra}</button>`;
 
 /* ===================== RENDER ===================== */
+function renderAct() {
+  const l = L();
+  $('eatFacts').innerHTML = l.eatFacts.map(([v, t, src]) => `<div><div class="v num">${v}</div><div class="s">${t}</div><span class="src">${src}</span></div>`).join('');
+  // EAT–Lancet 2019 の目安（g/日、2,500 kcal）
+  const plant = { veg: 300, fruit: 200, grain: 232, legume: 50, soy: 25, nuts: 50 }, anim = { dairy: 250, redmeat: 14, poultry: 29, fish: 28, eggs: 13 };
+  const rows = (o, c) => Object.entries(o).map(([k, g]) => `<div class="grow"><span>${l.phd[k]}${l.phdEq[k] ? `<br><small style="color:var(--amber)">${l.phdEq[k]}</small>` : ''}</span><div class="gb"><span style="width:${g / 300 * 100}%;background:${c}"></span></div><span class="gv">${g} g</span></div>`).join('');
+  $('phdPlant').innerHTML = rows(plant, 'var(--green)');
+  $('phdAnim').innerHTML = rows(anim, 'var(--amber)');
+  $('steps').innerHTML = l.steps.map(x => `<li>${x}</li>`).join('');
+}
+
 function renderCompare() {
   const l = L(), b = S.basis;
   const sel = S.sel, sname = l.food[sel];
@@ -782,6 +864,7 @@ function render() {
   renderPlanet();
   renderForests();
   renderCompare();
+  renderAct();
 }
 
 /* ===================== EVENTS ===================== */
