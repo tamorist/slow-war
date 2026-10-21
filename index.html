@@ -333,7 +333,7 @@
 
 <footer data-i18n="footer"></footer>
 
-<script src="site.js?v=20261021b"></script>
+<script src="site.js?v=20261021c"></script>
 <script>
 /* ===================== DATA ===================== */
 // 化石燃料CO₂（2023年頃の概算, Global Carbon Project）。世界合計は土地利用変化を含む 40 Gt。
@@ -347,11 +347,10 @@ const COUNTRIES = {
   japan:  { en: 'Japan',          ja: '日本',     enIn: 'Japan',             jaIn: '日本',     gt: 0.96,  pop: 1.24e8 },
   uk:     { en: 'United Kingdom', ja: '英国',     enIn: 'the UK',            jaIn: '英国',     gt: 0.31, pop: 6.9e7 },
 };
-// シナリオの倍率：×1＝1,000トン・ルールの中央値、×1.5＝温暖化の加速（Hansen & Kharecha 2025 の気候感度にもとづく私たちの仮定）、×3＝論文の幅の上端（Parncutt 2019）
+// シナリオの倍率：×1＝1,000トン・ルールの中央値、×1.5＝温暖化の加速（Hansen & Kharecha 2025 の気候感度にもとづく私たちの仮定）。幅は論文の「ありうる幅」×0.3〜×3（Parncutt 2019、Pearce & Parncutt 2023）
 const TIPS = [
   { m: 1,   en: '1,000-ton rule (paper’s central value) ×1', ja: '1,000トン・ルール（論文の中央値）×1' },
   { m: 1.5, en: 'With accelerated warming ×1.5',             ja: '温暖化の加速を織り込む ×1.5' },
-  { m: 3,   en: 'Upper end of the paper’s range ×3',         ja: '論文の幅の上端 ×3' },
 ];
 // 1,000トン・ルールの「1,000トン」は炭素（C）の重さ。CO₂に換算すると 1,000 × 44/12 ≒ 3,664 トンで将来の死者1人
 // これまでの排出：1850〜2024年の化石燃料＋土地利用変化のCO₂（Global Carbon Budget 2025 の年次データを私たちが合計）
@@ -377,7 +376,7 @@ const I18N = {
     oeSite: 'This site, to 2050 (world, central estimate)',
     oeRows: [['1.5 °C, after a temporary overshoot', 'over 400 million'], ['Warming held to 2 °C by 2050', 'over 800 million'], ['2 °C or more by 2050', 'over 2 billion'], ['3 °C or more by 2050', 'over 4 billion']],
     oeNote: 'That table is not a forecast: it describes how large the damage could be, for managing risk. Its timeframe is not precisely defined, and it includes deaths from societal breakdown — conflict, famine and mass migration. Compared with it, the numbers on this site, based on the 1,000-ton rule, are conservative.',
-    rangeLine: '<b>Central estimate — an order of magnitude.</b> Range: ≈ {lo} to {hi} people a year (0.1–10 deaths per 1,000 t of carbon)',
+    rangeLine: '<b>Central estimate — an order of magnitude.</b> Likely range: ≈ {lo} to {hi} a year (about 0.3–3×; 300–3,000 t of carbon per death)',
     chip: 'Scenario: {tip}',
     pulseH: 'About one person every <em class="num">{s}</em> {unit}.',
     sec: 'seconds', min: 'minutes',
@@ -406,15 +405,15 @@ const I18N = {
     lostL: 'Lives lost', savedL: 'Lives saved',
     ctaK: 'Personal simulator', ctaV: 'What does your own day add up to?',
     mH: 'How these numbers are calculated',
-    mLead: 'We use the “1,000-ton rule”: for every 1,000 tonnes of fossil <b>carbon</b> burned — about 3,664 tonnes of CO₂ — roughly one premature death occurs in the future through about a century of warming. It is an order-of-magnitude estimate: the authors put the likely range at 0.1 to 10 deaths per 1,000 tonnes of carbon.',
+    mLead: 'We use the “1,000-ton rule”: for every 1,000 tonnes of fossil <b>carbon</b> burned — about 3,664 tonnes of CO₂ — roughly one premature death occurs in the future through about a century of warming. It is a rough estimate: the authors put the likely range at about 300 to 3,000 tonnes of carbon per death — about a third to three times the central value.',
     formula: 'Annual emissions of {where} <span class="num">≈ {gt}</span> ÷ <span class="num">3,664 t CO₂</span> (= 1,000 t of carbon){mult} = <span class="num">≈ {perYear}</span> deaths a year',
     mList: [
       '<b>What this is — and is not.</b> The estimates rest on the “1,000-ton rule” proposed by Richard Parncutt (University of Graz, 2019) and re-examined with Joshua Pearce (Western University, 2023) against other studies: about one premature death for every 1,000 t of fossil carbon burned. We convert today’s CO₂ emissions to carbon (1 t C = 3.664 t CO₂). This is not a precise forecast for any person. It is a way to share the <b>order of magnitude</b> of the human toll we face, and to weigh the choices ahead.',
       'Calculated from {start}, holding annual emissions of {where} at about {gt} (unless a pathway is chosen).',
-      '<b>Scenarios.</b> <b>×1</b> is the 1,000-ton rule’s central value. It already includes indirect deaths from hunger, disease and migration, and even the possibility of climate-driven wars and ecological catastrophes (Parncutt 2019). <b>×1.5 (default)</b> reflects accelerating warming: Hansen &amp; Kharecha (2025) put climate sensitivity at about 4.5 °C, 1.5× the IPCC’s best estimate of 3 °C; we assume deaths per tonne rise in proportion (<b>our assumption</b>). <b>×3</b> is the upper end of the paper’s own range (about 3 billion deaths for 2 °C, against 1 billion central); the low end is about ×0.3.',
+      '<b>Scenarios.</b> <b>×1</b> is the 1,000-ton rule’s central value. It already includes indirect deaths from hunger, disease and migration, and even the possibility of climate-driven wars and ecological catastrophes (Parncutt 2019). <b>×1.5 (default)</b> reflects accelerating warming: Hansen &amp; Kharecha (2025) put climate sensitivity at about 4.5 °C, 1.5× the IPCC’s best estimate of 3 °C; we assume deaths per tonne rise in proportion (<b>our assumption</b>). The paper’s own <b>likely range</b> — about ×0.3 to ×3 (300 million to 3 billion deaths for 2 °C, against 1 billion central) — is shown next to the main numbers.',
       '“Locked in” means the harm becomes unavoidable once the CO₂ is emitted; the deaths themselves may occur decades later.',
       'Country figures: fossil CO₂ in 2024 (Global Carbon Budget 2025, via Our World in Data). The world total (42 Gt) also includes land-use change, so countries do not add up exactly.',
-      '<b>How uncertain is this?</b> The 1,000-ton rule is an order-of-magnitude estimate: the true number could be roughly ten times lower or higher. An independent method (Bressler 2021, built up from temperature–mortality relationships) gives about 4,400 t of CO₂ per death — close to the central value used here, and itself considered conservative. You can try the low and high ends in the <a href="simulator.html">detailed simulator</a>.',
+      '<b>How uncertain is this?</b> The 1,000-ton rule is a rough estimate: the authors’ likely range is about a third to three times the central value (Parncutt 2019; Pearce &amp; Parncutt 2023). An independent method (Bressler 2021, built up from temperature–mortality relationships) gives about 4,400 t of CO₂ per death — close to the central value used here, and itself considered conservative. You can try the low and high ends in the <a href="simulator.html">detailed simulator</a>.',
       'Even with that uncertainty, <b>comparisons between choices do not change</b>: how beef compares with plant protein, or how much a renewable electricity plan saves, depends on kilograms of CO₂e, not on the death factor. The death counts translate those kilograms into a unit whose weight we can feel.',
       'War deaths: World War II ≈ 70–85 million (median 80 million shown); World War I ≈ 20 million.',
       'Pathways: “gradual cuts” = −3% a year; “2 °C pathway” = −7% a year. UNEP treats cuts this steep as 1.5 °C pathways (with overshoot), but judged by the remaining carbon budget (Global Carbon Budget 2025), cutting 7% a year from 2025 lands between 1.7 °C and 2 °C (<a href="sources.html">why</a>).',
@@ -440,7 +439,7 @@ const I18N = {
     oeSite: 'このサイトの推計（2050年まで・世界・中央値）',
     oeRows: [['1.5℃（一時的に超えた後に戻る）', '4億人超'], ['2050年までに2℃にとどまる', '8億人超'], ['2050年までに2℃以上', '20億人超'], ['2050年までに3℃以上', '40億人超']],
     oeNote: 'この表は予測ではなく、リスク管理のための「起こりうる被害の大きさ」の区分です。期間ははっきり定められておらず、紛争・飢饉・大規模な移住など、社会の崩壊による死者も含みます。それと比べると、1,000トン・ルールにもとづくこのサイトの数字は控えめな推計です。',
-    rangeLine: '<b>推計の中央値（桁の目安）。</b>幅：年 約{lo}〜{hi}（炭素1,000トンあたり0.1〜10人）',
+    rangeLine: '<b>推計の中央値（桁の目安）。</b>ありうる幅：年 約{lo}〜{hi}（約0.3〜3倍。炭素300〜3,000トンで1人）',
     chip: 'シナリオ：{tip}',
     pulseH: 'およそ<em class="num">{s}</em>{unit}に1人。',
     sec: '秒', min: '分',
@@ -469,15 +468,15 @@ const I18N = {
     lostL: '失われる命', savedL: '救える命',
     ctaK: '個人シミュレータ', ctaV: 'あなたの1日は、何人分？',
     mH: 'この数字の求め方',
-    mLead: '研究にもとづく「1,000トン・ルール」を使っています。化石燃料の<b>炭素</b>を1,000トン（CO₂に換算すると約3,664トン）燃やすごとに、今後およそ1世紀の温暖化を通じて、将来1人の早すぎる死が生じるという推計です。桁の目安となる推計で、著者は炭素1,000トンあたり0.1〜10人の幅があるとしています。',
+    mLead: '研究にもとづく「1,000トン・ルール」を使っています。化石燃料の<b>炭素</b>を1,000トン（CO₂に換算すると約3,664トン）燃やすごとに、今後およそ1世紀の温暖化を通じて、将来1人の早すぎる死が生じるという推計です。おおまかな推計で、著者は「ありうる幅」を炭素300〜3,000トンで1人、つまり中央値の約3分の1〜3倍としています。',
     formula: '{where}の年間排出量 <span class="num">約{gt}</span> ÷ <span class="num">CO₂ 3,664トン</span>（＝炭素1,000トン）{mult} ＝ 年間 <span class="num">約{perYear}</span>',
     mList: [
       '<b>この推計が示すもの・示さないもの。</b>この推計は、リチャード・パーンカット（グラーツ大学）が2019年に提唱し、ジョシュア・ピアース（ウェスタン大学）と2023年にほかの研究とつき合わせてまとめ直した「1,000トン・ルール」（化石燃料の炭素1,000トンを燃やすごとに、将来の早すぎる死が約1人）にもとづきます。現在のCO₂排出量を炭素の重さに換算して（炭素1トン＝CO₂ 3.664トン）計算しています。これは一人ひとりの未来を精密に予測するものではありません。人類が直面している人道的な影響の<b>桁（規模感）</b>を共有し、これからの選択を考えるための物差しです。',
       '{start}年を起点に、{where}の年間排出量を約{gt}として計算しています（シナリオを選んだ場合を除く）。',
-      '<b>シナリオについて。</b><b>×1</b> は1,000トン・ルールの中央値です。飢餓・病気・移住による間接的な死に加え、気候による戦争や生態系の破局の可能性まで、すでに含んでいます（Parncutt 2019）。<b>×1.5（初期値）</b>は温暖化の加速を織り込んだもので、Hansen &amp; Kharecha（2025）は気候感度を約4.5℃と、IPCC の最良推計3℃の1.5倍と見積もっています。1トンあたりの死者もそれに比例して増えると仮定しました（<b>私たちの仮定</b>）。<b>×3</b> は論文自身が示す幅の上端です（2℃で中央値10億人に対し約30億人）。下端は約×0.3です。',
+      '<b>シナリオについて。</b><b>×1</b> は1,000トン・ルールの中央値です。飢餓・病気・移住による間接的な死に加え、気候による戦争や生態系の破局の可能性まで、すでに含んでいます（Parncutt 2019）。<b>×1.5（初期値）</b>は温暖化の加速を織り込んだもので、Hansen &amp; Kharecha（2025）は気候感度を約4.5℃と、IPCC の最良推計3℃の1.5倍と見積もっています。1トンあたりの死者もそれに比例して増えると仮定しました（<b>私たちの仮定</b>）。論文自身が示す<b>「ありうる幅」</b>（約×0.3〜×3。2℃で中央値10億人に対し約3億〜30億人）は、主な数字に添えて示しています。',
       '「確定」とは、排出された時点でその被害が避けられなくなるという意味です。実際に亡くなるのは数十年先になることがあります。',
       '国別の数値：2024年の化石燃料由来のCO₂（Global Carbon Budget 2025、Our World in Data 経由）。世界合計（42 Gt）は土地利用変化を含むため、各国の合計とは一致しません。',
-      '<b>どのくらい不確かなのか。</b>1,000トン・ルールは桁の目安となる推計で、実際の数は10分の1から10倍くらいまでの幅がありえます。気温と死亡率の関係から積み上げる別の方法（Bressler 2021）でも、CO₂ 約4,400トンで1人と、ここで使う中央値に近い値が出ています（しかもこれは控えめな推計とされます）。幅の下限・上限は<a href="simulator.html">詳細シミュレータ</a>で試せます。',
+      '<b>どのくらい不確かなのか。</b>1,000トン・ルールはおおまかな推計で、著者が示す「ありうる幅」は中央値の約3分の1〜3倍です（Parncutt 2019、Pearce &amp; Parncutt 2023）。気温と死亡率の関係から積み上げる別の方法（Bressler 2021）でも、CO₂ 約4,400トンで1人と、ここで使う中央値に近い値が出ています（しかもこれは控えめな推計とされます）。幅の下限・上限は<a href="simulator.html">詳細シミュレータ</a>で試せます。',
       'それでも、<b>選択どうしの比べ方は変わりません。</b>牛肉と植物性の差や、再エネの電気プランで減る量は、CO₂換算のキログラムで決まり、死者数の係数にはよりません。死者数は、そのキログラムを「重さが伝わる単位」に置き換えたものです。',
       '戦争の死者数：第二次世界大戦 約7,000万〜8,500万人（中央値8,000万人で表示）、第一次世界大戦 約2,000万人。',
       '削減の道筋：「ゆるやかに削減」は年 −3%、「2℃目標の道」は年 −7%。UNEP はこれほど急な削減を（オーバーシュートを伴う）1.5℃の道筋としていますが、残りのカーボンバジェット（Global Carbon Budget 2025）で判断すると、2025年から年7%の削減は1.7℃〜2℃の間に着地します（<a href="sources.html">理由</a>）。',
@@ -559,7 +558,7 @@ function render() {
   const approx = state.lang === 'ja' ? '約' : '≈ ';
   $('perHour').textContent = approx + fmt(sig(perSec() * 3600));
   $('perDay').textContent = approx + (state.lang === 'ja' ? people(perSec() * 86400, false) : fmt(sig(perSec() * 86400)));
-  $('rangeLine').innerHTML = t('rangeLine', { lo: people(perYear() / 10, state.lang === 'ja'), hi: people(perYear() * 10, state.lang === 'ja') });
+  $('rangeLine').innerHTML = t('rangeLine', { lo: people(sig(perYear() * 0.3, 2), state.lang === 'ja'), hi: people(sig(perYear() * 3, 2), state.lang === 'ja') });
   $('perYear').textContent = people(perYear(), false);
   startHeart(iv);
 

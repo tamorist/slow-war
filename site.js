@@ -29,11 +29,11 @@ const SW_GROUPS = {
 const SW_SOURCES = [
   // 基本の推計
   { g: 'core', cite: 'Parncutt, R. (2019)', title: 'The Human Cost of Anthropogenic Global Warming: Semi-Quantitative Prediction and the 1,000-Tonne Rule', venue: 'Frontiers in Psychology 10: 2323', url: 'https://doi.org/10.3389/fpsyg.2019.02323',
-    en: 'Where the 1,000-ton rule was first proposed: about one future premature death per 1,000 t of fossil carbon burned (likely 300–3,000 t). The 2 °C carbon budget (~1 trillion t of carbon, cumulative) → about 1 billion deaths spread over one to two centuries (range ~0.3–3 billion). A top-down estimate that includes indirect deaths and the possibility of climate-driven wars and ecological catastrophes. Basis of the ×1 and ×3 scenarios.',
-    ja: '1,000トン・ルールが最初に提唱された論文。化石燃料の炭素1,000 tを燃やすごとに、将来の早すぎる死が約1人（300〜3,000 tの幅）。2℃に相当する炭素（累積で約1兆 t）で、約10億人の死が1〜2世紀にわたって起こる（幅は約3億〜30億人）。間接的な死に加え、気候による戦争や生態系の破局の可能性まで含む推計。シナリオ ×1 と ×3 の根拠です。' },
+    en: 'Where the 1,000-ton rule was first proposed: about one future premature death per 1,000 t of fossil carbon burned (likely 300–3,000 t). The 2 °C carbon budget (~1 trillion t of carbon, cumulative) → about 1 billion deaths spread over one to two centuries (range ~0.3–3 billion). A top-down estimate that includes indirect deaths and the possibility of climate-driven wars and ecological catastrophes. Basis of the ×1 scenario and the likely range shown with each number.',
+    ja: '1,000トン・ルールが最初に提唱された論文。化石燃料の炭素1,000 tを燃やすごとに、将来の早すぎる死が約1人（300〜3,000 tの幅）。2℃に相当する炭素（累積で約1兆 t）で、約10億人の死が1〜2世紀にわたって起こる（幅は約3億〜30億人）。間接的な死に加え、気候による戦争や生態系の破局の可能性まで含む推計。シナリオ ×1 と、各数字に添えたありうる幅の根拠です。' },
   { g: 'core', cite: 'Pearce, J.M. & Parncutt, R. (2023)', title: 'Quantifying Global Greenhouse Gas Emissions in Human Deaths to Guide Energy Policy', venue: 'Energies 16(16): 6074', url: 'https://doi.org/10.3390/en16166074',
-    en: 'The “1,000-ton rule”: about 1 future premature death per 1,000 t of fossil carbon burned (≈ 3,664 t of CO₂). An order-of-magnitude estimate (likely 0.1–10 deaths per 1,000 tC). The basis of every death estimate on this site.',
-    ja: '「1,000トン・ルール」：化石燃料の炭素1,000 t（CO₂に換算して約3,664 t）を燃やすごとに、将来の早すぎる死が約1人。桁の目安となる推計です（炭素1,000 tあたり0.1〜10人の幅）。このサイトのすべての死者数の推計の土台です。' },
+    en: 'The “1,000-ton rule”: about 1 future premature death per 1,000 t of fossil carbon burned (≈ 3,664 t of CO₂). A rough estimate: “likely more than 300 million and less than 3 billion” deaths for 2 °C, i.e. about 0.3–3× the central value. The basis of every death estimate on this site.',
+    ja: '「1,000トン・ルール」：化石燃料の炭素1,000 t（CO₂に換算して約3,664 t）を燃やすごとに、将来の早すぎる死が約1人。おおまかな推計で、2℃で「おそらく3億人より多く、30億人より少ない」、つまり中央値の約0.3〜3倍の幅があります。このサイトのすべての死者数の推計の土台です。' },
   { g: 'core', cite: 'Bressler, R.D. (2021)', title: 'The mortality cost of carbon', venue: 'Nature Communications 12: 4467', url: 'https://doi.org/10.1038/s41467-021-24487-w',
     en: 'An independent estimate: about 4,434 t of CO₂ (2020 emissions) per excess death by 2100 — close to the carbon-based 1,000-ton rule. Useful for seeing how widely such estimates range.',
     ja: '独自の推計で、CO₂ 約4,434 t（2020年の排出）あたり2100年までに超過死亡1人。炭素ベースの1,000トン・ルールに近い値です。推計の幅を知るのに役立ちます。' },

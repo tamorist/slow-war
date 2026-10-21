@@ -441,7 +441,7 @@
   <div class="mstack" id="mStack"></div>
 </div>
 
-<script src="site.js?v=20261021b"></script>
+<script src="site.js?v=20261021c"></script>
 <script>
 /* ===================== DATA ===================== */
 const COUNTRIES = {
@@ -454,11 +454,10 @@ const COUNTRIES = {
   japan:  { en: 'Japan',          ja: '日本',     enIn: 'Japan',             jaIn: '日本',   gt: 0.96,  pop: 1.24e8, grid: 0.45, area: 0.378e6, cb: 9.62, hh: 2.2 },
   uk:     { en: 'United Kingdom', ja: '英国',     enIn: 'the UK',            jaIn: '英国',   gt: 0.31, pop: 6.9e7,  grid: 0.20, area: 0.244e6, cb: 8.85, hh: 2.4 },
 };
-// シナリオの倍率：×1＝1,000トン・ルールの中央値、×1.5＝温暖化の加速（私たちの仮定）、×3＝論文の幅の上端
+// シナリオの倍率：×1＝1,000トン・ルールの中央値、×1.5＝温暖化の加速（私たちの仮定）
 const TIPS = [
   { m: 1,   en: '1,000-ton rule (paper’s central value) ×1', ja: '1,000トン・ルール（論文の中央値）×1' },
   { m: 1.5, en: 'With accelerated warming ×1.5',             ja: '温暖化の加速を織り込む ×1.5' },
-  { m: 3,   en: 'Upper end of the paper’s range ×3',         ja: '論文の幅の上端 ×3' },
 ];
 const WW2 = 80e6;
 // 排出係数（kg CO₂e、ライフサイクルの概算。出典により最大2倍程度の幅あり）
@@ -680,7 +679,7 @@ const I18N = {
     beefNoteOff: 'Choosing beef adds ≈ <b>{kg} kg</b> per meal compared with chicken (about {x}× as much). Try it and watch your total.',
     wholeNoteH: 'How this is estimated',
     wholeNote: 'All emissions in the economy — including factories, power plants and imports — are assigned to whoever finally uses the goods and services (“consumption-based”). The total is consumption-based CO₂ (2023, Global Carbon Budget via Our World in Data) scaled up for other gases (2024 ratio). It is split using global shares: households 72%, government 10%, investment 18% (Hertwich & Peters, 2009). Later studies put the household share at 58–72%, and it differs by country. Most construction falls under investment — so if you include building a house (step 3 of shopping), it partly overlaps with that segment. A rough guide only.',
-    uncNote: 'Death counts are a central estimate (order of magnitude: about 1/10 to 10×). Comparisons between choices are not affected.',
+    uncNote: 'Death counts are a central estimate (the authors’ likely range: about ⅓ to 3×). Comparisons between choices are not affected.',
     resTitle: 'Your day',
     vs: 'Average household (lifestyle) footprint in {where}: ≈ {avg} kg/day (estimate)',
     scale: { you: 'You', country: 'Everyone in {name}', world: 'Everyone on Earth' },
@@ -711,8 +710,8 @@ const I18N = {
       'Electricity uses an approximate grid factor for {where}: <b>{grid} kg CO₂/kWh</b>. Electric-car and air-con emissions change with the region you choose.',
       '<b>What changes with the region:</b> the electricity factor, population and national averages, household size (used to share the bath, appliances and the home) and the default bath habit (a daily bath in Japan, a shower elsewhere). Other assumptions — the default day, appliance and house lifetimes, a car shared by two, kerosene heaters — are based on Japan.',
       'Your total covers only the activities above. The household average also includes eating out, services, home upkeep and more, so it is usually higher — see the whole-picture bar.',
-      '<b>How uncertain are the death counts?</b> The 1,000-ton rule is an order-of-magnitude estimate — the true numbers could be about ten times lower or higher (Bressler 2021, using another method, gets a similar central value). The kilograms, and every comparison between choices, do not depend on it.',
-      'Deaths use the 1,000-ton rule — 1,000 t of carbon ≈ 3,664 t CO₂ ≈ 1 future death (an order-of-magnitude estimate) — × the scenario multiplier you select (×1 = the paper’s central value; ×1.5 = accelerating warming; ×3 = upper end of the paper’s range).',
+      '<b>How uncertain are the death counts?</b> The 1,000-ton rule is a rough estimate — the authors’ likely range is about a third to three times the central value (Bressler 2021, using another method, gets a similar central value). The kilograms, and every comparison between choices, do not depend on it.',
+      'Deaths use the 1,000-ton rule — 1,000 t of carbon ≈ 3,664 t CO₂ ≈ 1 future death (an order-of-magnitude estimate) — × the scenario multiplier you select (×1 = the paper’s central value; ×1.5 = accelerating warming).',
       '<b>This is not about blame.</b> One person’s choices are tiny on their own. The point is what becomes possible when habits — and the systems behind them — change at scale.',
     ],
     factorsH: 'Show emission factors used',
@@ -818,7 +817,7 @@ const I18N = {
     beefNoteOff: '牛肉を選ぶと、鶏肉より1食あたり約<b>{kg} kg</b>増えます（約{x}倍）。試して、合計の変化を見てみてください。',
     wholeNoteH: 'この推計について',
     wholeNote: '工場・発電所・輸入品なども含め、国全体の排出を、最終的にモノやサービスを使う人に割り振った「消費ベース」の推計です。総量は、消費ベースのCO₂（2023年、Global Carbon Budget／Our World in Data）に、CO₂以外のガスの比率（2024年）を掛けた概算です。家庭・政府・投資への割り振りには、世界全体の推計（家庭72%・政府10%・投資18%、Hertwich & Peters 2009）を当てはめています。家庭の割合は研究によって58〜72%と幅があり、国によっても違います。建設の多くは「投資」に含まれます。そのため、買い物の③で「家」を入れると、この「投資」の部分と一部重なります。あくまで目安です。',
-    uncNote: '死者数は推計の中央値です（桁の目安：約10分の1〜10倍の幅）。選択どうしの比べ方は、この幅の影響を受けません。',
+    uncNote: '死者数は推計の中央値です（著者が示すありうる幅：約3分の1〜3倍）。選択どうしの比べ方は、この幅の影響を受けません。',
     resTitle: 'あなたの1日',
     vs: '{where}の平均的な人の生活由来（家庭の消費）の排出：約{avg} kg/日（推計）',
     scale: { you: 'あなた', country: '{name}の全員', world: '世界の全員' },
@@ -849,8 +848,8 @@ const I18N = {
       '電気は{where}の電力の概算係数 <b>{grid} kg CO₂/kWh</b> で計算しています。電気自動車やエアコンの排出は、選んだ国・地域によって変わります。',
       '<b>国・地域で変わるもの：</b>電気の排出係数、人口と国の平均値、世帯人数（湯船・家電・家を分ける計算）、お風呂の初期設定（日本は毎日湯船、ほかはシャワー）。そのほかの前提（初期設定の1日、家電や家の使用年数、車を2人で1台、石油ストーブなど）は日本の条件にもとづきます。',
       'あなたの合計は上の項目だけです。生活由来の平均には外食・サービス・住まいの維持なども含まれるため、ふつうはそれより高くなります（全体像の帯を参照）。',
-      '<b>死者数はどのくらい不確かか。</b>1,000トン・ルールは桁の目安となる推計で、実際の数は10分の1から10倍くらいまでの幅がありえます（別の方法による Bressler 2021 も近い中央値を出しています）。キログラムの値と、選択どうしの比べ方は、この幅の影響を受けません。',
-      '犠牲者数は1,000トン・ルール（炭素1,000 t ≒ CO₂ 3,664 t で将来の死者1人。桁の目安となる推計）に、選んだシナリオの倍率（×1＝論文の中央値、×1.5＝温暖化の加速、×3＝論文の幅の上端）を掛けて求めています。',
+      '<b>死者数はどのくらい不確かか。</b>1,000トン・ルールはおおまかな推計で、著者が示すありうる幅は中央値の約3分の1〜3倍です（別の方法による Bressler 2021 も近い中央値を出しています）。キログラムの値と、選択どうしの比べ方は、この幅の影響を受けません。',
+      '犠牲者数は1,000トン・ルール（炭素1,000 t ≒ CO₂ 3,664 t で将来の死者1人。桁の目安となる推計）に、選んだシナリオの倍率（×1＝論文の中央値、×1.5＝温暖化の加速）を掛けて求めています。',
       '<b>個人を責めるためのものではありません。</b>1人の選択だけでは小さな数字です。大切なのは、習慣と、それを支える社会の仕組みが大きな規模で変わったときに何が起きるかです。',
     ],
     factorsH: '使っている排出係数を見る',

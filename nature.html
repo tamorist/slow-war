@@ -346,13 +346,12 @@
 
 <footer data-i18n="footer"></footer>
 
-<script src="site.js?v=20261021b"></script>
+<script src="site.js?v=20261021c"></script>
 <script>
-// シナリオの倍率：×1＝1,000トン・ルールの中央値、×1.5＝温暖化の加速（私たちの仮定）、×3＝論文の幅の上端
+// シナリオの倍率：×1＝1,000トン・ルールの中央値、×1.5＝温暖化の加速（私たちの仮定）
 const TIPS = [
   { m: 1,   en: '1,000-ton rule (paper’s central value) ×1', ja: '1,000トン・ルール（論文の中央値）×1' },
   { m: 1.5, en: 'With accelerated warming ×1.5',             ja: '温暖化の加速を織り込む ×1.5' },
-  { m: 3,   en: 'Upper end of the paper’s range ×3',         ja: '論文の幅の上端 ×3' },
 ];
 // 食材別の環境負荷（Poore & Nemecek 2018 の平均値, Our World in Data 経由の概算）／ 1 kg あたり
 // ghg: kg CO₂e（土地利用変化を含む）, land: m²·年, water: 淡水取水量 L, eutro: 富栄養化 g PO₄eq, protein: たんぱく質の割合
@@ -452,7 +451,7 @@ const I18N = {
     pfLiveH: 'Livestock: most of the land, little of the food',
     live: { land: 'Share of farmland used for livestock (pasture + feed crops)', kcal: 'Share of the world’s calories it provides', prot: 'Share of the world’s protein it provides' },
     liveLand: '~3/4',
-    pfDeath: 'Only the greenhouse-gas part can be turned into lives. Applying the 1,000-ton rule to food’s 13.7 billion t CO₂e gives about <b>{n} future deaths a year</b> (central estimate, {tip}; the true figure could be ~10× lower or higher). <span class="own">our estimate</span><br><span class="hint">Land, water and pollution have no comparable death factor, so they are shown as shares, not lives. The counter on the story page counts CO₂ only, so this is not a slice of it.</span>',
+    pfDeath: 'Only the greenhouse-gas part can be turned into lives. Applying the 1,000-ton rule to food’s 13.7 billion t CO₂e gives about <b>{n} future deaths a year</b> (central estimate, {tip}; the authors’ likely range is about ⅓ to 3×). <span class="own">our estimate</span><br><span class="hint">Land, water and pollution have no comparable death factor, so they are shown as shares, not lives. The counter on the story page counts CO₂ only, so this is not a slice of it.</span>',
     pfBH: 'The Amazon: how close to the tipping point?',
     pfBLead: 'The Amazon makes much of its own rain. Scientists warn that once <b>20–25%</b> of the forest is lost — together with warming and fire — the east, south and centre could flip from rainforest to savanna.',
     fAll: 'The whole Amazon rainforest, as it originally was (= 100%)', fLeft: 'To the danger zone: <b>3–8</b> percentage points', fLost: 'Already lost: ~17%', fZone: 'Danger zone: 20–25% lost', kLost: 'Forest already lost', kLeft: 'Forest still standing', kZone: 'Beyond this, the forest may no longer sustain its own rain',
@@ -616,7 +615,7 @@ const I18N = {
     pfLiveH: '家畜：土地の大部分を使い、食べ物はわずか',
     live: { land: '農地のうち家畜に使われる割合（牧草地＋飼料畑）', kcal: '世界のカロリーのうち家畜由来の割合', prot: '世界のたんぱく質のうち家畜由来の割合' },
     liveLand: '約3/4',
-    pfDeath: '死者数に換算できるのは温室効果ガスの部分だけです。食べ物の排出137億 t CO₂e に1,000トン・ルールを当てはめると、<b>年約{n}の将来の死</b>が確定することになります（中央値、{tip}。実際は約10分の1〜10倍の幅があります）。<span class="own">私たちの概算</span><br><span class="hint">土地・水・汚染には同じような死者数への換算がないため、人数ではなく割合で示しています。ストーリーページのカウンターはCO₂だけを数えているので、その一部ではありません。</span>',
+    pfDeath: '死者数に換算できるのは温室効果ガスの部分だけです。食べ物の排出137億 t CO₂e に1,000トン・ルールを当てはめると、<b>年約{n}の将来の死</b>が確定することになります（中央値、{tip}。著者が示すありうる幅は約3分の1〜3倍）。<span class="own">私たちの概算</span><br><span class="hint">土地・水・汚染には同じような死者数への換算がないため、人数ではなく割合で示しています。ストーリーページのカウンターはCO₂だけを数えているので、その一部ではありません。</span>',
     pfBH: 'アマゾンは、限界まであとどれくらい？',
     pfBLead: 'アマゾンの森は、自らの雨の多くを自分でつくっています。森林の<b>20〜25%</b>が失われると、温暖化や火災と重なって、東部・南部・中部が熱帯雨林からサバンナに変わってしまう恐れがある、と科学者は警告しています。',
     fAll: 'アマゾンの熱帯雨林の、もとの広さ全体（＝100%）', fLeft: '危険域まで、あと <b>3〜8</b> ポイント', fLost: 'すでに失われた：約17%', fZone: '危険域：20〜25%が失われると', kLost: 'すでに失われた森', kLeft: '残っている森', kZone: 'ここを越えると、森が自らの雨を保てなくなる恐れ',

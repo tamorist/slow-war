@@ -87,7 +87,7 @@
 
 <footer data-i18n="footer"></footer>
 
-<script src="site.js?v=20261021b"></script>
+<script src="site.js?v=20261021c"></script>
 <script>
 const I18N = {
   en: {
@@ -98,10 +98,10 @@ const I18N = {
     keyH: 'Key numbers and assumptions',
     cols: ['Number', 'Value used', 'Source'],
     rows: [
-      ['Deaths per tonne of CO₂', '1 future death per 1,000 t of carbon ≈ 3,664 t CO₂ (the “1,000-ton rule”; likely range 0.1–10 deaths per 1,000 tC)', 'Parncutt (2019); Pearce & Parncutt (2023)', 'data'],
+      ['Deaths per tonne of CO₂', '1 future death per 1,000 t of carbon ≈ 3,664 t CO₂ (the “1,000-ton rule”; likely range 300–3,000 t of carbon per death, i.e. about 0.3–3× the central value)', 'Parncutt (2019); Pearce & Parncutt (2023)', 'data'],
       ['World emissions', '~42 Gt CO₂ a year (2024, incl. land-use change)', 'Global Carbon Budget 2025', 'data'],
       ['Country emissions', 'Fossil CO₂ in 2024', 'Global Carbon Budget 2025 / Our World in Data', 'data'],
-      ['Scenario multipliers', '×1 = the 1,000-ton rule’s central value (already includes indirect deaths, conflict and ecological catastrophe); ×1.5 (default) = accelerating warming; ×3 = upper end of the paper’s range', '×1, ×3: Parncutt (2019). ×1.5: our assumption that deaths scale with climate sensitivity — Hansen &amp; Kharecha (2025) put it at ~4.5 °C, 1.5× the IPCC’s 3 °C', 'est'],
+      ['Scenario multipliers', '×1 = the 1,000-ton rule’s central value (already includes indirect deaths, conflict and ecological catastrophe); ×1.5 (default) = accelerating warming; the likely range (×0.3–×3) is shown with each number', '×1 and the range: Parncutt (2019); Pearce &amp; Parncutt (2023). ×1.5: our assumption that deaths scale with climate sensitivity — Hansen &amp; Kharecha (2025) put it at ~4.5 °C, 1.5× the IPCC’s 3 °C', 'est'],
       ['Reduction pathways', '−3% / −7% a year', 'See the note below; UNEP Emissions Gap Report 2025, Global Carbon Budget 2025', 'est'],
       ['War deaths', 'WWII 80 million, WWI 20 million', 'Commonly cited estimates (see Wikipedia summaries)', 'data'],
       ['Food impacts', 'Emissions by stage, land, water, pollution', 'Poore & Nemecek (2018) via Our World in Data', 'data'],
@@ -154,10 +154,10 @@ const I18N = {
     keyH: '主な数値と前提',
     cols: ['項目', '使っている値', '出典'],
     rows: [
-      ['CO₂ 1トンあたりの死者', '炭素1,000 t ≒ CO₂ 3,664 tで将来の死者1人（1,000トン・ルール。炭素1,000 tあたり0.1〜10人の幅）', 'Parncutt (2019); Pearce & Parncutt (2023)', 'data'],
+      ['CO₂ 1トンあたりの死者', '炭素1,000 t ≒ CO₂ 3,664 tで将来の死者1人（1,000トン・ルール。ありうる幅は炭素300〜3,000 tで1人、中央値の約0.3〜3倍）', 'Parncutt (2019); Pearce & Parncutt (2023)', 'data'],
       ['世界の排出量', '年約42 Gt CO₂（2024年、土地利用変化を含む）', 'Global Carbon Budget 2025', 'data'],
       ['国別の排出量', '2024年の化石燃料由来CO₂', 'Global Carbon Budget 2025 / Our World in Data', 'data'],
-      ['シナリオの倍率', '×1＝1,000トン・ルールの中央値（間接的な死・紛争・生態系の破局をすでに含む）、×1.5（初期値）＝温暖化の加速、×3＝論文の幅の上端', '×1・×3：Parncutt（2019）。×1.5：死者が気候感度に比例すると置いた私たちの仮定（Hansen &amp; Kharecha 2025 は約4.5℃、IPCC の3℃の1.5倍）', 'est'],
+      ['シナリオの倍率', '×1＝1,000トン・ルールの中央値（間接的な死・紛争・生態系の破局をすでに含む）、×1.5（初期値）＝温暖化の加速。ありうる幅（×0.3〜×3）は各数字に添える', '×1と幅：Parncutt（2019）、Pearce &amp; Parncutt（2023）。×1.5：死者が気候感度に比例すると置いた私たちの仮定（Hansen &amp; Kharecha 2025 は約4.5℃、IPCC の3℃の1.5倍）', 'est'],
       ['削減の道筋', '年 −3%／−7%', '下の注記を参照。UNEP Emissions Gap Report 2025、Global Carbon Budget 2025', 'est'],
       ['戦争の死者数', '第二次世界大戦 8,000万人、第一次世界大戦 2,000万人', 'よく引用される推計（Wikipedia のまとめを参照）', 'data'],
       ['食べ物の環境負荷', '段階別の排出・土地・水・汚染', 'Poore & Nemecek (2018)、Our World in Data 経由', 'data'],
