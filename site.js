@@ -29,8 +29,8 @@ const SW_GROUPS = {
 const SW_SOURCES = [
   // 基本の推計
   { g: 'core', cite: 'Parncutt, R. (2019)', title: 'The Human Cost of Anthropogenic Global Warming: Semi-Quantitative Prediction and the 1,000-Tonne Rule', venue: 'Frontiers in Psychology 10: 2323', url: 'https://doi.org/10.3389/fpsyg.2019.02323',
-    en: 'Where the 1,000-ton rule was first proposed: about one future premature death per 1,000 t of fossil carbon burned.',
-    ja: '1,000トン・ルールが最初に提唱された論文。化石燃料の炭素1,000 tを燃やすごとに、将来の早すぎる死が約1人。' },
+    en: 'Where the 1,000-ton rule was first proposed: about one future premature death per 1,000 t of fossil carbon burned (likely 300–3,000 t). The 2 °C carbon budget (~1 trillion t of carbon, cumulative) → about 1 billion deaths spread over one to two centuries (range ~0.3–3 billion). A top-down estimate that includes indirect deaths and the possibility of climate-driven wars and ecological catastrophes. Basis of the ×1 and ×3 scenarios.',
+    ja: '1,000トン・ルールが最初に提唱された論文。化石燃料の炭素1,000 tを燃やすごとに、将来の早すぎる死が約1人（300〜3,000 tの幅）。2℃に相当する炭素（累積で約1兆 t）で、約10億人の死が1〜2世紀にわたって起こる（幅は約3億〜30億人）。間接的な死に加え、気候による戦争や生態系の破局の可能性まで含む推計。シナリオ ×1 と ×3 の根拠です。' },
   { g: 'core', cite: 'Pearce, J.M. & Parncutt, R. (2023)', title: 'Quantifying Global Greenhouse Gas Emissions in Human Deaths to Guide Energy Policy', venue: 'Energies 16(16): 6074', url: 'https://doi.org/10.3390/en16166074',
     en: 'The “1,000-ton rule”: about 1 future premature death per 1,000 t of fossil carbon burned (≈ 3,664 t of CO₂). An order-of-magnitude estimate (likely 0.1–10 deaths per 1,000 tC). The basis of every death estimate on this site.',
     ja: '「1,000トン・ルール」：化石燃料の炭素1,000 t（CO₂に換算して約3,664 t）を燃やすごとに、将来の早すぎる死が約1人。桁の目安となる推計です（炭素1,000 tあたり0.1〜10人の幅）。このサイトのすべての死者数の推計の土台です。' },
@@ -84,9 +84,12 @@ const SW_SOURCES = [
     en: 'Where current policies are heading in terms of warming.', ja: 'いまの政策のままだと、温暖化がどこまで進むかの見通し。' },
 
   // ティッピング
+  { g: 'tipping', cite: 'Hansen, J. & Kharecha, P. (2025)', title: 'Global Warming Has Accelerated: Are the United Nations and the Public Well-Informed?', venue: 'Environment: Science and Policy for Sustainable Development (2025); authors’ summary', url: 'https://www.columbia.edu/~jeh1/mailings/2025/Acceleration.12Feb2025.pdf',
+    en: 'Argues that climate sensitivity is about 4.5 °C for doubled CO₂ — 50% above the IPCC’s best estimate of 3 °C — partly because aerosol cooling has been underestimated. Basis of the ×1.5 scenario (our assumption that deaths scale accordingly). Other scientists regard it as the high end of mainstream estimates.',
+    ja: '二酸化炭素倍増時の気候感度は約4.5℃で、IPCC の最良推計3℃より50%大きいと主張（エアロゾルの冷却効果の過小評価などによる）。シナリオ ×1.5 の根拠です（死者もそれに比例すると置いた私たちの仮定）。主流の推計の中では高い側と見る研究者もいます。' },
   { g: 'tipping', cite: 'Armstrong McKay, D.I. et al. (2022)', title: 'Exceeding 1.5°C global warming could trigger multiple climate tipping points', venue: 'Science 377: eabn7950', url: 'https://doi.org/10.1126/science.abn7950',
-    en: 'Thresholds of major tipping elements. Background for the tipping options — the ×1.5 / ×2 / ×3 multipliers themselves are our illustrative assumptions, not from this paper.',
-    ja: '主なティッピング要素の閾値。ティッピング効果の選択肢の背景です。ただし ×1.5／×2／×3 の係数そのものは、この論文ではなく私たちが置いた目安です。' },
+    en: 'Thresholds of major tipping elements — background reading on why warming may accelerate. (The site’s scenario multipliers are based on Parncutt 2019 and Hansen &amp; Kharecha 2025, not this paper.)',
+    ja: '主なティッピング要素の閾値。温暖化が加速しうる理由の背景資料です（このサイトのシナリオの倍率は、この論文ではなく Parncutt 2019 と Hansen &amp; Kharecha 2025 にもとづきます）。' },
   { g: 'tipping', cite: 'Institute and Faculty of Actuaries & University of Exeter (2025)', title: 'Planetary Solvency – finding our balance with nature', venue: 'actuaries.org.uk', url: 'https://actuaries.org.uk/planetary-solvency',
     en: 'A risk-management framework. Its impact matrix (supplementary material) puts “over 4 billion deaths” at 3 °C or more by 2050, over 2 billion at 2 °C or more, over 800 million if held to 2 °C, over 400 million at 1.5 °C after overshoot. Illustrative risk categories, not forecasts; the timeframe is not precisely defined.',
     ja: 'リスク管理の枠組みを示した報告書。付録の評価表では、2050年までに3℃以上で「40億人超の死者」、2℃以上で20億人超、2℃にとどまる場合で8億人超、1.5℃に戻る場合で4億人超としています。予測ではなくリスクの区分で、期間ははっきり定められていません。' },
@@ -301,8 +304,8 @@ const SW_PAGES = [
     en: { nav: 'Your day', title: 'What does YOUR day add up to?', desc: 'Pick your travel, meals, heating and shopping. See what your day means in lives — if everyone in your country, or on Earth, lived it.', cta: 'Try the personal simulator', float: 'Your day: how many lives?' },
     ja: { nav: 'あなたの1日', title: 'あなたの1日は、何人分？', desc: '移動・食事・冷暖房・買い物を選ぶだけ。あなたの1日を、国や世界の全員でかけ算すると、命の数でいくつになるか。', cta: '個人シミュレータを試す', float: 'あなたの1日は、何人分？' } },
   { file: 'simulator.html', icon: '◐', color: '#4f9be8',
-    en: { nav: 'Simulator', title: 'Detailed simulator', desc: 'Change emissions, region, tipping effects and pathways yourself, and watch the numbers move.', cta: 'Open simulator' },
-    ja: { nav: 'シミュレータ', title: '詳細シミュレータ', desc: '排出量・国・ティッピング効果・削減の道筋を自分で動かして、数字の変化を見る。', cta: 'シミュレータへ' } },
+    en: { nav: 'Simulator', title: 'Detailed simulator', desc: 'Change emissions, region, scenarios and pathways yourself, and watch the numbers move.', cta: 'Open simulator' },
+    ja: { nav: 'シミュレータ', title: '詳細シミュレータ', desc: '排出量・国・シナリオ・削減の道筋を自分で動かして、数字の変化を見る。', cta: 'シミュレータへ' } },
   { file: 'nature.html', icon: '❦', color: '#4fb38a',
     en: { nav: 'Beyond carbon', title: 'Beyond carbon: food and nature', desc: 'The fight is also about keeping nature healthy: what food takes from land and water, the Amazon tipping gauge, and foods compared beyond carbon.', cta: 'Explore' },
     ja: { nav: '炭素だけではない', title: '炭素だけではない：食べ物と自然', desc: 'これは自然を守る戦いでもある。食べ物が使う土地と水、アマゾンのティッピング計、炭素以外の指標での食材の比較。', cta: '見てみる' } },

@@ -6,16 +6,16 @@
 <title>Climate Casualty Simulator</title>
 <meta name="author" content="Tatsuya Mori (@ttmori)">
 <meta name="twitter:creator" content="@ttmori">
-<meta name="description" content="Adjust emissions, region, tipping effects and pathways to see how many future deaths are locked in. 排出量・国・ティッピング効果を変えて試せる詳細シミュレータ。">
+<meta name="description" content="Adjust emissions, region, scenarios and pathways to see how many future deaths are locked in. 排出量・国・シナリオを変えて試せる詳細シミュレータ。">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="The Slow War">
 <meta property="og:title" content="Climate Casualty Simulator — The Slow War">
-<meta property="og:description" content="Adjust emissions, region, tipping effects and pathways to see how many future deaths are locked in. 排出量・国・ティッピング効果を変えて試せる詳細シミュレータ。">
+<meta property="og:description" content="Adjust emissions, region, scenarios and pathways to see how many future deaths are locked in. 排出量・国・シナリオを変えて試せる詳細シミュレータ。">
 <meta property="og:url" content="https://tamorist.github.io/slow-war/simulator.html">
 <meta property="og:image" content="https://tamorist.github.io/slow-war/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="A counter showing 17,200,000 future deaths locked in every year by the world’s CO₂ emissions, including moderate feedbacks">
+<meta property="og:image:alt" content="A counter showing 17,200,000 future deaths locked in every year by the world’s CO₂ emissions, including accelerated warming (×1.5)">
 <meta property="og:locale" content="en_US">
 <meta property="og:locale:alternate" content="ja_JP">
 <meta name="twitter:card" content="summary_large_image">
@@ -23,6 +23,8 @@
 <link rel="canonical" href="https://tamorist.github.io/slow-war/simulator.html">
 <link rel="license" href="https://creativecommons.org/licenses/by/4.0/">
 <style>
+  .pastchk { display: flex; align-items: center; gap: 8px; margin-top: 16px; font-size: 13.5px; cursor: pointer; }
+  .pastchk input { width: 18px; height: 18px; }
   :root {
     --bg: #f6f5f2; --panel: #ffffff; --text: #1d1d1f; --muted: #6b6b70;
     --line: #dcdad4; --accent: #b3261e; --war: #5b6b7a; --grid: #ecebe6; --tip: #b7791f;
@@ -119,6 +121,9 @@
       <label for="end" data-i18n="end"></label>
       <div class="row"><input id="end" type="range" min="2030" max="2100" step="1" value="2050"><span class="val" id="endV"></span></div>
 
+      <label class="pastchk"><input type="checkbox" id="past"> <span data-i18n="pastChk"></span></label>
+      <div class="hint" id="pastHint"></div>
+
       <button class="reset" id="reset" data-i18n="reset"></button>
     </section>
 
@@ -165,7 +170,7 @@
 </main>
 <footer class="sim-footer" data-i18n="footer"></footer>
 
-<script src="site.js?v=20261021a"></script>
+<script src="site.js?v=20261021b"></script>
 <script>
 // 化石燃料CO₂（2023年頃の概算, Global Carbon Project）。世界合計は土地利用変化を含む 40 Gt。
 const COUNTRIES = {
@@ -181,10 +186,9 @@ const COUNTRIES = {
 };
 // 線形推計に掛ける概算の係数（例示であり査読済みの推計ではない）
 const TIPS = [
-  { m: 1,   en: 'None (1,000-ton rule only)',        ja: 'なし（1,000トン・ルールのみ）' },
-  { m: 1.5, en: 'Moderate feedbacks ×1.5',           ja: '中程度のフィードバック ×1.5' },
-  { m: 2,   en: 'Tipping-point cascade ×2',          ja: 'ティッピング連鎖 ×2' },
-  { m: 3,   en: 'Cascade + societal collapse ×3',    ja: '連鎖＋社会的崩壊 ×3' },
+  { m: 1,   en: '1,000-ton rule (paper’s central value) ×1', ja: '1,000トン・ルール（論文の中央値）×1' },
+  { m: 1.5, en: 'With accelerated warming ×1.5',             ja: '温暖化の加速を織り込む ×1.5' },
+  { m: 3,   en: 'Upper end of the paper’s range ×3',         ja: '論文の幅の上端 ×3' },
 ];
 const WW2 = 80e6, WW1 = 20e6;
 
@@ -197,19 +201,20 @@ const I18N = {
     unc: 'Uncertainty of the 1,000-ton rule', uncHint: 'An order-of-magnitude estimate: try the low (×0.1) and high (×10) ends of the authors’ range. Comparisons between choices do not depend on this.',
     range: 'Range (0.1–10× the central value): {lo} – {hi}',
     tpd: 'CO₂ per one future death', tpdHint: '1,000-ton rule = 1,000 t of carbon ≈ 3,664 t CO₂ per person (likely range: 10× either way)',
-    tip: 'Tipping effects (rough multiplier)', tipHint: 'Illustrative, not peer-reviewed: permafrost, forest dieback, conflict, famine, migration…',
+    tip: 'Scenario (multiplier)', tipHint: '×1: the paper’s central value (includes indirect deaths and conflict) / ×1.5: accelerating warming (Hansen &amp; Kharecha 2025: sensitivity 1.5× IPCC; assumed proportional) / ×3: upper end of the paper’s range',
     rate: 'Annual change in emissions', rateHint: '0% = flat / −3% = gradual cuts / −7% ≈ 2 °C pathway',
     start: 'Base year', end: 'Count until', reset: 'Reset',
+    pastChk: 'Include past emissions (1850–2024, world only)', pastHintOn: 'Adds ≈ 2,750 billion t of CO₂ already emitted (Global Carbon Budget 2025, our sum). These deaths are locked in, but unfold over one to two centuries.', pastHintOff: 'Available when the region is set to World.', pastSfx: ' (incl. past emissions)',
     todayH: 'FUTURE DEATHS LOCKED IN TODAY — {name} (since midnight, your local time)',
     rateLine: 'Current pace: {d} per day / {s} per second', session: 'Since you opened this page: {n}',
     cmpH: 'CUMULATIVE DEATHS VS. PAST WARS',
     k10: 'Locked in over 10 years to {y}', kEnd: 'Cumulative to {y}',
-    ratio: '≈ {a}× WWII / ≈ {b}× WWI', linear: 'Linear (no tipping): {n}',
+    ratio: '≈ {a}× WWII / ≈ {b}× WWI', linear: 'At ×1 (1,000-ton rule only): {n}',
     warRef: 'Reference: deaths in past wars', warRefD: 'World War II ≈ 70–85 million (median 80 million) / World War I ≈ 20 million',
-    chartH: 'CUMULATIVE DEATHS OVER TIME', lgCum: 'Cumulative locked-in deaths', lgLin: 'Linear (no tipping)', lgWar: 'Multiples of WWII (80M)',
+    chartH: 'CUMULATIVE DEATHS OVER TIME', lgCum: 'Cumulative locked-in deaths', lgLin: 'At ×1 (1,000-ton rule only)', lgWar: 'Multiples of WWII (80M)',
     footer: '<a href="index.html">The Slow War</a> · <a href="sources.html">Sources &amp; data</a>',
     srcH: 'Sources & further reading', srcAll: 'All sources and key assumptions →',
-    note: '* Deaths = cumulative emissions ÷ CO₂ per death × tipping multiplier. With tipping effects set to “None” this is a conservative linear lower bound. Tipping multipliers are rough illustrative assumptions. For the general audience version, see the <a href="index.html">story page</a>; for your own day, the <a href="my-day.html">personal simulator</a>.',
+    note: '* Deaths = cumulative emissions ÷ CO₂ per death × scenario multiplier. ×1 is the 1,000-ton rule’s central value (it already includes indirect deaths such as conflict and famine); ×1.5 adds accelerating warming (our assumption, based on Hansen &amp; Kharecha 2025); ×3 is the upper end of the paper’s range. For the general audience version, see the <a href="index.html">story page</a>; for your own day, the <a href="my-day.html">personal simulator</a>.',
   },
   ja: {
     title: '気候犠牲者シミュレータ',
@@ -219,19 +224,20 @@ const I18N = {
     unc: '1,000トン・ルールの不確かさ', uncHint: '桁の目安となる推計です。著者が示す幅の下限（×0.1）と上限（×10）を試せます。選択どうしの比べ方は、この設定によりません。',
     range: '幅（中央値の0.1〜10倍）：{lo} 〜 {hi}',
     tpd: '1人の死を生む排出量（CO₂）', tpdHint: '1,000トン・ルール ＝ 炭素1,000 t ≒ CO₂ 3,664 t/人（幅は上下に約10倍）',
-    tip: 'ティッピング効果（概算の係数）', tipHint: '査読済みの推計ではない目安：永久凍土・森林枯死・紛争・飢饉・移民など',
+    tip: 'シナリオ（倍率）', tipHint: '×1：論文の中央値（間接的な死や紛争を含む）／×1.5：温暖化の加速（Hansen &amp; Kharecha 2025：気候感度がIPCCの1.5倍。比例すると仮定）／×3：論文の幅の上端',
     rate: '排出量の年変化率', rateHint: '0% ＝ 現状維持 / −3% ＝ ゆるやかな削減 / −7% ≒ 2℃経路',
     start: '基準年', end: '集計終了年', reset: '初期値に戻す',
+    pastChk: 'これまでの排出を含める（1850〜2024年、世界のみ）', pastHintOn: 'すでに出したCO₂ 約2兆7,500億 t（Global Carbon Budget 2025 を私たちが合計）を加えます。これらの死は確定していますが、1〜2世紀にわたって起こります。', pastHintOff: '国・地域を「世界」にすると選べます。', pastSfx: '（これまでの排出を含む）',
     todayH: '本日確定した未来の犠牲者 — {name}（あなたの地域の今日0時から）',
     rateLine: '現在のペース：1日 {d} 人 ／ 1秒 {s} 人', session: 'このページを開いてから：{n} 人',
     cmpH: '累積確定犠牲者と過去の戦争の比較',
     k10: '{y}年までの10年間で確定', kEnd: '{y}年までの累積確定',
-    ratio: '第二次世界大戦の約 {a} 倍 / 第一次世界大戦の約 {b} 倍', linear: '線形（ティッピングなし）：{n}',
+    ratio: '第二次世界大戦の約 {a} 倍 / 第一次世界大戦の約 {b} 倍', linear: '×1（1,000トン・ルールのみ）の場合：{n}',
     warRef: '参考：過去の戦争による死者数', warRefD: '第二次世界大戦 ≒ 7,000万〜8,500万人（中央値 8,000万） / 第一次世界大戦 ≒ 2,000万人',
-    chartH: '累積犠牲者の推移', lgCum: '累積確定犠牲者', lgLin: '線形（ティッピングなし）', lgWar: 'WWII（8,000万）の倍数',
+    chartH: '累積犠牲者の推移', lgCum: '累積確定犠牲者', lgLin: '×1（1,000トン・ルールのみ）', lgWar: 'WWII（8,000万）の倍数',
     footer: '<a href="index.html">静かな戦争</a> ・ <a href="sources.html">出典とデータ</a>',
     srcH: '出典と参考資料', srcAll: 'すべての出典と主な前提 →',
-    note: '※ 死者数 ＝ 累積排出量 ÷ 1人あたり排出量 × ティッピング係数。ティッピング効果「なし」のときは控えめな線形の下限推計です。ティッピング係数は目安として示した概算です。一般向けの解説は <a href="index.html">ストーリーページ</a>、自分の1日に置き換えるなら <a href="my-day.html">個人シミュレータ</a> をどうぞ。',
+    note: '※ 死者数 ＝ 累積排出量 ÷ 1人あたり排出量 × シナリオの倍率。×1 は1,000トン・ルールの中央値（紛争や飢饉などの間接的な死をすでに含む）、×1.5 は温暖化の加速を織り込んだもの（Hansen &amp; Kharecha 2025 にもとづく私たちの仮定）、×3 は論文の幅の上端です。一般向けの解説は <a href="index.html">ストーリーページ</a>、自分の1日に置き換えるなら <a href="my-day.html">個人シミュレータ</a> をどうぞ。',
   },
 };
 
@@ -253,6 +259,8 @@ const short = n => lang === 'ja'
 const ratioTxt = x => x >= 10 ? Math.round(x) : trim(x.toFixed(1));
 
 // 1,000トン・ルールの不確かさ：著者は炭素1,000 tあたり0.1〜10人の幅を示している
+// これまでの排出：1850〜2024年の化石燃料＋土地利用変化のCO₂（Global Carbon Budget 2025 の年次データを私たちが合計、Gt）
+const PAST_GT = 2752;
 const UNC = [
   { f: 0.1, en: 'Low end (×0.1)', ja: '控えめな端（×0.1）' },
   { f: 1,   en: 'Central estimate', ja: '中央値' },
@@ -260,12 +268,14 @@ const UNC = [
 ];
 function params() {
   return { E0: +$('emis').value, tpd: +$('tpd').value, r: +$('rate').value / 100,
-           start: +$('start').value, end: +$('end').value, m: TIPS[+$('tip').value].m, u: UNC[+$('unc').value].f };
+           start: +$('start').value, end: +$('end').value, m: TIPS[+$('tip').value].m, u: UNC[+$('unc').value].f,
+           past: $('past').checked && $('country').value === 'world' };
 }
-// 年ごとの累積犠牲者（線形 lin と ティッピング込み cum）
+// 年ごとの累積犠牲者（×1の lin と シナリオの倍率込み cum）
 function series(p) {
-  const out = [{ year: p.start, lin: 0, cum: 0 }];
-  let lin = 0;
+  // 「これまでの排出を含める」とき（世界のみ）：1850〜2024年の排出による分を出発点に加える
+  let lin = p.past ? PAST_GT * 1e9 / p.tpd * p.u : 0;
+  const out = [{ year: p.start, lin, cum: lin * p.m }];
   for (let y = p.start; y < Math.max(p.end, p.start + 10); y++) {
     lin += p.E0 * Math.pow(1 + p.r, y - p.start) * 1e9 / p.tpd * p.u;
     out.push({ year: y + 1, lin, cum: lin * p.m });
@@ -307,11 +317,11 @@ function update() {
 
   const s = series(p), y10 = p.start + 10, a10 = at(s, y10), aEnd = at(s, p.end);
   const showLin = p.m !== 1;
-  $('k10').textContent = t('k10', { y: y10 });
+  $('k10').textContent = t('k10', { y: y10 }) + (p.past ? t('pastSfx') : '');
   $('v10').textContent = fmt(a10.cum);
   $('x10').textContent = short(a10.cum) + '　' + t('ratio', { a: ratioTxt(a10.cum / WW2), b: ratioTxt(a10.cum / WW1) });
   $('l10').textContent = showLin ? t('linear', { n: short(a10.lin) }) : '';
-  $('kEnd').textContent = t('kEnd', { y: p.end });
+  $('kEnd').textContent = t('kEnd', { y: p.end }) + (p.past ? t('pastSfx') : '');
   $('vEnd').textContent = fmt(aEnd.cum);
   $('xEnd').textContent = short(aEnd.cum) + '　' + t('ratio', { a: ratioTxt(aEnd.cum / WW2), b: ratioTxt(aEnd.cum / WW1) });
   $('lEnd').textContent = showLin ? t('linear', { n: short(aEnd.lin) }) : '';
@@ -319,6 +329,9 @@ function update() {
   $('r10').textContent = t('range', { lo: short(a10.cum / p.u * 0.1), hi: short(a10.cum / p.u * 10) });
   $('rEnd').textContent = t('range', { lo: short(aEnd.cum / p.u * 0.1), hi: short(aEnd.cum / p.u * 10) });
   $('lgTipWrap').hidden = !showLin;
+  const isWorld = $('country').value === 'world';
+  $('past').disabled = !isWorld;
+  $('pastHint').textContent = isWorld ? ($('past').checked ? t('pastHintOn') : '') : t('pastHintOff');
 
   const dps = deathsPerSec(p);
   $('todayH').textContent = t('todayH', { name: countryName() });
@@ -395,12 +408,13 @@ sliders.forEach(i => $(i).addEventListener('input', () => {
 $('country').addEventListener('change', e => { $('emis').value = COUNTRIES[e.target.value].gt; update(); });
 $('tip').addEventListener('change', update);
 $('unc').addEventListener('change', update);
+$('past').addEventListener('change', update);
 document.querySelectorAll('.lang button').forEach(b => b.addEventListener('click', () => {
   lang = b.dataset.lang; store.set('scw-lang', lang); applyLang();
 }));
 $('reset').addEventListener('click', () => {
   sliders.forEach(i => $(i).value = defaults[i]);
-  $('country').value = defaults.country; $('tip').value = defaults.tip; $('unc').value = '1'; update();
+  $('country').value = defaults.country; $('tip').value = defaults.tip; $('unc').value = '1'; $('past').checked = false; update();
 });
 window.addEventListener('resize', update);
 matchMedia('(prefers-color-scheme: dark)').addEventListener('change', update);

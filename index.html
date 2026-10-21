@@ -15,7 +15,7 @@
 <meta property="og:image" content="https://tamorist.github.io/slow-war/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="A counter showing 17,200,000 future deaths locked in every year by the world’s CO₂ emissions, including moderate feedbacks">
+<meta property="og:image:alt" content="A counter showing 17,200,000 future deaths locked in every year by the world’s CO₂ emissions, including accelerated warming (×1.5)">
 <meta property="og:locale" content="en_US">
 <meta property="og:locale:alternate" content="ja_JP">
 <meta name="twitter:card" content="summary_large_image">
@@ -108,6 +108,15 @@
   .grid.on i { opacity: 1; transform: none; }
   .grid i.tip { background: var(--amber); }
   .war { color: var(--war); } .clim { color: var(--red); }
+  .past { margin-top: 48px; padding: 20px; border-radius: 14px; background: rgba(229,72,59,.06); border: 1px solid rgba(229,72,59,.35); }
+  .past h3 { font-size: 18px; margin: 0 0 8px; }
+  .past p { font-size: 13.5px; color: #c9c8c3; margin: 0 0 12px; line-height: 1.7; }
+  .past .p3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin: 14px 0; }
+  .past .p3 > div { background: var(--bg); border: 1px solid var(--faint); border-radius: 12px; padding: 14px; }
+  .past .k { font-size: 12.5px; color: #c9c8c3; }
+  .past .v { font-size: 28px; font-weight: 900; color: var(--red); line-height: 1.25; margin-top: 4px; }
+  .past .s { font-size: 11.5px; color: var(--muted); margin-top: 4px; }
+  .past .note { font-size: 12.5px; color: var(--muted); margin: 8px 0 0; }
   .other-est { margin-top: 48px; padding: 20px; border-radius: 14px; background: var(--bg); border: 1px solid var(--faint); }
   .other-est h3 { font-size: 16px; margin: 0 0 8px; }
   .other-est p { font-size: 13.5px; color: #c9c8c3; margin: 0 0 12px; line-height: 1.7; }
@@ -240,6 +249,7 @@
       </div>
     </div>
     <div class="cmp" id="cmp"></div>
+    <div class="past" id="past"></div>
     <div class="other-est" id="otherEst"></div>
   </div>
 </section>
@@ -323,7 +333,7 @@
 
 <footer data-i18n="footer"></footer>
 
-<script src="site.js?v=20261021a"></script>
+<script src="site.js?v=20261021b"></script>
 <script>
 /* ===================== DATA ===================== */
 // 化石燃料CO₂（2023年頃の概算, Global Carbon Project）。世界合計は土地利用変化を含む 40 Gt。
@@ -337,31 +347,38 @@ const COUNTRIES = {
   japan:  { en: 'Japan',          ja: '日本',     enIn: 'Japan',             jaIn: '日本',     gt: 0.96,  pop: 1.24e8 },
   uk:     { en: 'United Kingdom', ja: '英国',     enIn: 'the UK',            jaIn: '英国',     gt: 0.31, pop: 6.9e7 },
 };
-// ティッピング等の効果：線形推計に掛ける概算の係数（例示であり査読済みの推計ではない）
+// シナリオの倍率：×1＝1,000トン・ルールの中央値、×1.5＝温暖化の加速（Hansen & Kharecha 2025 の気候感度にもとづく私たちの仮定）、×3＝論文の幅の上端（Parncutt 2019）
 const TIPS = [
-  { m: 1,   en: 'None (1,000-ton rule only)',            ja: 'なし（1,000トン・ルールのみ）' },
-  { m: 1.5, en: 'Moderate feedbacks ×1.5',               ja: '中程度のフィードバック ×1.5' },
-  { m: 2,   en: 'Tipping-point cascade ×2',              ja: 'ティッピング連鎖 ×2' },
-  { m: 3,   en: 'Cascade + societal collapse ×3',        ja: '連鎖＋社会的崩壊 ×3' },
+  { m: 1,   en: '1,000-ton rule (paper’s central value) ×1', ja: '1,000トン・ルール（論文の中央値）×1' },
+  { m: 1.5, en: 'With accelerated warming ×1.5',             ja: '温暖化の加速を織り込む ×1.5' },
+  { m: 3,   en: 'Upper end of the paper’s range ×3',         ja: '論文の幅の上端 ×3' },
 ];
 // 1,000トン・ルールの「1,000トン」は炭素（C）の重さ。CO₂に換算すると 1,000 × 44/12 ≒ 3,664 トンで将来の死者1人
+// これまでの排出：1850〜2024年の化石燃料＋土地利用変化のCO₂（Global Carbon Budget 2025 の年次データを私たちが合計）
+const PAST_GT = 2752;
 const TPD = 3664, START = 2025, WW1 = 20e6, WW2 = 80e6, STADIUM = 55000;
 
 /* ===================== I18N ===================== */
 const I18N = {
   en: {
     title: 'The Slow War',
-    ctlCountry: 'Region', ctlTip: 'Tipping effects',
+    ctlCountry: 'Region', ctlTip: 'Scenario',
     heroTitle: 'Future deaths locked in today<br>by CO₂ emissions from {where}',
     people: 'people', peopleShort: 'people', since: 'Since you opened this page',
     since0: 'counted from midnight, your local time',
+    pastH: 'Including past emissions',
+    pastLead: 'The counter starts from today. But the CO₂ already emitted since 1850 — about <b>2,750 billion t</b> (≈ 750 billion t of carbon) — has locked in deaths too. Shown for the whole world, with the scenario you chose.',
+    pastK1: 'Already locked in by past emissions (1850–2024)', pastK2: 'Plus emissions to 2050 at today’s pace', pastK3: 'For reference: the carbon budget for 2 °C',
+    pastS1: '≈ {x}× World War II', pastS2: '≈ {x}× World War II', pastV3: '~1 billion', pastS3: '≈ 1 trillion t of carbon, cumulative — the paper’s central value (range ~0.3–3 billion)',
+    pastNote: '<b>When do these deaths happen?</b> Not all by 2050. Emissions lock them in; according to the paper, they unfold over the following one to two centuries (Parncutt 2019). Cumulative emissions: our sum of the Global Carbon Budget 2025 annual data (fossil fuels + land-use change).',
+    oeSitePast: 'This site, including past emissions (1850–2050, world)',
     oeH: 'Compared with other estimates: an actuarial risk assessment',
     oeLead: 'The UK Institute and Faculty of Actuaries and the University of Exeter, in <i>Planetary Solvency</i> (2025), set out the scale of deaths that could come with each level of warming, as a risk-management tool.',
     oeSite: 'This site, to 2050 (world, central estimate)',
     oeRows: [['1.5 °C, after a temporary overshoot', 'over 400 million'], ['Warming held to 2 °C by 2050', 'over 800 million'], ['2 °C or more by 2050', 'over 2 billion'], ['3 °C or more by 2050', 'over 4 billion']],
     oeNote: 'That table is not a forecast: it describes how large the damage could be, for managing risk. Its timeframe is not precisely defined, and it includes deaths from societal breakdown — conflict, famine and mass migration. Compared with it, the numbers on this site, based on the 1,000-ton rule, are conservative.',
     rangeLine: '<b>Central estimate — an order of magnitude.</b> Range: ≈ {lo} to {hi} people a year (0.1–10 deaths per 1,000 t of carbon)',
-    chip: 'Includes tipping effects: {tip}',
+    chip: 'Scenario: {tip}',
     pulseH: 'About one person every <em class="num">{s}</em> {unit}.',
     sec: 'seconds', min: 'minutes',
     pulseLead: 'No gunfire. No bombs. Yet the CO₂ released at this very moment will, through heatwaves, hunger, floods and disease, take someone’s life in the years to come. This is a slow war.',
@@ -369,7 +386,7 @@ const I18N = {
     warH: 'Compared with history’s deadliest wars',
     warLead: 'Around 80 million people died in World War II. At today’s pace, emissions from {where} would match that toll in <em>about {t}</em>.',
     years: '{n} years', months: '{n} months',
-    dotLegend: 'One dot = 1 million people', tipLegend: 'Added by tipping effects',
+    dotLegend: 'One dot = 1 million people', tipLegend: 'Added by the chosen scenario (above ×1)',
     ww1: 'World War I', ww2: 'World War II', c35: 'Climate: locked in by 2035', c35s: 'Next 10 years of emissions',
     c50: 'Climate: locked in by 2050', c50s: 'Next 25 years of emissions', xww2: '({x}× WWII)',
     scaleH: 'If the numbers are too big to imagine', scaleLead: 'Let’s put them in familiar terms.',
@@ -394,7 +411,7 @@ const I18N = {
     mList: [
       '<b>What this is — and is not.</b> The estimates rest on the “1,000-ton rule” proposed by Richard Parncutt (University of Graz, 2019) and re-examined with Joshua Pearce (Western University, 2023) against other studies: about one premature death for every 1,000 t of fossil carbon burned. We convert today’s CO₂ emissions to carbon (1 t C = 3.664 t CO₂). This is not a precise forecast for any person. It is a way to share the <b>order of magnitude</b> of the human toll we face, and to weigh the choices ahead.',
       'Calculated from {start}, holding annual emissions of {where} at about {gt} (unless a pathway is chosen).',
-      'By default we show <b>moderate feedbacks (×1.5)</b>. With tipping effects set to “None” it is a <b>conservative lower bound</b>. Tipping multipliers (×1.5 / ×2 / ×3) are <b>rough illustrative assumptions, not peer-reviewed estimates</b>. They show how the linear estimate could grow if feedbacks such as permafrost thaw and forest dieback, and societal cascades (conflict, famine, mass migration), are included. The Global Tipping Points Report 2025 finds that warm-water coral reefs have already passed their tipping point.',
+      '<b>Scenarios.</b> <b>×1</b> is the 1,000-ton rule’s central value. It already includes indirect deaths from hunger, disease and migration, and even the possibility of climate-driven wars and ecological catastrophes (Parncutt 2019). <b>×1.5 (default)</b> reflects accelerating warming: Hansen &amp; Kharecha (2025) put climate sensitivity at about 4.5 °C, 1.5× the IPCC’s best estimate of 3 °C; we assume deaths per tonne rise in proportion (<b>our assumption</b>). <b>×3</b> is the upper end of the paper’s own range (about 3 billion deaths for 2 °C, against 1 billion central); the low end is about ×0.3.',
       '“Locked in” means the harm becomes unavoidable once the CO₂ is emitted; the deaths themselves may occur decades later.',
       'Country figures: fossil CO₂ in 2024 (Global Carbon Budget 2025, via Our World in Data). The world total (42 Gt) also includes land-use change, so countries do not add up exactly.',
       '<b>How uncertain is this?</b> The 1,000-ton rule is an order-of-magnitude estimate: the true number could be roughly ten times lower or higher. An independent method (Bressler 2021, built up from temperature–mortality relationships) gives about 4,400 t of CO₂ per death — close to the central value used here, and itself considered conservative. You can try the low and high ends in the <a href="simulator.html">detailed simulator</a>.',
@@ -408,17 +425,23 @@ const I18N = {
   },
   ja: {
     title: '静かな戦争',
-    ctlCountry: '国・地域', ctlTip: 'ティッピング効果',
+    ctlCountry: '国・地域', ctlTip: 'シナリオ',
     heroTitle: '今日、{where}のCO₂排出によって<br>将来失われることが確定した命',
     people: '人', peopleShort: '人', since: 'あなたがこのページを開いてから',
     since0: '（あなたの地域の今日0時から）',
+    pastH: 'これまでの排出も含めると',
+    pastLead: 'カウンターは今日から数えています。けれど、1850年以降にすでに出したCO₂ 約<b>2兆7,500億 t</b>（炭素で約7,500億 t）も、死を確定させています。世界全体の値で、選んだシナリオで表示しています。',
+    pastK1: 'これまでの排出ですでに確定（1850〜2024年）', pastK2: 'いまのペースで2050年まで排出すると', pastK3: '参考：2℃に相当する炭素の量では',
+    pastS1: '第二次世界大戦の約{x}倍', pastS2: '第二次世界大戦の約{x}倍', pastV3: '約10億人', pastS3: '累積で炭素 約1兆 t。論文の中央値（幅は約3億〜30億人）',
+    pastNote: '<b>これらの死は、いつ起こるのか。</b>2050年までにすべてが起こるわけではありません。排出によって確定し、論文によればその後1〜2世紀にわたって起こります（Parncutt 2019）。累積排出量は、Global Carbon Budget 2025 の年次データ（化石燃料＋土地利用変化）を私たちが合計したものです。',
+    oeSitePast: 'このサイト：これまでの排出も含める（1850〜2050年・世界）',
     oeH: 'ほかの推計と比べると：保険数理の専門家によるリスク評価',
     oeLead: '英国アクチュアリー会（保険数理の専門家団体）とエクセター大学の報告書『Planetary Solvency』（2025年）は、リスク管理のための評価表で、温暖化の水準ごとに起こりうる死者の規模を示しています。',
     oeSite: 'このサイトの推計（2050年まで・世界・中央値）',
     oeRows: [['1.5℃（一時的に超えた後に戻る）', '4億人超'], ['2050年までに2℃にとどまる', '8億人超'], ['2050年までに2℃以上', '20億人超'], ['2050年までに3℃以上', '40億人超']],
     oeNote: 'この表は予測ではなく、リスク管理のための「起こりうる被害の大きさ」の区分です。期間ははっきり定められておらず、紛争・飢饉・大規模な移住など、社会の崩壊による死者も含みます。それと比べると、1,000トン・ルールにもとづくこのサイトの数字は控えめな推計です。',
     rangeLine: '<b>推計の中央値（桁の目安）。</b>幅：年 約{lo}〜{hi}（炭素1,000トンあたり0.1〜10人）',
-    chip: 'ティッピング効果を含む：{tip}',
+    chip: 'シナリオ：{tip}',
     pulseH: 'およそ<em class="num">{s}</em>{unit}に1人。',
     sec: '秒', min: '分',
     pulseLead: '銃声も爆撃もない。けれど、いまこの瞬間も排出されるCO₂は、熱波・飢餓・洪水・感染症などを通して、将来の誰かの命を確実に奪っていきます。これは「ゆっくり進む戦争」です。',
@@ -426,7 +449,7 @@ const I18N = {
     warH: '史上最悪の戦争と比べると',
     warLead: '第二次世界大戦では約8,000万人が亡くなりました。いまのペースが続けば、{where}の排出による犠牲は<em>約{t}</em>でそれに並びます。',
     years: '{n}年', months: '{n}か月',
-    dotLegend: '点1つ ＝ 100万人', tipLegend: 'ティッピング効果による上乗せ分',
+    dotLegend: '点1つ ＝ 100万人', tipLegend: '選んだシナリオによる上乗せ分（×1を超える分）',
     ww1: '第一次世界大戦', ww2: '第二次世界大戦', c35: '気候：2035年までに確定', c35s: '今後10年間の排出',
     c50: '気候：2050年までに確定', c50s: '今後25年間の排出', xww2: '（WWIIの{x}倍）',
     scaleH: '数字が大きすぎて、<br>想像できないなら', scaleLead: '身近なものに置き換えてみます。',
@@ -451,7 +474,7 @@ const I18N = {
     mList: [
       '<b>この推計が示すもの・示さないもの。</b>この推計は、リチャード・パーンカット（グラーツ大学）が2019年に提唱し、ジョシュア・ピアース（ウェスタン大学）と2023年にほかの研究とつき合わせてまとめ直した「1,000トン・ルール」（化石燃料の炭素1,000トンを燃やすごとに、将来の早すぎる死が約1人）にもとづきます。現在のCO₂排出量を炭素の重さに換算して（炭素1トン＝CO₂ 3.664トン）計算しています。これは一人ひとりの未来を精密に予測するものではありません。人類が直面している人道的な影響の<b>桁（規模感）</b>を共有し、これからの選択を考えるための物差しです。',
       '{start}年を起点に、{where}の年間排出量を約{gt}として計算しています（シナリオを選んだ場合を除く）。',
-      '初期表示は<b>中程度のフィードバック（×1.5）</b>です。ティッピング効果を「なし」にすると<b>控えめな下限</b>の推計になります。×1.5／×2／×3 の係数は<b>査読済みの推計ではなく、目安として示した概算</b>です。永久凍土の融解や森林の枯死などのフィードバック、紛争・飢饉・大規模移民といった社会の連鎖的危機を含めた場合に、線形推計がどこまで膨らみうるかを示しています。Global Tipping Points Report 2025 は、暖かい海のサンゴ礁がすでにティッピング・ポイントを超えたと報告しています。',
+      '<b>シナリオについて。</b><b>×1</b> は1,000トン・ルールの中央値です。飢餓・病気・移住による間接的な死に加え、気候による戦争や生態系の破局の可能性まで、すでに含んでいます（Parncutt 2019）。<b>×1.5（初期値）</b>は温暖化の加速を織り込んだもので、Hansen &amp; Kharecha（2025）は気候感度を約4.5℃と、IPCC の最良推計3℃の1.5倍と見積もっています。1トンあたりの死者もそれに比例して増えると仮定しました（<b>私たちの仮定</b>）。<b>×3</b> は論文自身が示す幅の上端です（2℃で中央値10億人に対し約30億人）。下端は約×0.3です。',
       '「確定」とは、排出された時点でその被害が避けられなくなるという意味です。実際に亡くなるのは数十年先になることがあります。',
       '国別の数値：2024年の化石燃料由来のCO₂（Global Carbon Budget 2025、Our World in Data 経由）。世界合計（42 Gt）は土地利用変化を含むため、各国の合計とは一致しません。',
       '<b>どのくらい不確かなのか。</b>1,000トン・ルールは桁の目安となる推計で、実際の数は10分の1から10倍くらいまでの幅がありえます。気温と死亡率の関係から積み上げる別の方法（Bressler 2021）でも、CO₂ 約4,400トンで1人と、ここで使う中央値に近い値が出ています（しかもこれは控えめな推計とされます）。幅の下限・上限は<a href="simulator.html">詳細シミュレータ</a>で試せます。',
@@ -548,8 +571,16 @@ function render() {
   const c35 = cumulative(0, 10), c50 = cumulative(0, 25);
   // ほかの推計との比較：英国アクチュアリー会とエクセター大学のリスク評価表（予測ではなく、被害の大きさの区分）
   const world50 = COUNTRIES.world.gt * 1e9 * 25 / TPD * mult();
+  // これまでの排出も含める（世界）：1850〜2024年の排出 ＋ いまのペースで2050年まで
+  const pastNow = PAST_GT * 1e9 / TPD * mult(), pastAll = pastNow + world50;
+  $('past').innerHTML = `<h3>${t('pastH')}</h3><p>${t('pastLead')}</p><div class="p3">
+    <div><div class="k">${t('pastK1')}</div><div class="v num">${people(pastNow)}</div><div class="s">${t('pastS1', { x: ratio(pastNow / WW2) })}</div></div>
+    <div><div class="k">${t('pastK2')}</div><div class="v num">${people(pastAll)}</div><div class="s">${t('pastS2', { x: ratio(pastAll / WW2) })}</div></div>
+    <div><div class="k">${t('pastK3')}</div><div class="v num" style="color:var(--text)">${t('pastV3')}</div><div class="s">${t('pastS3')}</div></div></div>
+    <p class="note">${t('pastNote')}</p>`;
   $('otherEst').innerHTML = `<h3>${t('oeH')}</h3><p>${t('oeLead')}</p><table>
     <tr class="site"><td>${t('oeSite')}</td><td class="num">${people(world50)}</td></tr>
+    <tr class="site"><td>${t('oeSitePast')}</td><td class="num">${people(pastAll)}</td></tr>
     ${L().oeRows.map(([a, b]) => `<tr><td>${a}</td><td class="num">${b}</td></tr>`).join('')}</table>
     <p class="oe-note">${t('oeNote')}</p>`;
   const rows = [
@@ -560,7 +591,7 @@ function render() {
   ];
   $('cmp').innerHTML = rows.map(r => {
     const dots = Math.max(r.n >= 5e5 ? 1 : 0, Math.round(r.n / 1e6));
-    const base = r.cls === 'clim' ? Math.round(dots / mult()) : dots;   // 線形分（残りはティッピング上乗せ）
+    const base = r.cls === 'clim' ? Math.round(dots / mult()) : dots;   // ×1の分（残りはシナリオによる上乗せ）
     const extra = r.cls === 'clim' ? `<small> ${t('xww2', { x: ratio(r.n / WW2) })}</small>` : '';
     return `<div class="cmp-row ${r.cls}"><div class="label"><div class="name">${r.name}<small>${r.sub}</small></div>
       <div class="count num">${people(r.n)}${extra}</div></div>

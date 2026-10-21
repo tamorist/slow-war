@@ -346,13 +346,13 @@
 
 <footer data-i18n="footer"></footer>
 
-<script src="site.js?v=20261021a"></script>
+<script src="site.js?v=20261021b"></script>
 <script>
+// シナリオの倍率：×1＝1,000トン・ルールの中央値、×1.5＝温暖化の加速（私たちの仮定）、×3＝論文の幅の上端
 const TIPS = [
-  { m: 1,   en: 'None (1,000-ton rule only)',     ja: 'なし（1,000トン・ルールのみ）' },
-  { m: 1.5, en: 'Moderate feedbacks ×1.5',        ja: '中程度のフィードバック ×1.5' },
-  { m: 2,   en: 'Tipping-point cascade ×2',       ja: 'ティッピング連鎖 ×2' },
-  { m: 3,   en: 'Cascade + societal collapse ×3', ja: '連鎖＋社会的崩壊 ×3' },
+  { m: 1,   en: '1,000-ton rule (paper’s central value) ×1', ja: '1,000トン・ルール（論文の中央値）×1' },
+  { m: 1.5, en: 'With accelerated warming ×1.5',             ja: '温暖化の加速を織り込む ×1.5' },
+  { m: 3,   en: 'Upper end of the paper’s range ×3',         ja: '論文の幅の上端 ×3' },
 ];
 // 食材別の環境負荷（Poore & Nemecek 2018 の平均値, Our World in Data 経由の概算）／ 1 kg あたり
 // ghg: kg CO₂e（土地利用変化を含む）, land: m²·年, water: 淡水取水量 L, eutro: 富栄養化 g PO₄eq, protein: たんぱく質の割合
@@ -373,7 +373,7 @@ const PLANTS = ['tofu', 'peas'];
 /* ===================== I18N ===================== */
 const I18N = {
   en: {
-    title: 'Beyond Carbon — The Slow War', ctlTip: 'Tipping effects',
+    title: 'Beyond Carbon — The Slow War', ctlTip: 'Scenario',
     h1: 'This is also a fight for nature.',
     lead: 'The fight against climate change is not only about cutting emissions. It is equally about how healthy we can keep the natural world — the forests, soils, water and oceans that hold the climate steady.',
     why: [
@@ -465,7 +465,7 @@ const I18N = {
       ['📉', '62–77%', 'of the forest could shift almost system-wide if warming reaches <b>1.5–1.9 °C</b> while deforestation reaches 22–28% (a 2026 modelling study).'],
     ],
     impRel: 'If this share of the forest’s carbon were released:',
-    impDeath: 'By the 1,000-ton rule (1 future death per 1,000 t of carbon) that would lock in about <span class="big">{lo}–{hi}</span> future deaths — on top of the counter. {ww2} <span class="own">our estimate</span><br><span class="hint" style="display:block;margin-top:6px">No tipping multiplier is applied, since this is itself a tipping effect. How much carbon would be lost, and how fast, is not known; this only shows the scale.</span>',
+    impDeath: 'By the 1,000-ton rule (1 future death per 1,000 t of carbon) that would lock in about <span class="big">{lo}–{hi}</span> future deaths — on top of the counter. {ww2} <span class="own">our estimate</span><br><span class="hint" style="display:block;margin-top:6px">Counted at ×1 (the paper’s central value), whatever scenario is chosen above. How much carbon would be lost, and how fast, is not known; this only shows the scale.</span>',
     impWW2: '(World War II: about 80 million.)',
     amz: [
       ['~63%', 'of cleared land in the Brazilian Legal Amazon is <b>cattle pasture</b> (479,760 of 762,464 km², 2014; stable since 2004)'],
@@ -523,10 +523,10 @@ const I18N = {
     simSel: 'Land absorbs this much less:',
     sinkOut: 'About <b>{gt} billion t</b> more CO₂ would stay in the air each year. By the 1,000-ton rule that locks in about <span class="big">{n}</span> more future deaths <b>every year</b> — {p} of the counter today (without tipping effects). {src} <span class="own">our estimate</span>',
     sinkSrc: 'If the land turned into a net <b>source</b>, the extra would be larger still.',
-    skNote: '<b>About this estimate:</b> today’s land sink ≈ 21% of the ~42 billion t of CO₂ we emit ≈ 8.8 billion t a year (Global Carbon Budget 2025). The 1,000-ton rule is calibrated on emissions under today’s carbon cycle; we treat CO₂ left in the air by a weaker sink as an addition to it. This is our interpretation and only shows the scale — no tipping multiplier is applied, since a failing sink is itself one of those feedbacks.',
+    skNote: '<b>About this estimate:</b> today’s land sink ≈ 21% of the ~42 billion t of CO₂ we emit ≈ 8.8 billion t a year (Global Carbon Budget 2025). The 1,000-ton rule is calibrated on emissions under today’s carbon cycle; we treat CO₂ left in the air by a weaker sink as an addition to it. This is our interpretation and only shows the scale — counted at ×1 (the paper’s central value), whatever scenario is chosen above.',
   },
   ja: {
-    title: '炭素だけではない — 静かな戦争', ctlTip: 'ティッピング効果',
+    title: '炭素だけではない — 静かな戦争', ctlTip: 'シナリオ',
     h1: 'これは、自然を守る戦いでもある。',
     lead: '気候変動との戦いは、排出を減らすだけの戦いではありません。気候を支える森・土・水・海といった自然環境を、どれだけ健全に保てるかの戦いでもあります。',
     why: [
@@ -629,7 +629,7 @@ const I18N = {
       ['📉', '62〜77%', '温暖化が<b>1.5〜1.9℃</b>に達し、森林減少が22〜28%に進むと、森のこれだけの面積がほぼ全体で転換しうる、とする研究があります（2026年のモデル研究）。'],
     ],
     impRel: '森の炭素のうち、これだけが放出されたら：',
-    impDeath: '1,000トン・ルール（炭素1,000 tで将来の死1人）で換算すると、約<span class="big">{lo}〜{hi}</span>の将来の死が、カウンターの数字に上乗せされることになります。{ww2}<span class="own">私たちの概算</span><br><span class="hint" style="display:block;margin-top:6px">これ自体がティッピングによる影響なので、ティッピング係数はかけていません。どれだけの炭素が、どれほどの速さで失われるかはわかっていません。規模の目安としてご覧ください。</span>',
+    impDeath: '1,000トン・ルール（炭素1,000 tで将来の死1人）で換算すると、約<span class="big">{lo}〜{hi}</span>の将来の死が、カウンターの数字に上乗せされることになります。{ww2}<span class="own">私たちの概算</span><br><span class="hint" style="display:block;margin-top:6px">上で選んだシナリオにかかわらず、×1（論文の中央値）で計算しています。どれだけの炭素が、どれほどの速さで失われるかはわかっていません。規模の目安としてご覧ください。</span>',
     impWW2: '（第二次世界大戦の死者は約8,000万人）',
     amz: [
       ['約63%', 'ブラジル法定アマゾンで切り開かれた土地のうち<b>牛の牧草地</b>の割合（762,464 km²のうち479,760 km²、2014年。2004年以降ほぼ横ばい）'],
@@ -687,7 +687,7 @@ const I18N = {
     simSel: '陸の吸収が、これだけ減ると：',
     sinkOut: '毎年、約<b>{gt}億 t</b>のCO₂が余分に大気に残ります。1,000トン・ルールで換算すると、<b>毎年</b>約<span class="big">{n}</span>の将来の死が上乗せされます。いまのカウンター（ティッピング効果なし）の{p}に当たります。{src}<span class="own">私たちの概算</span>',
     sinkSrc: '陸が排出源に転じれば、上乗せはさらに大きくなります。',
-    skNote: '<b>この推計について：</b>いまの陸の吸収 ≈ 人間が出すCO₂ 約420億 t の21% ≈ 年約88億 t（Global Carbon Budget 2025）。1,000トン・ルールは、いまの炭素循環のもとでの排出量にもとづいています。吸収源が弱まって大気に残るCO₂は、その上乗せと見なしています。これは私たちの解釈で、規模の目安です。吸収源の衰えはそれ自体がティッピングの一部なので、ティッピング係数はかけていません。',
+    skNote: '<b>この推計について：</b>いまの陸の吸収 ≈ 人間が出すCO₂ 約420億 t の21% ≈ 年約88億 t（Global Carbon Budget 2025）。1,000トン・ルールは、いまの炭素循環のもとでの排出量にもとづいています。吸収源が弱まって大気に残るCO₂は、その上乗せと見なしています。これは私たちの解釈で、規模の目安です。上で選んだシナリオにかかわらず、×1（論文の中央値）で計算しています。',
   },
 };
 

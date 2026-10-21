@@ -87,7 +87,7 @@
 
 <footer data-i18n="footer"></footer>
 
-<script src="site.js?v=20261021a"></script>
+<script src="site.js?v=20261021b"></script>
 <script>
 const I18N = {
   en: {
@@ -101,7 +101,7 @@ const I18N = {
       ['Deaths per tonne of CO₂', '1 future death per 1,000 t of carbon ≈ 3,664 t CO₂ (the “1,000-ton rule”; likely range 0.1–10 deaths per 1,000 tC)', 'Parncutt (2019); Pearce & Parncutt (2023)', 'data'],
       ['World emissions', '~42 Gt CO₂ a year (2024, incl. land-use change)', 'Global Carbon Budget 2025', 'data'],
       ['Country emissions', 'Fossil CO₂ in 2024', 'Global Carbon Budget 2025 / Our World in Data', 'data'],
-      ['Tipping multipliers', '×1.5 (default) / ×2 / ×3', 'Our illustrative assumption, informed by Armstrong McKay et al. (2022) and the Global Tipping Points Report 2025', 'est'],
+      ['Scenario multipliers', '×1 = the 1,000-ton rule’s central value (already includes indirect deaths, conflict and ecological catastrophe); ×1.5 (default) = accelerating warming; ×3 = upper end of the paper’s range', '×1, ×3: Parncutt (2019). ×1.5: our assumption that deaths scale with climate sensitivity — Hansen &amp; Kharecha (2025) put it at ~4.5 °C, 1.5× the IPCC’s 3 °C', 'est'],
       ['Reduction pathways', '−3% / −7% a year', 'See the note below; UNEP Emissions Gap Report 2025, Global Carbon Budget 2025', 'est'],
       ['War deaths', 'WWII 80 million, WWI 20 million', 'Commonly cited estimates (see Wikipedia summaries)', 'data'],
       ['Food impacts', 'Emissions by stage, land, water, pollution', 'Poore & Nemecek (2018) via Our World in Data', 'data'],
@@ -115,14 +115,14 @@ const I18N = {
       ['Shopping: big purchases', 'Making a petrol car ≈ 7 t; building a wooden house ≈ 34 t; a fridge ≈ 0.25 t, an A/C ≈ 0.31 t, a bed ≈ 0.44 t; spread over assumed lifetimes and household size', 'Transport & Environment; MLIT (Wood Miles group); ADEME Impact CO2; Cabinet Office (years of use)', 'est'],
       ['Shopping: average consumer goods', 'Japan ≈ 1,030 kg/yr; Canada 2.5 t, UK 1.0 t, Finland 1.4 t, China 0.4 t, India under 0.1 t (2019); high-income average derived. Rough guide only: values vary a lot by method', 'Hot or Cool Institute (2021) Table 3.1; IGES et al. (2019)', 'data'],
       ['Food’s share of the planet', 'Greenhouse gases 26% (13.7 Gt CO₂e), habitable land 50%, freshwater withdrawals 70%, eutrophication 78%; livestock ≈ 3/4 of farmland, 18% of calories, 37% of protein', 'Poore & Nemecek (2018) via Our World in Data', 'data'],
-      ['Food’s emissions as lives', '13.7 Gt CO₂e ÷ 3,664 t × tipping multiplier (applies the 1,000-ton rule to all gases)', 'Our estimate', 'est'],
+      ['Food’s emissions as lives', '13.7 Gt CO₂e ÷ 3,664 t × scenario multiplier (applies the 1,000-ton rule to all gases)', 'Our estimate', 'est'],
       ['Amazon tipping gauge', 'Lost: ~17% of the basin, ~20% of the Brazilian part (2019); danger zone 20–25%; pasture ≈ 63% of cleared land (2014)', 'Lovejoy & Nobre (2018, 2019); INPE & Embrapa TerraClass 2014', 'data'],
       ['If the whole world ate differently', 'Farmland: today 4.13, no beef/mutton 2.21, no beef/mutton/dairy 1.1, eggs & fish 1.01, vegan 1.0 billion ha', 'Poore & Nemecek (2018) via Our World in Data', 'data'],
       ['Nature’s sinks and planetary boundaries (“Beyond carbon” page)', 'Sinks weakened by climate change explain ~8% of the CO₂ rise since 1960; 7 of 9 planetary boundaries breached, all worsening', 'Global Carbon Budget 2025; Planetary Health Check 2025', 'data'],
-      ['If the Amazon tips', 'Carbon 150–200 billion t (15–20 years of CO₂ emissions), up to 50% of regional rainfall, 40 million+ people; deaths = released carbon ÷ 1,000 t (no tipping multiplier)', 'Flores et al. (2024); Wunderling et al. (2026); deaths: our estimate', 'est'],
+      ['If the Amazon tips', 'Carbon 150–200 billion t (15–20 years of CO₂ emissions), up to 50% of regional rainfall, 40 million+ people; deaths = released carbon ÷ 1,000 t (at ×1)', 'Flores et al. (2024); Wunderling et al. (2026); deaths: our estimate', 'est'],
       ['Freed land as a share of habitable land', 'Farmland today ≈ 43% of habitable land, scaled by each diet’s farmland; forests ≈ 4.0 billion ha (38%)', 'Poore &amp; Nemecek (2018); Our World in Data', 'data'],
       ['World forest loss', '≈ 6 → 4 billion ha since the last ice age (−1/3, half in the last century); deforestation 10.9 million ha/yr, net loss 4.1 million ha/yr (2015–2025); tropical primary forest loss 6.7 million ha (2024)', 'Our World in Data; FAO FRA 2025; Global Forest Watch / WRI', 'data'],
-      ['If the land sink weakened', 'Land sink ≈ 21% × 42 Gt CO₂ ≈ 8.8 Gt/yr; CO₂ left in the air ÷ 3,664 t per death (no tipping multiplier), treated as an addition to the counter', 'Global Carbon Budget 2025; our estimate and interpretation', 'est'],
+      ['If the land sink weakened', 'Land sink ≈ 21% × 42 Gt CO₂ ≈ 8.8 Gt/yr; CO₂ left in the air ÷ 3,664 t per death (at ×1), treated as an addition to the counter', 'Global Carbon Budget 2025; our estimate and interpretation', 'est'],
       ['Planetary boundaries and wildlife', '7 of 9 boundaries crossed (2025); monitored wildlife populations −73% on average since 1970 (freshwater −85%); ocean sink flat since 2016', 'Planetary Health Check 2025; Living Planet Report 2024; Global Carbon Budget 2025 (AWI)', 'data'],
       ['A world that doubled', 'Population 4.07 → 8.09 billion; meat 116 → 367 million t; per person 28 → 45 kg (1975 → 2023)', 'UN WPP and FAO via Our World in Data', 'data'],
       ['Why forests are lost', 'Tropical deforestation 2010–2014: cattle pasture 41%, oilseeds (palm, soy) 18%, forestry 13%, other cereals 9%, other crops 19%; palm oil yields and uses', 'Pendrill et al. (2019) and “Palm oil”, via Our World in Data', 'data'],
@@ -157,7 +157,7 @@ const I18N = {
       ['CO₂ 1トンあたりの死者', '炭素1,000 t ≒ CO₂ 3,664 tで将来の死者1人（1,000トン・ルール。炭素1,000 tあたり0.1〜10人の幅）', 'Parncutt (2019); Pearce & Parncutt (2023)', 'data'],
       ['世界の排出量', '年約42 Gt CO₂（2024年、土地利用変化を含む）', 'Global Carbon Budget 2025', 'data'],
       ['国別の排出量', '2024年の化石燃料由来CO₂', 'Global Carbon Budget 2025 / Our World in Data', 'data'],
-      ['ティッピング係数', '×1.5（初期値）／×2／×3', '私たちが置いた目安（Armstrong McKay ら 2022、Global Tipping Points Report 2025 を参考）', 'est'],
+      ['シナリオの倍率', '×1＝1,000トン・ルールの中央値（間接的な死・紛争・生態系の破局をすでに含む）、×1.5（初期値）＝温暖化の加速、×3＝論文の幅の上端', '×1・×3：Parncutt（2019）。×1.5：死者が気候感度に比例すると置いた私たちの仮定（Hansen &amp; Kharecha 2025 は約4.5℃、IPCC の3℃の1.5倍）', 'est'],
       ['削減の道筋', '年 −3%／−7%', '下の注記を参照。UNEP Emissions Gap Report 2025、Global Carbon Budget 2025', 'est'],
       ['戦争の死者数', '第二次世界大戦 8,000万人、第一次世界大戦 2,000万人', 'よく引用される推計（Wikipedia のまとめを参照）', 'data'],
       ['食べ物の環境負荷', '段階別の排出・土地・水・汚染', 'Poore & Nemecek (2018)、Our World in Data 経由', 'data'],
@@ -171,14 +171,14 @@ const I18N = {
       ['買い物：大きな買い物', 'ガソリン車の製造 約7 t、木造戸建ての建設 約34 t、冷蔵庫 約0.25 t・エアコン 約0.31 t・ベッド 約0.44 tの製造。想定の使用年数と世帯人数で割り戻し', 'Transport & Environment、国土交通省（ウッドマイルズ研究会の試算）、ADEME Impact CO2、内閣府（平均使用年数）', 'est'],
       ['買い物：平均的な消費財', '日本 年約1,030 kg。カナダ2.5 t、英国1.0 t、フィンランド1.4 t、中国0.4 t、インド0.1 t未満（2019年）。高所得国の平均は計算値。手法で大きく変わるため目安', 'Hot or Cool Institute (2021) 表3.1、IGES ほか (2019)', 'data'],
       ['食べ物が地球に占める割合', '温室効果ガス26%（137億 t CO₂e）、人が住める土地50%、淡水取水70%、富栄養化78%。家畜は農地の約4分の3、カロリーの18%、たんぱく質の37%', 'Poore & Nemecek（2018）、Our World in Data 経由', 'data'],
-      ['食べ物の排出を人数に換算', '137億 t CO₂e ÷ 3,664 t × ティッピング係数（1,000トン・ルールを全ガスに当てはめる）', '私たちの概算', 'est'],
+      ['食べ物の排出を人数に換算', '137億 t CO₂e ÷ 3,664 t × シナリオの倍率（1,000トン・ルールを全ガスに当てはめる）', '私たちの概算', 'est'],
       ['アマゾンのティッピング計', '消失：流域全体の約17%、ブラジル側の約20%（2019年）。危険域20〜25%。切り開かれた土地の約63%が牧草地（2014年）', 'Lovejoy & Nobre（2018・2019）、INPE・Embrapa TerraClass 2014', 'data'],
       ['世界の食べ方が変わったら', '農地：いま41.3億、牛肉・羊肉なし22.1億、さらに乳製品なし11億、卵と魚だけ10.1億、ヴィーガン10億 ha', 'Poore & Nemecek（2018）、Our World in Data 経由', 'data'],
       ['自然の吸収源と地球の限界（「炭素だけではない」ページ）', '気候変動による吸収源の弱まりが1960年以降のCO₂増加の約8%。地球の限界9項目のうち7つを超過し、すべて悪化', 'Global Carbon Budget 2025、Planetary Health Check 2025', 'data'],
-      ['もしアマゾンが限界を越えたら', '炭素1,500億〜2,000億 t（CO₂排出の15〜20年分）、地域の雨の最大50%、4,000万人以上。死者＝放出される炭素 ÷ 1,000 t（ティッピング係数なし）', 'Flores ら（2024）、Wunderling ら（2026）。死者数は私たちの概算', 'est'],
+      ['もしアマゾンが限界を越えたら', '炭素1,500億〜2,000億 t（CO₂排出の15〜20年分）、地域の雨の最大50%、4,000万人以上。死者＝放出される炭素 ÷ 1,000 t（×1）', 'Flores ら（2024）、Wunderling ら（2026）。死者数は私たちの概算', 'est'],
       ['空く土地を、人が住める土地に占める割合で', 'いまの農地＝人が住める土地の約43%を、食べ方ごとの農地に比例させて換算。森林は約40億 ha（38%）', 'Poore &amp; Nemecek（2018）、Our World in Data', 'data'],
       ['世界の森林の消失', '氷期後 約60億 → 40億 ha（3分の1を失い、半分は最近100年）。森林減少 年1,090万 ha、純減 年410万 ha（2015〜2025年）。熱帯原生林の消失 670万 ha（2024年）', 'Our World in Data、FAO 世界森林資源評価 2025、Global Forest Watch / WRI', 'data'],
-      ['もし陸の吸収が弱まったら', '陸の吸収 ≈ 21% × 420億 t CO₂ ≈ 年88億 t。大気に残るCO₂ ÷ 3,664 t で1人（係数なし）。カウンターへの上乗せと見なす', 'Global Carbon Budget 2025、私たちの概算と解釈', 'est'],
+      ['もし陸の吸収が弱まったら', '陸の吸収 ≈ 21% × 420億 t CO₂ ≈ 年88億 t。大気に残るCO₂ ÷ 3,664 t で1人（×1）。カウンターへの上乗せと見なす', 'Global Carbon Budget 2025、私たちの概算と解釈', 'est'],
       ['地球の限界と野生動物', '9項目のうち7つを超過（2025年）。観測された野生動物の個体群は1970年から平均73%減（淡水85%減）。海の吸収は2016年以降ほぼ横ばい', 'Planetary Health Check 2025、生きている地球レポート 2024、Global Carbon Budget 2025（AWI）', 'data'],
       ['人は2倍に', '人口 40.7億 → 80.9億人、肉 1.16億 → 3.67億 t、1人あたり 28 → 45 kg（1975 → 2023年）', '国連 世界人口推計・FAO（Our World in Data 経由）', 'data'],
       ['森が失われる原因', '熱帯の森林減少（2010〜2014年）：牛の牧草地41%、油糧作物（パーム油・大豆）18%、林業13%、その他の穀物9%、その他の作物19%。パーム油の収量と用途', 'Pendrill ら（2019）、「Palm oil」（Our World in Data 経由）', 'data'],
