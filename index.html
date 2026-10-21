@@ -376,7 +376,7 @@ const I18N = {
     oeSite: 'This site, to 2050 (world, central estimate)',
     oeRows: [['1.5 °C, after a temporary overshoot', 'over 400 million'], ['Warming held to 2 °C by 2050', 'over 800 million'], ['2 °C or more by 2050', 'over 2 billion'], ['3 °C or more by 2050', 'over 4 billion']],
     oeNote: 'That table is not a forecast: it describes how large the damage could be, for managing risk. Its timeframe is not precisely defined, and it includes deaths from societal breakdown — conflict, famine and mass migration. Compared with it, the numbers on this site, based on the 1,000-ton rule, are conservative.',
-    rangeLine: '<b>Central estimate — an order of magnitude.</b> Likely range: ≈ {lo} to {hi} a year (about 0.3–3×; 300–3,000 t of carbon per death)',
+    rangeLine: '<b>A central estimate.</b> The true number could be about a third to three times this — the likely range given by the 1,000-ton rule’s authors.',
     chip: 'Scenario: {tip}',
     pulseH: 'About one person every <em class="num">{s}</em> {unit}.',
     sec: 'seconds', min: 'minutes',
@@ -439,7 +439,7 @@ const I18N = {
     oeSite: 'このサイトの推計（2050年まで・世界・中央値）',
     oeRows: [['1.5℃（一時的に超えた後に戻る）', '4億人超'], ['2050年までに2℃にとどまる', '8億人超'], ['2050年までに2℃以上', '20億人超'], ['2050年までに3℃以上', '40億人超']],
     oeNote: 'この表は予測ではなく、リスク管理のための「起こりうる被害の大きさ」の区分です。期間ははっきり定められておらず、紛争・飢饉・大規模な移住など、社会の崩壊による死者も含みます。それと比べると、1,000トン・ルールにもとづくこのサイトの数字は控えめな推計です。',
-    rangeLine: '<b>推計の中央値（桁の目安）。</b>ありうる幅：年 約{lo}〜{hi}（約0.3〜3倍。炭素300〜3,000トンで1人）',
+    rangeLine: '<b>推計の中央値です。</b>実際には、この数字の約3分の1〜3倍の幅がありえます（1,000トン・ルールの論文が示す幅）。',
     chip: 'シナリオ：{tip}',
     pulseH: 'およそ<em class="num">{s}</em>{unit}に1人。',
     sec: '秒', min: '分',
@@ -558,7 +558,7 @@ function render() {
   const approx = state.lang === 'ja' ? '約' : '≈ ';
   $('perHour').textContent = approx + fmt(sig(perSec() * 3600));
   $('perDay').textContent = approx + (state.lang === 'ja' ? people(perSec() * 86400, false) : fmt(sig(perSec() * 86400)));
-  $('rangeLine').innerHTML = t('rangeLine', { lo: people(sig(perYear() * 0.3, 2), state.lang === 'ja'), hi: people(sig(perYear() * 3, 2), state.lang === 'ja') });
+  $('rangeLine').innerHTML = t('rangeLine');
   $('perYear').textContent = people(perYear(), false);
   startHeart(iv);
 
