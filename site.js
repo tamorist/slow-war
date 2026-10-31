@@ -313,6 +313,10 @@ const SW_PAGES = [
     en: { nav: 'Sources & data', title: 'Sources & data', desc: 'Every number traced to its source, the key assumptions, and further reading.', cta: 'See sources' },
     ja: { nav: '出典とデータ', title: '出典とデータ', desc: 'すべての数値の出典と主な前提、さらに知りたい人への資料。', cta: '出典へ' } },
 ];
+// 姉妹サイト
+const SW_SISTER = { url: 'https://tamorist.github.io/83-billion/', icon: '🐄', color: '#e0a43b',
+  en: { label: 'Sister site', title: '83 Billion Reasons', desc: 'Every year about 83 billion land animals are killed for food. The evidence on animals, the planet and health — and what changes when you swap meat for plant protein.', cta: 'Visit' },
+  ja: { label: '姉妹サイト', title: '830億の理由', desc: '毎年、約830億の陸の動物が食べるために殺されています。動物・地球・健康についての根拠と、肉を植物性たんぱく質に替えると何が変わるか。', cta: 'サイトへ' } };
 const SW_NAV_ORDER = ['index.html', 'simulator.html', 'my-day.html', 'nature.html', 'sources.html'];
 const SW_UI = {
   en: { brand: 'The Slow War', next: 'Next: try it yourself', nextSub: 'Big numbers can feel distant. See what your own day adds up to.', next2: 'Keep exploring', nextSub2: 'See the bigger picture, or trace every number to its source.', rec: 'Recommended', close: 'Close' },
@@ -346,7 +350,8 @@ function swFooterSource(lang) {
     span.innerHTML = `${sep}<a href="${SW_REPO}" target="_blank" rel="noopener">${lang === 'ja' ? 'ソースコードを見る（GitHub）' : 'View source on GitHub'}</a>`
       + `<br><span class="sw-lic">${lang === 'ja' ? 'コード' : 'Code'}: <a href="${SW_REPO}/blob/main/LICENSE" target="_blank" rel="noopener license">MIT</a>${sep}`
       + `${lang === 'ja' ? 'コンテンツ' : 'Content'}: <a href="https://creativecommons.org/licenses/by/4.0/${lang === 'ja' ? 'deed.ja' : ''}" target="_blank" rel="noopener license">CC BY 4.0</a>${sep}`
-      + `<a href="sources.html#license">${lang === 'ja' ? '使い方とクレジット' : 'How to reuse'}</a></span>`;
+      + `<a href="sources.html#license">${lang === 'ja' ? '使い方とクレジット' : 'How to reuse'}</a>`
+      + `<br>${SW_SISTER[lang].label}: <a href="${SW_SISTER.url}" target="_blank" rel="noopener">${SW_SISTER[lang].title} ↗</a></span>`;
     f.appendChild(span);
   });
 }
@@ -360,7 +365,13 @@ function swNext(container, lang) {
     `<a class="sw-card${p.featured ? ' feat' : ''}" href="${p.file}" style="--c:${p.color}">
       ${p.featured ? `<span class="sw-rec">${ui.rec}</span>` : ''}
       <span class="sw-ic">${p.icon}</span><b>${p[lang].title}</b><span class="sw-d">${p[lang].desc}</span>
-      <span class="sw-btn">${p[lang].cta} →</span></a>`).join('')}</div></div>`;
+      <span class="sw-btn">${p[lang].cta} →</span></a>`).join('')}</div>${swSisterCard(lang)}</div>`;
+}
+
+function swSisterCard(lang) {
+  const x = SW_SISTER, l = x[lang];
+  return `<a class="sw-sister" href="${x.url}" target="_blank" rel="noopener" style="--c:${x.color}"><span class="sw-ic">${x.icon}</span>
+    <span class="sw-sis-t"><small>${l.label}</small><b>${l.title}</b><span>${l.desc}</span></span><span class="sw-btn">${l.cta} ↗</span></a>`;
 }
 
 /* 画面の隅に出る浮きボタン（個人シミュレータへ）。最初の画面を過ぎてから表示し、閉じたら同じ訪問中は出さない */
@@ -435,6 +446,16 @@ function swFloat(lang) {
 @media (prefers-reduced-motion: no-preference) { .sw-float.show a { animation: sw-pulse 2.6s ease-in-out 1s 3; } }
 @keyframes sw-pulse { 50% { box-shadow: 0 10px 28px -8px rgba(0,0,0,.6), 0 0 0 10px color-mix(in srgb, var(--c) 0%, transparent); } }
 @media (max-width: 899px) { body:has(.mbar) .sw-float { bottom: 104px; } }
+.sw-sister { display: flex; align-items: center; gap: 14px; margin-top: 14px; padding: 16px 18px; border-radius: 16px; text-decoration: none; color: inherit;
+  border: 1px dashed color-mix(in srgb, var(--c) 70%, transparent); background: color-mix(in srgb, var(--c) 7%, transparent); transition: transform .15s, background .15s; }
+.sw-sister:hover { transform: translateY(-2px); background: color-mix(in srgb, var(--c) 13%, transparent); }
+.sw-sister .sw-ic { flex: none; }
+.sw-sis-t { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.sw-sis-t small { font-size: 11px; letter-spacing: .08em; opacity: .7; }
+.sw-sis-t b { font-size: 16px; }
+.sw-sis-t span { font-size: 12.5px; opacity: .8; line-height: 1.55; }
+.sw-sister .sw-btn { margin: 0 0 0 auto; align-self: center; flex: none; }
+@media (max-width: 560px) { .sw-sister { flex-wrap: wrap; } .sw-sister .sw-btn { margin-left: 0; } }
 /* 狭い画面：上の設定バーを1段にまとめ、下へスクロール中は隠す */
 .bar-top, .top { transition: transform .25s ease; }
 .sw-tucked { transform: translateY(-115%); }

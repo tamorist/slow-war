@@ -8,6 +8,7 @@ Visualizes future deaths "locked in" by CO₂ emissions, based on the 1,000-ton 
 - `simulator.html` — detailed simulator
 - `my-day.html` — personal simulator (your day, at scale)
 - `nature.html` — beyond carbon: food, land, water, the Amazon tipping gauge and foods compared
+- Sister site: [83 Billion Reasons / 830億の理由](https://tamorist.github.io/83-billion/) — animals, the planet and health, and what changes when you swap meat for plant protein
 - `sources.html` — sources, key assumptions and further reading
 - `site.js` — shared navigation, source list and analytics
 
