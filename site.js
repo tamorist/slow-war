@@ -356,7 +356,8 @@ function swFooterSource(lang) {
       + `<br><span class="sw-lic">${lang === 'ja' ? 'コード' : 'Code'}: <a href="${SW_REPO}/blob/main/LICENSE" target="_blank" rel="noopener license">MIT</a>${sep}`
       + `${lang === 'ja' ? 'コンテンツ' : 'Content'}: <a href="https://creativecommons.org/licenses/by/4.0/${lang === 'ja' ? 'deed.ja' : ''}" target="_blank" rel="noopener license">CC BY 4.0</a>${sep}`
       + `<a href="sources.html#license">${lang === 'ja' ? '使い方とクレジット' : 'How to reuse'}</a>`
-      + `<br>${lang === 'ja' ? '姉妹サイト' : 'Sister sites'}: ${SW_SISTERS.map(x => `<a href="${x.url}" target="_blank" rel="noopener">${x[lang].title} ↗</a>`).join(sep)}</span>`;
+      + `<br>${lang === 'ja' ? '姉妹サイト' : 'Sister sites'}: ${SW_SISTERS.map(x => `<a href="${x.url}" target="_blank" rel="noopener">${x[lang].title} ↗</a>`).join(sep)}`
+      + `<br>${lang === 'ja' ? 'すべてのサイト' : 'All sites'}: <a href="https://tamorist.github.io/">ClimateWatchMan ↗</a></span>`;
     f.appendChild(span);
   });
 }
