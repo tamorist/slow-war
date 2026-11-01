@@ -314,9 +314,14 @@ const SW_PAGES = [
     ja: { nav: '出典とデータ', title: '出典とデータ', desc: 'すべての数値の出典と主な前提、さらに知りたい人への資料。', cta: '出典へ' } },
 ];
 // 姉妹サイト
-const SW_SISTER = { url: 'https://tamorist.github.io/83-billion/', icon: '🐄', color: '#e0a43b',
-  en: { label: 'Sister site', title: '83 Billion Reasons', desc: 'Every year about 83 billion land animals are killed for food. The evidence on animals, the planet and health — and what changes when you swap meat for plant protein.', cta: 'Visit' },
-  ja: { label: '姉妹サイト', title: '830億の理由', desc: '毎年、約830億の陸の動物が食べるために殺されています。動物・地球・健康についての根拠と、肉を植物性たんぱく質に替えると何が変わるか。', cta: 'サイトへ' } };
+const SW_SISTERS = [
+  { url: 'https://tamorist.github.io/tipping-point/', icon: '⚠', color: '#e0634c',
+    en: { label: 'Sister site', title: 'Before the Tipping Point', desc: 'The whole climate crisis on one page: the carbon budget left for 1.5°C, tipping points and how they can cascade, and why emissions keep rising.', cta: 'Visit' },
+    ja: { label: '姉妹サイト', title: '臨界点の手前で', desc: '気候変動の全体像を1ページに。1.5℃までに残された炭素、越えたら戻れない臨界点とその連鎖、そして排出が止まらない理由。', cta: 'サイトへ' } },
+  { url: 'https://tamorist.github.io/83-billion/', icon: '🐄', color: '#e0a43b',
+    en: { label: 'Sister site', title: '83 Billion Reasons', desc: 'Every year about 83 billion land animals are killed for food. The evidence on animals, the planet and health — and what changes when you swap meat for plant protein.', cta: 'Visit' },
+    ja: { label: '姉妹サイト', title: '830億の理由', desc: '毎年、約830億の陸の動物が食べるために殺されています。動物・地球・健康についての根拠と、肉を植物性たんぱく質に替えると何が変わるか。', cta: 'サイトへ' } },
+];
 const SW_NAV_ORDER = ['index.html', 'simulator.html', 'my-day.html', 'nature.html', 'sources.html'];
 const SW_UI = {
   en: { brand: 'The Slow War', next: 'Next: try it yourself', nextSub: 'Big numbers can feel distant. See what your own day adds up to.', next2: 'Keep exploring', nextSub2: 'See the bigger picture, or trace every number to its source.', rec: 'Recommended', close: 'Close' },
@@ -351,7 +356,7 @@ function swFooterSource(lang) {
       + `<br><span class="sw-lic">${lang === 'ja' ? 'コード' : 'Code'}: <a href="${SW_REPO}/blob/main/LICENSE" target="_blank" rel="noopener license">MIT</a>${sep}`
       + `${lang === 'ja' ? 'コンテンツ' : 'Content'}: <a href="https://creativecommons.org/licenses/by/4.0/${lang === 'ja' ? 'deed.ja' : ''}" target="_blank" rel="noopener license">CC BY 4.0</a>${sep}`
       + `<a href="sources.html#license">${lang === 'ja' ? '使い方とクレジット' : 'How to reuse'}</a>`
-      + `<br>${SW_SISTER[lang].label}: <a href="${SW_SISTER.url}" target="_blank" rel="noopener">${SW_SISTER[lang].title} ↗</a></span>`;
+      + `<br>${lang === 'ja' ? '姉妹サイト' : 'Sister sites'}: ${SW_SISTERS.map(x => `<a href="${x.url}" target="_blank" rel="noopener">${x[lang].title} ↗</a>`).join(sep)}</span>`;
     f.appendChild(span);
   });
 }
@@ -369,9 +374,9 @@ function swNext(container, lang) {
 }
 
 function swSisterCard(lang) {
-  const x = SW_SISTER, l = x[lang];
+  return SW_SISTERS.map(x => { const l = x[lang];
   return `<a class="sw-sister" href="${x.url}" target="_blank" rel="noopener" style="--c:${x.color}"><span class="sw-ic">${x.icon}</span>
-    <span class="sw-sis-t"><small>${l.label}</small><b>${l.title}</b><span>${l.desc}</span></span><span class="sw-btn">${l.cta} ↗</span></a>`;
+    <span class="sw-sis-t"><small>${l.label}</small><b>${l.title}</b><span>${l.desc}</span></span><span class="sw-btn">${l.cta} ↗</span></a>`; }).join('');
 }
 
 /* 画面の隅に出る浮きボタン（個人シミュレータへ）。最初の画面を過ぎてから表示し、閉じたら同じ訪問中は出さない */
