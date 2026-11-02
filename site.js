@@ -382,6 +382,9 @@ const SW_SISTERS = [
   { url: 'https://tamorist.github.io/83-billion/', icon: '🐄', color: '#e0a43b',
     en: { label: 'Sister site', title: '83 Billion Reasons', desc: 'Every year about 83 billion land animals are killed for food. The evidence on animals, the planet and health — and what changes when you swap meat for plant protein.', cta: 'Visit' },
     ja: { label: '姉妹サイト', title: '830億の理由', desc: '毎年、約830億の陸の動物が食べるために殺されています。動物・地球・健康についての根拠と、肉を植物性たんぱく質に替えると何が変わるか。', cta: 'サイトへ' } },
+  { url: 'https://tamorist.github.io/enough/', icon: '⚖', color: '#5a4fa0',
+    en: { label: 'Sister site', title: 'Enough for All', desc: 'Population and emissions surged in 50 years and we now use 1.7 Earths. Why unequal wealth, unequal emissions and planetary limits mean we must share fairly and stop overconsuming.', cta: 'Visit' },
+    ja: { label: '姉妹サイト', title: '足りる経済へ', desc: '人口も排出もこの50年で急増し、人類は地球1.7個分を使っています。富と排出の偏り、地球の限界から、富を分け直し過剰消費の経済から抜け出す必要がある理由。', cta: 'サイトへ' } },
 ];
 const SW_NAV_ORDER = ['index.html', 'simulator.html', 'my-day.html', 'nature.html', 'sources.html'];
 const SW_UI = {
