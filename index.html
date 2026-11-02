@@ -491,6 +491,8 @@ const I18N = {
 const store = { get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
                 set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} } };
 const state = { lang: store.get('scw-lang') === 'ja' ? 'ja' : 'en', country: 'world', tip: 1, r: 0 };
+const qLang = new URLSearchParams(location.search).get('lang');
+if (qLang === 'en' || qLang === 'ja') state.lang = qLang;
 const $ = id => document.getElementById(id);
 const L = () => I18N[state.lang];
 const t = (k, v = {}) => L()[k].replace(/\{(\w+)\}/g, (_, x) => v[x] ?? '');
