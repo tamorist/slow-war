@@ -38,6 +38,12 @@
   .num { font-family: Inter, -apple-system, sans-serif; font-variant-numeric: tabular-nums; letter-spacing: -.01em; }
   section { padding: 96px 16px; }
   .wrap { max-width: 880px; margin: 0 auto; }
+  .reveal { display: none; }
+  html[lang="ja"] .cwrap:not(.open) > :not(.reveal) { display: none; }
+  html[lang="ja"] .cwrap:not(.open) .reveal { display: inline-flex; flex-direction: column; align-items: center; gap: 2px; margin: 8px 0 0; font: inherit; font-size: 15px; font-weight: 700; color: var(--text); background: transparent; border: 1px solid var(--faint); border-radius: 999px; padding: 10px 22px; cursor: pointer; }
+  html[lang="ja"] .cwrap:not(.open) .reveal:hover { border-color: var(--muted); }
+  .reveal small { font-weight: 400; color: var(--muted); font-size: 12px; }
+  .hero .sw-guide { margin-left: auto; margin-right: auto; }
   .eyebrow { font-size: 12px; letter-spacing: .2em; color: var(--muted); text-transform: uppercase; margin: 0 0 16px; }
   h2 { font-size: clamp(24px, 4.4vw, 36px); line-height: 1.35; margin: 0 0 20px; font-weight: 900; }
   p.lead { font-size: clamp(15px, 2.2vw, 17px); color: #c9c8c3; max-width: 640px; margin: 0; }
@@ -206,6 +212,9 @@
 <!-- 1. HERO -->
 <section class="hero">
   <div class="wrap">
+    <div data-guide="hero" class="big-g"></div>
+    <div class="cwrap" id="cwrap">
+    <button type="button" class="reveal" id="reveal" data-i18n="reveal"></button>
     <h1 id="heroTitle"></h1>
     <div class="big num" id="today">0</div>
     <div class="unit" data-i18n="people"></div>
@@ -213,6 +222,7 @@
     <div class="range-line" id="rangeLine"></div>
     <div><span class="chip" id="chip" hidden></span></div>
     <p class="since"><span data-i18n="since"></span>　<b class="num" id="since">0</b> <span data-i18n="peopleShort"></span></p>
+    </div>
   </div>
   <a class="scroll" href="#pulse">SCROLL</a>
 </section>
@@ -226,6 +236,7 @@
       <div class="pulse-text">
         <h2 id="pulseH"></h2>
         <p class="lead" data-i18n="pulseLead"></p>
+        <div data-guide="pulse"></div>
       </div>
     </div>
     <div class="stats3">
@@ -242,6 +253,7 @@
     <div class="reveal">
       <p class="eyebrow">02 — Compared to War</p>
       <h2 data-i18n="warH"></h2>
+      <div data-guide="war"></div>
       <p class="lead" id="warLead"></p>
       <div class="legend-dot">
         <span><i></i><span data-i18n="dotLegend"></span></span>
@@ -260,6 +272,7 @@
     <div class="reveal">
       <p class="eyebrow">03 — Make it Real</p>
       <h2 data-i18n="scaleH"></h2>
+      <div data-guide="scale"></div>
       <p class="lead" data-i18n="scaleLead"></p>
     </div>
     <div class="cards">
@@ -298,6 +311,7 @@
   <div class="wrap reveal">
     <p class="eyebrow">04 — The Future is Not Fixed</p>
     <h2 data-i18n="scnH"></h2>
+    <div data-guide="scn"></div>
     <p class="lead" id="scnLead"></p>
     <div class="tabs" role="group">
       <button class="tab" data-r="0"><b data-i18n="s0"></b><span data-i18n="s0d"></span></button>
@@ -319,6 +333,7 @@
   <div class="wrap reveal">
     <p class="eyebrow">How it Works</p>
     <h2 style="font-size:22px" data-i18n="mH"></h2>
+    <div data-guide="method"></div>
     <p class="lead" data-i18n="mLead"></p>
     <div class="formula" id="formula"></div>
     <ul id="mList"></ul>
@@ -333,7 +348,7 @@
 
 <footer data-i18n="footer"></footer>
 
-<script src="site.js?v=20261102a"></script>
+<script src="site.js?v=20261103a"></script>
 <script>
 /* ===================== DATA ===================== */
 // 化石燃料CO₂（2023年頃の概算, Global Carbon Project）。世界合計は土地利用変化を含む 40 Gt。
@@ -378,6 +393,7 @@ const I18N = {
     oeNote: 'That table is not a forecast: it describes how large the damage could be, for managing risk. Its timeframe is not precisely defined, and it includes deaths from societal breakdown — conflict, famine and mass migration. Compared with it, the numbers on this site, based on the 1,000-ton rule, are conservative.',
     rangeLine: '<b>A central estimate.</b> The true number could be about a third to three times this — the likely range given by the 1,000-ton rule’s authors.',
     chip: 'Scenario: {tip}',
+    reveal: '',
     pulseH: 'About one person every <em class="num">{s}</em> {unit}.',
     sec: 'seconds', min: 'minutes',
     pulseLead: 'No gunfire. No bombs. Yet the CO₂ released at this very moment will, through heatwaves, hunger, floods and disease, take someone’s life in the years to come. This is a slow war.',
@@ -441,6 +457,7 @@ const I18N = {
     oeNote: 'この表は予測ではなく、リスク管理のための「起こりうる被害の大きさ」の区分です。期間ははっきり定められておらず、紛争・飢饉・大規模な移住など、社会の崩壊による死者も含みます。それと比べると、1,000トン・ルールにもとづくこのサイトの数字は控えめな推計です。',
     rangeLine: '<b>推計の中央値です。</b>実際には、この数字の約3分の1〜3倍の幅がありえます（1,000トン・ルールの論文が示す幅）。',
     chip: 'シナリオ：{tip}',
+    reveal: '今日の数字を見る<small>確定した将来の死者の推計</small>',
     pulseH: 'およそ<em class="num">{s}</em>{unit}に1人。',
     sec: '秒', min: '分',
     pulseLead: '銃声も爆撃もない。けれど、いまこの瞬間も排出されるCO₂は、熱波・飢餓・洪水・感染症などを通して、将来の誰かの命を確実に奪っていきます。これは「ゆっくり進む戦争」です。',
@@ -664,6 +681,7 @@ document.querySelectorAll('.lang button').forEach(b => b.addEventListener('click
 $('country').addEventListener('change', e => { state.country = e.target.value; render(); });
 $('tip').addEventListener('change', e => { state.tip = +e.target.value; render(); });
 document.querySelectorAll('.tab').forEach(b => b.addEventListener('click', () => setScenario(+b.dataset.r)));
+$('reveal').addEventListener('click', () => $('cwrap').classList.add('open'));
 
 render();
 tick();

@@ -294,6 +294,64 @@ function swRenderSources(container, lang, groups, limit) {
   document.head.appendChild(st);
 })();
 
+/* ===================== 案内役「ちきゅうさん」（日本語のときだけ表示） ===================== */
+// ページ内の <div data-guide="キー"> に、キャラクターと吹き出しを描く。英語では空にする。
+const SW_GUIDE = {
+  hero: ['smile', '<span class="nm">ちきゅうさん</span>こんにちは。ここは、気候変動の被害を<b>「命の数」</b>で考えるサイトだよ。重い数字が出てくるから、無理しないでね。心の準備ができたら、下のボタンで見られるよ。そして、この数字は<b>これから変えられる</b>ものなんだ。'],
+  pulse: ['worry', '銃も爆弾もないけれど、ゆっくり進む被害があるの。だから<b>「静かな戦争」</b>って呼んでいるんだ。'],
+  war: ['worry', '戦争と比べるのは、こわがらせるためじゃなくて、<b>大きさを正しく知るため</b>だよ。'],
+  scale: ['smile', '大きすぎる数字は、身近なものに置き換えると、少しわかりやすくなるよ。'],
+  scn: ['happy', 'ここがいちばん大事なところ。<b>この数字は、まだ変えられる</b>。減らし方しだいで、守れる命が大きく変わるんだ。'],
+  method: ['smile', 'どうやって計算しているかも、ぜんぶ見せているよ。気になったら、ゆっくり読んでみてね。'],
+  sim: ['smile', '<span class="nm">ちきゅうさん</span>ここでは、国や排出の減らし方を変えて、未来がどう変わるかを自分で試せるよ。'],
+  nature: ['smile', '<span class="nm">ちきゅうさん</span>ここでは、人だけじゃなく、<b>森や生きものたち</b>のことも見ていくよ。わたしの上には、たくさんの命が暮らしているんだ。'],
+  myday: ['smile', '<span class="nm">ちきゅうさん</span>ふだんの1日が、どれくらいの重さを持つのか、いっしょに見てみよう。<b>責めるためじゃない</b>から、安心してね。小さな選びかえにも、ちゃんと意味があるよ。'],
+};
+function swGuideSVG(mood) {
+  const brow = mood === 'worry' ? '<path d="M37 44l8-3M71 41l8 3" stroke="#2b2f2c" stroke-width="2.6" stroke-linecap="round"/>' : '';
+  const mouth = mood === 'happy'
+    ? '<path d="M49 61q9 11 18 0z" fill="#7a3b33"/><path d="M53 66q5 3 10 0" fill="#e88b84"/>'
+    : mood === 'worry'
+      ? '<path d="M51 65q4-3 7 0t7 0" stroke="#2b2f2c" stroke-width="2.4" fill="none" stroke-linecap="round"/>'
+      : '<path d="M51 61q7 6 14 0" stroke="#2b2f2c" stroke-width="2.6" fill="none" stroke-linecap="round"/>';
+  return `<svg viewBox="0 0 116 116" aria-hidden="true">
+    <ellipse cx="58" cy="108" rx="30" ry="4" fill="#000" opacity=".12"/>
+    <path d="M58 14c2-8 9-12 16-11-1 8-8 13-16 11z" fill="#4f9a6a"/><path d="M58 16c-1-6-6-9-11-8 1 6 6 9 11 8z" fill="#6fb784"/>
+    <circle cx="58" cy="58" r="42" fill="#6db3df"/>
+    <path d="M24 44c6-10 18-15 26-10 6 4 2 12-6 13-7 1-8 8-14 9-5 1-8-6-6-12z" fill="#7cc48f"/>
+    <path d="M70 22c10 2 20 9 24 18-6 2-12-2-17 2-5 3-10 1-11-5-1-6-2-11 4-15z" fill="#7cc48f"/>
+    <path d="M74 80c6-4 14-3 18 1-3 7-10 13-18 14-5-3-6-11 0-15z" fill="#7cc48f"/><path d="M32 82c4 0 7 4 6 8-4-1-8-4-6-8z" fill="#7cc48f"/>
+    <circle cx="58" cy="58" r="42" fill="none" stroke="#3d7fae" stroke-width="2.5"/>
+    <path d="M30 34q8-12 22-14" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round" opacity=".6"/>
+    ${brow}
+    <ellipse cx="44" cy="52" rx="4.6" ry="5.8" fill="#2b2f2c"/><ellipse cx="72" cy="52" rx="4.6" ry="5.8" fill="#2b2f2c"/>
+    <circle cx="45.6" cy="49.8" r="1.7" fill="#fff"/><circle cx="73.6" cy="49.8" r="1.7" fill="#fff"/>
+    <ellipse cx="35" cy="63" rx="6" ry="3.6" fill="#f29b9b" opacity=".75"/><ellipse cx="81" cy="63" rx="6" ry="3.6" fill="#f29b9b" opacity=".75"/>
+    ${mouth}</svg>`;
+}
+function swGuide(lang) {
+  document.querySelectorAll('[data-guide]').forEach(el => {
+    const g = SW_GUIDE[el.dataset.guide];
+    el.classList.add('sw-guide');
+    el.innerHTML = lang === 'ja' && g ? `<span class="sw-gchar">${swGuideSVG(g[0])}</span><p class="sw-bubble">${g[1]}</p>` : '';
+    el.hidden = !(lang === 'ja' && g);
+  });
+}
+(function () {
+  const css = `
+.sw-guide { display: flex; align-items: flex-end; gap: 10px; margin: 20px 0 24px; max-width: 680px; text-align: left; }
+.sw-guide[hidden] { display: none; }
+.sw-gchar { flex: 0 0 64px; width: 64px; height: 64px; }
+.sw-gchar svg { width: 100%; height: 100%; display: block; }
+.sw-bubble { margin: 0 0 14px; background: #f6f2ea; color: #1d1f1c; border-radius: 16px 16px 16px 4px; padding: 10px 14px; font-size: 14.5px; line-height: 1.75; font-weight: 400; letter-spacing: 0; text-transform: none; }
+.sw-bubble b { color: #2f6b4f; font-weight: 700; }
+.sw-bubble .nm { display: block; font-size: 11px; font-weight: 700; color: #6b6a63; margin-bottom: 2px; }
+.sw-guide.big-g .sw-gchar { flex-basis: 84px; width: 84px; height: 84px; }`;
+  const st = document.createElement('style');
+  st.textContent = css;
+  document.head.appendChild(st);
+})();
+
 /* ===================== 共通ナビゲーション ===================== */
 // color：ページごとのテーマ色（メニューの点・カード・浮きボタンで共通に使う）
 const SW_PAGES = [
@@ -342,6 +400,7 @@ function swNav(lang) {
   if (tabs && on && tabs.scrollWidth > tabs.clientWidth) tabs.scrollLeft = on.offsetLeft - (tabs.clientWidth - on.offsetWidth) / 2;
   swFooterSource(lang);
   swFloat(lang);
+  swGuide(lang);
 }
 
 /* フッターの末尾に GitHub のソースへのリンクを付ける（フッターの文言が描画された後に呼ぶ） */
