@@ -297,7 +297,7 @@ function swRenderSources(container, lang, groups, limit) {
 /* ===================== 案内役「ちきゅうさん」（日本語のときだけ表示） ===================== */
 // ページ内の <div data-guide="キー"> に、キャラクターと吹き出しを描く。英語では空にする。
 const SW_GUIDE = {
-  hero: ['smile', '<span class="nm">ちきゅうさん</span>こんにちは。ここは、気候変動の被害を<b>「命の数」</b>で考えるサイトだよ。重い数字が出てくるから、無理しないでね。心の準備ができたら、下のボタンで見られるよ。そして、この数字は<b>これから変えられる</b>ものなんだ。'],
+  hero: ['smile', '<span class="nm">ちきゅうさん</span>こんにちは。ここは、気候変動の被害を<b>「命の数」</b>で考えるサイトだよ。重い数字が出てくるから、無理しないでね。心の準備ができたら、下のボタンで見られるよ。そして、この数字は<b>これから変えられる</b>ものなんだ。<a class="sw-bubble-go" href="my-day.html">数字よりも、<b>自分の1日の選び方で何が変わるか</b>を試してみたい人は、こちらの「あなたの1日」からどうぞ →</a>'],
   pulse: ['worry', '銃も爆弾もないけれど、ゆっくり進む被害があるの。だから<b>「静かな戦争」</b>って呼んでいるんだ。'],
   war: ['worry', '戦争と比べるのは、こわがらせるためじゃなくて、<b>大きさを正しく知るため</b>だよ。'],
   scale: ['smile', '大きすぎる数字は、身近なものに置き換えると、少しわかりやすくなるよ。'],
@@ -345,6 +345,9 @@ function swGuide(lang) {
 .sw-gchar svg { width: 100%; height: 100%; display: block; }
 .sw-bubble { margin: 0 0 14px; background: #f6f2ea; color: #1d1f1c; border-radius: 16px 16px 16px 4px; padding: 10px 14px; font-size: 14.5px; line-height: 1.75; font-weight: 400; letter-spacing: 0; text-transform: none; }
 .sw-bubble b { color: #2f6b4f; font-weight: 700; }
+.sw-bubble-go { display: block; margin-top: 8px; padding: 8px 12px; border-radius: 10px; background: #fff3dc; color: #1d1f1c; text-decoration: none; font-size: 14px; border: 1px solid #e8c98a; }
+.sw-bubble-go:hover { background: #ffe9bf; }
+.sw-bubble-go b { color: #a0661a; }
 .sw-bubble .nm { display: block; font-size: 11px; font-weight: 700; color: #6b6a63; margin-bottom: 2px; }
 .sw-guide.big-g .sw-gchar { flex-basis: 84px; width: 84px; height: 84px; }`;
   const st = document.createElement('style');
