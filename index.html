@@ -38,11 +38,11 @@
   .num { font-family: Inter, -apple-system, sans-serif; font-variant-numeric: tabular-nums; letter-spacing: -.01em; }
   section { padding: 96px 16px; }
   .wrap { max-width: 880px; margin: 0 auto; }
-  .reveal { display: none; }
-  html[lang="ja"] .cwrap:not(.open) > :not(.reveal) { display: none; }
-  html[lang="ja"] .cwrap:not(.open) .reveal { display: inline-flex; flex-direction: column; align-items: center; gap: 2px; margin: 8px 0 0; font: inherit; font-size: 15px; font-weight: 700; color: var(--text); background: transparent; border: 1px solid var(--faint); border-radius: 999px; padding: 10px 22px; cursor: pointer; }
-  html[lang="ja"] .cwrap:not(.open) .reveal:hover { border-color: var(--muted); }
-  .reveal small { font-weight: 400; color: var(--muted); font-size: 12px; }
+  .cshow { display: none; }
+  html[lang="ja"] .cwrap:not(.open) > :not(.cshow) { display: none; }
+  html[lang="ja"] .cwrap:not(.open) .cshow { display: inline-flex; flex-direction: column; align-items: center; gap: 2px; margin: 8px 0 0; font: inherit; font-size: 15px; font-weight: 700; color: var(--text); background: transparent; border: 1px solid var(--faint); border-radius: 999px; padding: 10px 22px; cursor: pointer; }
+  html[lang="ja"] .cwrap:not(.open) .cshow:hover { border-color: var(--muted); }
+  .cshow small { font-weight: 400; color: var(--muted); font-size: 12px; }
   .hero .sw-guide { margin-left: auto; margin-right: auto; }
   .eyebrow { font-size: 12px; letter-spacing: .2em; color: var(--muted); text-transform: uppercase; margin: 0 0 16px; }
   h2 { font-size: clamp(24px, 4.4vw, 36px); line-height: 1.35; margin: 0 0 20px; font-weight: 900; }
@@ -214,7 +214,7 @@
   <div class="wrap">
     <div data-guide="hero" class="big-g"></div>
     <div class="cwrap" id="cwrap">
-    <button type="button" class="reveal" id="reveal" data-i18n="reveal"></button>
+    <button type="button" class="cshow" id="reveal" data-i18n="reveal"></button>
     <h1 id="heroTitle"></h1>
     <div class="big num" id="today">0</div>
     <div class="unit" data-i18n="people"></div>
