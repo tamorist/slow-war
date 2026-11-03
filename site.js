@@ -386,6 +386,14 @@ const SW_SISTERS = [
     en: { label: 'Sister site', title: 'Enough for All', desc: 'Population and emissions surged in 50 years and we now use 1.7 Earths. Why unequal wealth, unequal emissions and planetary limits mean we must share fairly and stop overconsuming.', cta: 'Visit' },
     ja: { label: '姉妹サイト', title: '足りる経済へ', desc: '人口も排出もこの50年で急増し、人類は地球1.7個分を使っています。富と排出の偏り、地球の限界から、富を分け直し過剰消費の経済から抜け出す必要がある理由。', cta: 'サイトへ' } },
 ];
+/* ClimateWatchMan（トップページ）と、4つのサイトのおすすめの読む順番 */
+const SW_HUB = 'https://tamorist.github.io/';
+const SW_STEPS = [
+  { slug: 'tipping-point', color: '#c75c1a', ja: ['全体像をつかむ', '臨界点の手前で'], en: ['See the whole picture', 'Before the Tipping Point'] },
+  { slug: 'slow-war', color: '#d23c2f', ja: ['命の数で実感する', '静かな戦争'], en: ['Feel it in lives', 'The Slow War'] },
+  { slug: '83-billion', color: '#2f6b4f', ja: ['食卓から変える', '830億の理由'], en: ['Change it at the table', '83 Billion Reasons'] },
+  { slug: 'enough', color: '#5a4fa0', ja: ['社会の仕組みから変える', '足りる経済へ'], en: ['Change the system', 'Enough for All'] },
+];
 const SW_NAV_ORDER = ['index.html', 'simulator.html', 'my-day.html', 'nature.html', 'sources.html'];
 const SW_UI = {
   en: { brand: 'The Slow War', next: 'Next: try it yourself', nextSub: 'Big numbers can feel distant. See what your own day adds up to.', next2: 'Keep exploring', nextSub2: 'See the bigger picture, or trace every number to its source.', rec: 'Recommended', close: 'Close' },
@@ -399,7 +407,7 @@ function swNav(lang) {
   let nav = document.querySelector('.sw-nav');
   if (!nav) { nav = document.createElement('nav'); nav.className = 'sw-nav'; nav.setAttribute('aria-label', 'Site'); document.body.prepend(nav); }
   const cur = swCurrent(), ui = SW_UI[lang];
-  nav.innerHTML = `<div class="sw-nav-in"><a class="sw-brand" href="index.html"><i></i>${ui.brand}</a><div class="sw-tabs">${SW_NAV_ORDER.map(swPage).map(p =>
+  nav.innerHTML = `<div class="sw-nav-in"><a class="sw-brand" href="index.html"><i></i>${ui.brand}</a><a class="sw-hub" href="${SW_HUB}"><i></i>${lang === 'ja' ? 'すべてのサイト' : 'All sites'}</a><div class="sw-tabs">${SW_NAV_ORDER.map(swPage).map(p =>
     `<a href="${p.file}" class="sw-tab${p.file === cur ? ' on' : ''}${p.featured ? ' feat' : ''}" style="--c:${p.color}"${p.file === cur ? ' aria-current="page"' : ''}><i></i>${p[lang].nav}</a>`).join('')}</div></div>`;
   // 狭い画面ではタブが横にスクロールするので、現在のページのタブを見える位置に寄せる
   const tabs = nav.querySelector('.sw-tabs'), on = nav.querySelector('.sw-tab.on');
@@ -436,7 +444,18 @@ function swNext(container, lang) {
     `<a class="sw-card${p.featured ? ' feat' : ''}" href="${p.file}" style="--c:${p.color}">
       ${p.featured ? `<span class="sw-rec">${ui.rec}</span>` : ''}
       <span class="sw-ic">${p.icon}</span><b>${p[lang].title}</b><span class="sw-d">${p[lang].desc}</span>
-      <span class="sw-btn">${p[lang].cta} →</span></a>`).join('')}</div>${swSisterCard(lang)}</div>`;
+      <span class="sw-btn">${p[lang].cta} →</span></a>`).join('')}</div>${swHubCard(lang)}${swSisterCard(lang)}</div>`;
+}
+
+/* トップページ（ClimateWatchMan）への大きなカード。4つのサイトの中で、いまどこにいるかを示す */
+function swHubCard(lang) {
+  const ja = lang === 'ja';
+  return `<a class="sw-hubcard" href="${SW_HUB}"><span class="k">CLIMATEWATCHMAN</span>
+    <b>${ja ? '<span style="display:inline-block">気候危機を、理解する。</span><span style="display:inline-block">そして、止める。</span>' : 'Understand the climate crisis. Then help stop it.'}</b>
+    <span class="d">${ja ? 'このサイトは、つながった4つのサイトのひとつです。全体の地図と、おすすめの読む順番はトップページで。' : 'This site is one of four connected sites. See the whole map, and a suggested reading order, on the home page.'}</span>
+    <ol>${SW_STEPS.map((s, i) => { const on = s.slug === 'slow-war';
+      return `<li${on ? ' class="on"' : ''} style="--c:${s.color}"><small>${i + 1}. ${s[lang][0]}</small>${s[lang][1]}${on ? (ja ? '<span style="display:inline-block">（いまここ）</span>' : ' (you are here)') : ''}</li>`; }).join('')}</ol>
+    <span class="go">${ja ? 'トップページへ →' : 'Go to the home page →'}</span></a>`;
 }
 
 function swSisterCard(lang) {
@@ -482,6 +501,22 @@ function swFloat(lang) {
 .sw-tab.feat:not(.on) { border-color: var(--c); color: #fff; background: color-mix(in srgb, var(--c) 18%, transparent); font-weight: 700; }
 .sw-tab.on { background: #ecebe7; color: #0e0f11; border-color: #ecebe7; font-weight: 700; }
 @media (max-width: 560px) { .sw-tabs { margin-left: 0; width: 100%; } }
+.sw-hub { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; text-decoration: none; font-weight: 700; font-size: 12.5px; color: #0e0f11; background: #ecebe7; border-radius: 999px; padding: 5px 12px 5px 10px; }
+.sw-hub:hover { background: #fff; }
+.sw-hub i { width: 9px; height: 9px; border-radius: 50%; background: conic-gradient(#c75c1a 0 25%, #d23c2f 0 50%, #2f6b4f 0 75%, #5a4fa0 0); }
+@media (max-width: 560px) { .sw-hub { margin-left: auto; } }
+.sw-hubcard { display: block; margin-top: 22px; text-decoration: none; color: #f3efe6; background: #1b1d21; border: 1px solid #34373c; border-radius: 20px; padding: 24px 24px 20px; }
+.sw-hubcard:hover { border-color: #6b6e74; }
+.sw-hubcard .k { font-size: 12px; letter-spacing: .2em; color: #a9a6a0; font-weight: 700; }
+.sw-hubcard b { display: block; font-size: clamp(20px, 3.6vw, 26px); line-height: 1.4; margin: 6px 0 4px; }
+.sw-hubcard .d { display: block; color: #c9c6bf; font-size: 14px; line-height: 1.6; }
+.sw-hubcard ol { list-style: none; padding: 0; margin: 16px 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.sw-hubcard li { border-top: 4px solid var(--c); background: rgba(255,255,255,.05); border-radius: 8px; padding: 8px 10px; font-size: 12.5px; line-height: 1.45; color: #c9c6bf; }
+.sw-hubcard li small { display: block; font-size: 11px; color: #8f8c86; }
+.sw-hubcard li.on { background: rgba(255,255,255,.14); color: #fff; font-weight: 700; }
+.sw-hubcard li.on small { color: #f3efe6; }
+.sw-hubcard .go { display: inline-block; font-weight: 800; font-size: 15px; background: #f3efe6; color: #141614; border-radius: 999px; padding: 9px 18px; }
+@media (max-width: 640px) { .sw-hubcard ol { grid-template-columns: 1fr 1fr; } }
 
 .sw-next { margin: 8px 0; font-family: Inter, "Noto Sans JP", -apple-system, "Hiragino Sans", sans-serif; }
 .sw-next h3 { font-size: clamp(22px, 3.6vw, 28px); font-weight: 900; margin: 0 0 6px; line-height: 1.3; }
