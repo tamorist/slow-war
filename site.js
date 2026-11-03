@@ -444,7 +444,20 @@ function swNext(container, lang) {
     `<a class="sw-card${p.featured ? ' feat' : ''}" href="${p.file}" style="--c:${p.color}">
       ${p.featured ? `<span class="sw-rec">${ui.rec}</span>` : ''}
       <span class="sw-ic">${p.icon}</span><b>${p[lang].title}</b><span class="sw-d">${p[lang].desc}</span>
-      <span class="sw-btn">${p[lang].cta} →</span></a>`).join('')}</div>${swHubCard(lang)}${swSisterCard(lang)}</div>`;
+      <span class="sw-btn">${p[lang].cta} →</span></a>`).join('')}</div></div>`;
+  swFamily(container, lang);
+}
+
+/* トップページと姉妹サイトへのカード。サイト内のページと混ざらないよう、出典の後（作者紹介の前）に置く */
+function swFamily(container, lang) {
+  let fam = document.querySelector('.sw-family');
+  if (!fam) {
+    fam = document.createElement('div');
+    fam.className = 'sw-next sw-family';
+    const author = document.getElementById('author');
+    if (author) author.before(fam); else container.after(fam);
+  }
+  fam.innerHTML = swHubCard(lang) + swSisterCard(lang);
 }
 
 /* トップページ（ClimateWatchMan）への大きなカード。4つのサイトの中で、いまどこにいるかを示す */
@@ -505,6 +518,8 @@ function swFloat(lang) {
 .sw-hub:hover { background: #fff; }
 .sw-hub i { width: 9px; height: 9px; border-radius: 50%; background: conic-gradient(#c75c1a 0 25%, #d23c2f 0 50%, #2f6b4f 0 75%, #5a4fa0 0); }
 @media (max-width: 560px) { .sw-hub { margin-left: auto; } }
+.sw-next.sw-family { margin: 32px 0 28px; }
+.sw-family > .sw-hubcard:first-child { margin-top: 0; }
 .sw-hubcard { display: block; margin-top: 22px; text-decoration: none; color: #f3efe6; background: #1b1d21; border: 1px solid #34373c; border-radius: 20px; padding: 24px 24px 20px; }
 .sw-hubcard:hover { border-color: #6b6e74; }
 .sw-hubcard .k { font-size: 12px; letter-spacing: .2em; color: #a9a6a0; font-weight: 700; }
