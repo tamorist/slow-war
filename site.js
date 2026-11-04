@@ -303,9 +303,6 @@ const SW_GUIDE = {
   scale: ['smile', '大きすぎる数字は、身近なものに置き換えると、少しわかりやすくなるよ。'],
   scn: ['happy', 'ここがいちばん大事なところ。<b>この数字は、まだ変えられる</b>。減らし方しだいで、守れる命が大きく変わるんだ。'],
   method: ['smile', 'どうやって計算しているかも、ぜんぶ見せているよ。気になったら、ゆっくり読んでみてね。'],
-  sim: ['smile', '<span class="nm">ちきゅうさん</span>ここでは、国や排出の減らし方を変えて、未来がどう変わるかを自分で試せるよ。'],
-  nature: ['smile', '<span class="nm">ちきゅうさん</span>ここでは、人だけじゃなく、<b>森や生きものたち</b>のことも見ていくよ。わたしの上には、たくさんの命が暮らしているんだ。'],
-  myday: ['smile', '<span class="nm">ちきゅうさん</span>ふだんの1日が、どれくらいの重さを持つのか、いっしょに見てみよう。<b>責めるためじゃない</b>から、安心してね。小さな選びかえにも、ちゃんと意味があるよ。'],
 };
 function swGuideSVG(mood) {
   const brow = mood === 'worry' ? '<path d="M37 44l8-3M71 41l8 3" stroke="#2b2f2c" stroke-width="2.6" stroke-linecap="round"/>' : '';
