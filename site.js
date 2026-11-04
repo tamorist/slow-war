@@ -725,11 +725,14 @@ function swAuthor(container, lang) {
     box.classList.toggle('first', g !== 'on' && g !== 'off');
     box.querySelectorAll('[data-guide-set]').forEach(b => b.setAttribute('aria-pressed', b.dataset.guideSet === g));
   };
+  // 「解説なし」なら冒頭の数字をすぐ見せ、「解説あり」なら隠した初期状態に戻す
+  const reveal = () => { const cw = document.getElementById('cwrap'); if (cw) cw.classList.toggle('open', g === 'off'); };
   document.addEventListener('click', e => {
     const b = e.target.closest('[data-guide-set]'); if (!b) return;
     g = b.dataset.guideSet; try { localStorage.setItem(KEY, g); } catch (e) {}
-    apply();
+    apply(); reveal();
   });
   window.cwmGuideApply = apply;
   apply();
+  if (g === 'off') { if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', reveal); else reveal(); }
 })();
