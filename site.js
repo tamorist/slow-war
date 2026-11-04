@@ -336,9 +336,40 @@ function swGuide(lang) {
     el.innerHTML = lang === 'ja' && g ? `<span class="sw-gchar">${swGuideSVG(g[0])}</span><p class="sw-bubble">${g[1]}</p>` : '';
     el.hidden = !(lang === 'ja' && g);
   });
+  // 解説あり／なしの選択を、ページの最初の解説の前に置く（日本語のときだけ）
+  let pick = document.getElementById('guidePick');
+  const first = document.querySelector('[data-guide]');
+  if (lang === 'ja' && first && !pick) {
+    first.insertAdjacentHTML('beforebegin', `<div class="gpick first" id="guidePick" role="group" aria-label="ちきゅうさんの解説">
+  <p class="gp-q">はじめに、読み方を選べます</p>
+  <div class="gp-btns"><span class="gp-l">ちきゅうさんの解説</span>
+    <button data-guide-set="on">🌍 解説あり<small>ちきゅうさんと、やさしい言葉で読む</small></button>
+    <button data-guide-set="off">解説なし<small>データと本文だけで読む</small></button>
+  </div>
+</div>
+`);
+    pick = document.getElementById('guidePick');
+  }
+  if (pick) pick.hidden = lang !== 'ja';
+  if (window.cwmGuideApply) window.cwmGuideApply();
 }
 (function () {
   const css = `
+/* ちきゅうさんの解説 あり／なし（姉妹サイト共通） */
+.gpick { background: #fff; color: #1d1f1c; border: 1px solid rgba(0,0,0,.12); border-radius: 14px; padding: 12px 14px; margin: 18px 0 6px; max-width: 680px; font-size: 13px; text-align: left; box-shadow: 0 2px 8px rgba(0,0,0,.05); }
+.gpick .gp-q { margin: 0 0 8px; font-weight: 700; font-size: 14px; color: #1d1f1c !important; }
+.gpick .gp-btns { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.gpick .gp-l { color: #6b6e66; font-size: 12.5px; }
+.gpick button { font: inherit; font-size: 13.5px; text-align: left; background: #f4f1ea; color: #1d1f1c; border: 1px solid rgba(0,0,0,.14); border-radius: 10px; padding: 8px 12px; cursor: pointer; line-height: 1.4; }
+.gpick button small { display: block; font-size: 11.5px; color: #6b6e66; font-weight: 400; }
+.gpick button[aria-pressed="true"] { background: #1d1f1c; color: #fff; border-color: #1d1f1c; font-weight: 700; }
+.gpick button[aria-pressed="true"] small { color: rgba(255,255,255,.75); }
+.gpick.first .gp-l { display: none; }
+.gpick:not(.first) { display: inline-block; padding: 6px 10px; border-radius: 999px; }
+.gpick:not(.first) .gp-q, .gpick:not(.first) button small { display: none; }
+.gpick:not(.first) button { padding: 3px 11px; border-radius: 999px; font-size: 12.5px; }
+html.en .gpick, .gpick[hidden] { display: none !important; }
+html.noguide .guide, html.noguide .sw-guide { display: none !important; }
 .sw-guide { display: flex; align-items: flex-end; gap: 10px; margin: 20px 0 24px; max-width: 680px; text-align: left; }
 .sw-guide[hidden] { display: none; }
 .sw-gchar { flex: 0 0 64px; width: 64px; height: 64px; }
@@ -685,4 +716,23 @@ function swAuthor(container, lang) {
   const st = document.createElement('style');
   st.textContent = css;
   document.head.appendChild(st);
+})();
+// ---- ちきゅうさんの解説 あり／なし（姉妹サイト共通の設定。同じドメインなので localStorage を共有。?guide=on|off でも指定できる）
+(function () {
+  const KEY = 'cwm-guide';
+  let g = null;
+  try { const q = new URLSearchParams(location.search).get('guide'); if (q === 'on' || q === 'off') { g = q; localStorage.setItem(KEY, q); } else g = localStorage.getItem(KEY); } catch (e) {}
+  const apply = () => {
+    document.documentElement.classList.toggle('noguide', g === 'off');
+    const box = document.getElementById('guidePick'); if (!box) return;
+    box.classList.toggle('first', g !== 'on' && g !== 'off');
+    box.querySelectorAll('[data-guide-set]').forEach(b => b.setAttribute('aria-pressed', b.dataset.guideSet === g));
+  };
+  document.addEventListener('click', e => {
+    const b = e.target.closest('[data-guide-set]'); if (!b) return;
+    g = b.dataset.guideSet; try { localStorage.setItem(KEY, g); } catch (e) {}
+    apply();
+  });
+  window.cwmGuideApply = apply;
+  apply();
 })();
