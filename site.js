@@ -294,15 +294,15 @@ function swRenderSources(container, lang, groups, limit) {
   document.head.appendChild(st);
 })();
 
-/* ===================== 案内役「ちきゅうさん」（日本語のときだけ表示） ===================== */
-// ページ内の <div data-guide="キー"> に、キャラクターと吹き出しを描く。英語では空にする。
+/* ===================== 案内役「ちきゅうさん」（英語では Little Earth。日本語は初期表示あり、英語は初期表示なし） ===================== */
+// ページ内の <div data-guide="キー"> に、キャラクターと吹き出しを描く。[表情, 日本語, 英語]
 const SW_GUIDE = {
-  hero: ['smile', '<span class="nm">ちきゅうさん</span>こんにちは。ここは、気候変動の被害を<b>「命の数」</b>で考えるサイトだよ。重い数字が出てくるから、無理しないでね。心の準備ができたら、下のボタンで見られるよ。そして、この数字は<b>これから変えられる</b>ものなんだ。<a class="sw-bubble-go" href="my-day.html">数字よりも、<b>自分の1日の選び方で何が変わるか</b>を試してみたい人は、こちらの「あなたの1日」からどうぞ →</a>'],
-  pulse: ['worry', '銃も爆弾もないけれど、ゆっくり進む被害があるの。だから<b>「静かな戦争」</b>って呼んでいるんだ。'],
-  war: ['worry', '戦争と比べるのは、こわがらせるためじゃなくて、<b>大きさを正しく知るため</b>だよ。'],
-  scale: ['smile', '大きすぎる数字は、身近なものに置き換えると、少しわかりやすくなるよ。'],
-  scn: ['happy', 'ここがいちばん大事なところ。<b>この数字は、まだ変えられる</b>。減らし方しだいで、守れる命が大きく変わるんだ。'],
-  method: ['smile', 'どうやって計算しているかも、ぜんぶ見せているよ。気になったら、ゆっくり読んでみてね。'],
+  hero: ['smile', '<span class="nm">ちきゅうさん</span>こんにちは。ここは、気候変動の被害を<b>「命の数」</b>で考えるサイトだよ。重い数字が出てくるから、無理しないでね。心の準備ができたら、下のボタンで見られるよ。そして、この数字は<b>これから変えられる</b>ものなんだ。<a class="sw-bubble-go" href="my-day.html">数字よりも、<b>自分の1日の選び方で何が変わるか</b>を試してみたい人は、こちらの「あなたの1日」からどうぞ →</a>', '<span class="nm">Little Earth</span>Hello! This site looks at the harm from climate change <b>in human lives</b>. Some heavy numbers are coming, so be gentle with yourself. And these numbers <b>can still be changed</b>.<a class="sw-bubble-go" href="my-day.html">Rather than numbers, want to try <b>what your own day’s choices change</b>? Start with “Your day” →</a>'],
+  pulse: ['worry', '銃も爆弾もないけれど、ゆっくり進む被害があるの。だから<b>「静かな戦争」</b>って呼んでいるんだ。', 'There are no guns or bombs, but the harm moves slowly on. That’s why we call it <b>“the slow war”</b>.'],
+  war: ['worry', '戦争と比べるのは、こわがらせるためじゃなくて、<b>大きさを正しく知るため</b>だよ。', 'Comparing it with war isn’t meant to scare you — it’s to <b>grasp its true size</b>.'],
+  scale: ['smile', '大きすぎる数字は、身近なものに置き換えると、少しわかりやすくなるよ。', 'Numbers that are too big get a little easier when set beside familiar things.'],
+  scn: ['happy', 'ここがいちばん大事なところ。<b>この数字は、まだ変えられる</b>。減らし方しだいで、守れる命が大きく変わるんだ。', 'This is the most important part. <b>These numbers can still change.</b> How we cut emissions decides how many lives are saved.'],
+  method: ['smile', 'どうやって計算しているかも、ぜんぶ見せているよ。気になったら、ゆっくり読んでみてね。', 'We show exactly how everything is calculated. If you’re curious, take your time with it.'],
 };
 function swGuideSVG(mood) {
   const brow = mood === 'worry' ? '<path d="M37 44l8-3M71 41l8 3" stroke="#2b2f2c" stroke-width="2.6" stroke-linecap="round"/>' : '';
@@ -327,27 +327,22 @@ function swGuideSVG(mood) {
     ${mouth}</svg>`;
 }
 function swGuide(lang) {
+  const ja = lang === 'ja';
   document.querySelectorAll('[data-guide]').forEach(el => {
     const g = SW_GUIDE[el.dataset.guide];
     el.classList.add('sw-guide');
-    el.innerHTML = lang === 'ja' && g ? `<span class="sw-gchar">${swGuideSVG(g[0])}</span><p class="sw-bubble">${g[1]}</p>` : '';
-    el.hidden = !(lang === 'ja' && g);
+    el.innerHTML = g ? `<span class="sw-gchar">${swGuideSVG(g[0])}</span><p class="sw-bubble">${ja ? g[1] : g[2]}</p>` : '';
+    el.hidden = !g;
   });
-  // 解説あり／なしの選択を、ページの最初の解説の前に置く（日本語のときだけ）
-  let pick = document.getElementById('guidePick');
+  // 解説あり／なしの選択を、ページの最初の解説の前に置く（言語に合わせて書き直す）
   const first = document.querySelector('[data-guide]');
-  if (lang === 'ja' && first && !pick) {
-    first.insertAdjacentHTML('beforebegin', `<div class="gpick first" id="guidePick" role="group" aria-label="ちきゅうさんの解説">
-  <p class="gp-q">はじめに、読み方を選べます</p>
-  <div class="gp-btns"><span class="gp-l">ちきゅうさんの解説</span>
-    <button data-guide-set="on">🌍 解説あり<small>ちきゅうさんと、やさしい言葉で読む</small></button>
-    <button data-guide-set="off">解説なし<small>データと本文だけで読む</small></button>
-  </div>
-</div>
-`);
-    pick = document.getElementById('guidePick');
-  }
-  if (pick) pick.hidden = lang !== 'ja';
+  let pick = document.getElementById('guidePick');
+  if (!first) return;
+  if (!pick) { first.insertAdjacentHTML('beforebegin', '<div class="gpick first" id="guidePick" role="group"></div>'); pick = document.getElementById('guidePick'); }
+  pick.setAttribute('aria-label', ja ? 'ちきゅうさんの解説' : 'Guide');
+  pick.innerHTML = ja
+    ? '<p class="gp-q">はじめに、読み方を選べます</p><div class="gp-btns"><span class="gp-l">ちきゅうさんの解説</span><button data-guide-set="on">🌍 解説あり<small>ちきゅうさんと、やさしい言葉で読む</small></button><button data-guide-set="off">解説なし<small>データと本文だけで読む</small></button></div>'
+    : '<p class="gp-q">How would you like to read?</p><div class="gp-btns"><span class="gp-l">Little Earth’s guide</span><button data-guide-set="on">🌍 Guide on<small>Read along with Little Earth, in plain words</small></button><button data-guide-set="off">Guide off<small>Just the data and the text</small></button></div>';
   if (window.cwmGuideApply) window.cwmGuideApply();
 }
 (function () {
@@ -365,7 +360,7 @@ function swGuide(lang) {
 .gpick:not(.first) { display: inline-block; padding: 6px 10px; border-radius: 999px; }
 .gpick:not(.first) .gp-q, .gpick:not(.first) button small { display: none; }
 .gpick:not(.first) button { padding: 3px 11px; border-radius: 999px; font-size: 12.5px; }
-html.en .gpick, .gpick[hidden] { display: none !important; }
+.gpick[hidden] { display: none !important; }
 html.noguide .guide, html.noguide .sw-guide { display: none !important; }
 .sw-guide { display: flex; align-items: flex-end; gap: 10px; margin: 20px 0 24px; max-width: 680px; text-align: left; }
 .sw-guide[hidden] { display: none; }
@@ -719,11 +714,14 @@ function swAuthor(container, lang) {
   const KEY = 'cwm-guide';
   let g = null;
   try { const q = new URLSearchParams(location.search).get('guide'); if (q === 'on' || q === 'off') { g = q; localStorage.setItem(KEY, q); } else g = localStorage.getItem(KEY); } catch (e) {}
+  // 選ぶ前は、日本語では「解説あり」、英語では「解説なし」。選んだあとは、どちらの言語でもその選択に従う
+  const L = () => { const h = document.documentElement; return h.classList.contains('en') ? 'en' : h.classList.contains('ja') ? 'ja' : (h.lang === 'ja' ? 'ja' : 'en'); };
   const apply = () => {
-    document.documentElement.classList.toggle('noguide', g === 'off');
+    const chosen = g === 'on' || g === 'off', eff = chosen ? g : (L() === 'ja' ? 'on' : 'off');
+    document.documentElement.classList.toggle('noguide', eff === 'off');
     const box = document.getElementById('guidePick'); if (!box) return;
-    box.classList.toggle('first', g !== 'on' && g !== 'off');
-    box.querySelectorAll('[data-guide-set]').forEach(b => b.setAttribute('aria-pressed', b.dataset.guideSet === g));
+    box.classList.toggle('first', !chosen && L() === 'ja');
+    box.querySelectorAll('[data-guide-set]').forEach(b => b.setAttribute('aria-pressed', (chosen || L() === 'en') && b.dataset.guideSet === eff));
   };
   // 「解説なし」なら冒頭の数字をすぐ見せ、「解説あり」なら隠した初期状態に戻す
   const reveal = () => { const cw = document.getElementById('cwrap'); if (cw) cw.classList.toggle('open', g === 'off'); };
