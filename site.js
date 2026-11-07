@@ -303,6 +303,24 @@ const SW_GUIDE = {
   scale: ['smile', '大きすぎる数字は、身近なものに置き換えると、少しわかりやすくなるよ。', 'Numbers that are too big get a little easier when set beside familiar things.'],
   scn: ['happy', 'ここがいちばん大事なところ。<b>この数字は、まだ変えられる</b>。減らし方しだいで、守れる命が大きく変わるんだ。', 'This is the most important part. <b>These numbers can still change.</b> How we cut emissions decides how many lives are saved.'],
   method: ['smile', 'どうやって計算しているかも、ぜんぶ見せているよ。気になったら、ゆっくり読んでみてね。', 'We show exactly how everything is calculated. If you’re curious, take your time with it.'],
+  // あなたの1日（my-day.html）
+  mdIntro: ['smile', 'あなたの1日をえらぶと、合計の数字が変わるよ。それを<b>国や世界の人数でかけ算</b>すると、命の数になるんだ。', 'Choose your day and the total changes. Multiply it by <b>everyone in a country or the world</b>, and it becomes a number of lives.'],
+  mdPlate: ['worry', '牛肉の排出の多くは、料理や運ぶときじゃなくて、<b>牛のげっぷと、森を切ること</b>から来ているの。', 'Most of beef’s emissions come not from cooking or transport but from <b>cattle burps and cleared forests</b>.'],
+  mdSwap: ['happy', '置きかえるなら、<b>豆や大豆</b>がいちばん効くよ。鶏肉にするだけだと、まだ足りないんだ。', 'If you swap, <b>beans and soy</b> do the most. Switching to chicken alone isn’t enough.'],
+  mdWhatif: ['happy', 'ひとつだけ変えたら、どれくらいちがう？ 気軽に試してみてね。', 'What if you changed just one thing? Have a go.'],
+  // 自然を守る戦い（nature.html）
+  naIntro: ['smile', 'ここは、<b>わたし（地球）の体</b>の話。森や海や土が、気候を支えているんだ。', 'This part is about <b>my body — the planet’s</b>. Forests, oceans and soil hold the climate steady.'],
+  naPop: ['smile', '人は2倍になったのに、食べ方の「ふつう」は昔のまま。でも、<b>地球の大きさは変わっていない</b>んだ。', 'There are twice as many people, yet our idea of a “normal” diet hasn’t changed. And <b>the planet hasn’t grown</b>.'],
+  naAmazon: ['worry', 'アマゾンは、危ない範囲まで<b>あと少し</b>。でも、まだ間に合うよ。', 'The Amazon is <b>close</b> to the danger zone — but there’s still time.'],
+  naSink: ['worry', 'わたしは、みんなの CO₂ の<b>約半分</b>を吸ってきたの。でも、その力が弱りはじめているんだ。', 'I’ve soaked up <b>about half</b> of your CO₂. But that strength is starting to fade.'],
+  naAct: ['happy', '肉はゼロじゃなくていいんだ。<b>植物を中心に</b>、少しずつでいいよ。', 'Meat doesn’t have to be zero. <b>Put plants at the centre</b>, a little at a time.'],
+  // 詳細シミュレータ（simulator.html）
+  smParams: ['smile', 'ここで前提を変えられるよ。いろいろ動かして、<b>何が結果を大きく変えるか</b>を見てみてね。', 'You can change the assumptions here. Move things around and see <b>what changes the result most</b>.'],
+  smCmp: ['worry', '過去の戦争とくらべるのは、<b>大きさをつかむため</b>。こわがらせるためじゃないよ。', 'Comparing with past wars is to <b>grasp the scale</b>, not to frighten you.'],
+  smChart: ['happy', '線の傾きは、減らし方しだいで<b>まだ変えられる</b>よ。', 'How steep the line is <b>can still change</b>, depending on how fast we cut.'],
+  // 出典とデータ（sources.html）
+  srIntro: ['smile', '数字はぜんぶ、<b>どこから来たか</b>たどれるようにしているよ。気になったら、元の資料も読んでみてね。', 'Every number can be <b>traced to where it came from</b>. If you’re curious, read the original sources too.'],
+  srPath: ['smile', 'ちょっと専門的な話。なぜ「年7%」を2℃の道と呼ぶのか、理由を説明しているよ。', 'A bit technical: why we call “7% a year” the 2 °C path.'],
 };
 function swGuideSVG(mood) {
   const brow = mood === 'worry' ? '<path d="M37 44l8-3M71 41l8 3" stroke="#2b2f2c" stroke-width="2.6" stroke-linecap="round"/>' : '';

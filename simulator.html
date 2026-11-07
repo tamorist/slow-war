@@ -90,6 +90,7 @@
   <div class="grid">
     <section class="panel">
       <h2 data-i18n="params"></h2>
+      <div data-guide="smParams"></div>
 
       <label for="country" class="first" data-i18n="country"></label>
       <select id="country"></select>
@@ -137,6 +138,7 @@
 
       <section class="panel">
         <h2 data-i18n="cmpH"></h2>
+        <div data-guide="smCmp"></div>
         <div class="two">
           <div class="stat"><div class="k" id="k10"></div><div class="v" id="v10"></div><div class="x" id="x10"></div><div class="lin" id="l10"></div><div class="lin rng" id="r10"></div></div>
           <div class="stat"><div class="k" id="kEnd"></div><div class="v" id="vEnd"></div><div class="x" id="xEnd"></div><div class="lin" id="lEnd"></div><div class="lin rng" id="rEnd"></div></div>
@@ -149,6 +151,7 @@
 
       <section class="panel">
         <h2 data-i18n="chartH"></h2>
+        <div data-guide="smChart"></div>
         <canvas id="chart"></canvas>
         <div class="legend">
           <span><span class="sw" style="background:var(--accent)"></span><span data-i18n="lgCum"></span></span>
@@ -170,7 +173,7 @@
 </main>
 <footer class="sim-footer" data-i18n="footer"></footer>
 
-<script src="site.js?v=20261106a"></script>
+<script src="site.js?v=20261107a"></script>
 <script>
 // 化石燃料CO₂（2023年頃の概算, Global Carbon Project）。世界合計は土地利用変化を含む 40 Gt。
 const COUNTRIES = {
